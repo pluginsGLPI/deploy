@@ -1,19 +1,18 @@
 {% import 'components/form/fields_macros.html.twig' as fields %}
 
-{% if file is not defined %}
-    {% set file = "PluginDeplpyFile"|itemtype_class %}
-{% endif %}
 {% set rand = random() %}
 {% set field_options = {
    'full_width': true,
    'rand': rand,
 } %}
 
-<form enctype="multipart/form-data" action="{{ "PluginDeployPackage"|itemtype_form_path }}" method="POST">
-    <input type="hidden" name="plugin_deploy_packages_id" value="{{ plugin_deploy_packages_id }}">
-    <input type="hidden" name="add_file" value="1">
+{% set is_edit = file_instance.fields['filename']|length > 0 %}
 
-    {% if file.fields['filename']|length == 0 %}
+<form enctype="multipart/form-data" action="{{ "PluginDeployPackage"|itemtype_form_path }}" method="POST">
+    <input type="hidden" name="id" value="{{ file_instance.fields['id'] }}">
+    <input type="hidden" name="plugin_deploy_packages_id" value="{{ file_instance.fields['plugin_deploy_packages_id'] }}">
+
+    {% if not is_edit %}
         {{ fields.dropdownArrayField(
             'upload_mode',
             '',
@@ -25,13 +24,10 @@
             __('Upload mode') ~ '<i class="ms-2 ti ti-upload"></i>',
             field_options
         ) }}
-    {% else %}
-        TODO field
-        {{ file.fields['filename'] }}
     {% endif %}
 
-    <div id="file_options" class="d-none">
-        {% if file.fields['filename']|length == 0 %}
+    <div id="file_options" class="{{ is_edit ? "" : "d-none" }}">
+        {% if not is_edit %}
             <div id="from_computer" class="d-none">
                 {% set upload_field %}
                     <input class="form-control" type="file" id="file_input" name="file">
@@ -50,39 +46,56 @@
         {% else %}
             {{ fields.readOnlyField(
                 'filename',
-                file.fields['filename'],
+                file_instance.fields['filename'],
                 __('File') ~ '<i class="ms-2 ti ti-file"></i>',
+                field_options
+            ) }}
+            {{ fields.field(
+                'filename',
+                '<span class="text-muted d-inline-block text-truncate" style="width: 100%" title="' ~ file_instance.fields['sha512'] ~ '">' ~ file_instance.fields['sha512'] ~ '</span>',
+                '<i class="ms-2 ti ti-fingerprint"></i>',
                 field_options
             ) }}
         {% endif %}
 
         {{ fields.checkboxField(
             'uncompress',
-            '',
+            file_instance.fields['uncompress'],
             __('Uncompress', 'deploy') ~ '<i class="ms-2 ti ti-file-zip"></i>',
             field_options
         ) }}
 
         {{ fields.checkboxField(
             'p2p',
-            '',
+            file_instance.fields['p2p'],
             __('Enable p2p', 'deploy') ~ '<i class="ms-2 ti ti-affiliate"></i>',
             field_options
         ) }}
 
         {{ fields.numberField(
             'p2p_retention_days',
-            '',
+            file_instance.fields['p2p_retention_days'],
             __('Retention days', 'deploy') ~ '<i class="ms-2 ti ti-calendar-time"></i>',
             field_options
         ) }}
-    </div>
 
-    <div class="d-flex flex-row-reverse align-items-start flex-wrap mt-4 pt-4 border-top">
-        <button type="submit" class="btn btn-primary">
-            <i class="ti ti-plus"></i>
-            <span>{{ __('add', 'deploy') }}</span>
-        </button>
+        <div class="d-flex flex-row-reverse align-items-start flex-wrap mt-4 pt-4 border-top">
+            {% if is_edit %}
+                <button type="submit" class="btn btn-primary mx-1" name="edit_file" value="1">
+                    <i class="ti ti-device-floppy"></i>
+                    <span>{{ __('edit', 'deploy') }}</span>
+                </button>
+                <button type="submit" class="btn btn-outline-danger mx-1" name="delete_file" value="1">
+                    <i class="ti ti-x"></i>
+                    <span>{{ __('delete', 'deploy') }}</span>
+                </button>
+            {% else %}
+                <button type="submit" class="btn btn-primary mx-1" name="add_file" value="1">
+                    <i class="ti ti-plus"></i>
+                    <span>{{ __('add', 'deploy') }}</span>
+                </button>
+            {% endif %}
+        </div>
     </div>
 </form>
 

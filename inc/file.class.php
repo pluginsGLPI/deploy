@@ -67,9 +67,28 @@ class PluginDeployFile extends CommonDBTM
     {
         $files = self::getForPackage($package);
         TemplateRenderer::getInstance()->display('@deploy/files.html.twig', [
-            'count' => count($files),
-            'files' => $files,
             'plugin_deploy_packages_id' => $package->fields['id'],
+            'count'                     => count($files),
+            'files'                     => $files,
+        ]);
+    }
+
+    public static function showAdd(int $plugin_deploy_packages_id = 0)
+    {
+        $file_instance = new self;
+        $file_instance->getEmpty();
+        $file_instance->fields['plugin_deploy_packages_id'] = $plugin_deploy_packages_id;
+        TemplateRenderer::getInstance()->display('@deploy/file.form.html.twig', [
+            'file_instance' => $file_instance,
+        ]);
+    }
+
+    public static function showEdit(int $ID = 0)
+    {
+        $file_instance = new self();
+        $file_instance->getFromDB($ID);
+        TemplateRenderer::getInstance()->display('@deploy/file.form.html.twig', [
+            'file_instance' => $file_instance,
         ]);
     }
 

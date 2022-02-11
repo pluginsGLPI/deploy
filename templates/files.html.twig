@@ -2,25 +2,20 @@
 
 <div class="container-fluid">
     <div class="mb-2">
-        <button class="btn btn-primary mb-2"
-        data-bs-toggle="modal" data-bs-target="#add_file">
+        <button class="btn btn-primary mb-2" id="add_file">
             <i class="ti ti-file-upload"></i>
             <span>{{ __('add a file', 'deploy') }}</span>
         </button>
     </div>
 
-    <div class="modal fade" id="add_file" role="dialog">
+    <div class="modal fade" id="modal_file" role="dialog">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">{{ __('Add a file', 'deploy') }}</h4>
+                    <h4 class="modal-title"></h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('Close') }}"></button>
                 </div>
-                <div class="modal-body">
-                    {% include '@deploy/file.form.html.twig' with {
-                        'plugin_deploy_packages_id': plugin_deploy_packages_id
-                    } only %}
-                </div>
+                <div class="modal-body"></div>
             </div>
         </div>
     </div>
@@ -38,6 +33,8 @@
                     __('filename', 'deploy'),
                     __('size', 'deploy'),
                     __('mimetype', 'deploy'),
+                    __('P2P', 'deploy'),
+                    __('Uncompress', 'deploy'),
                     __('SHA', 'deploy'),
                  ] %}
 
@@ -52,9 +49,15 @@
                 <tbody>
                 {% for file in files %}
                     <tr>
-                        <td>{{ file['icon'] }} {{ file['filename'] }}</td>
+                        <td>
+                            <a href="#" class="edit_file" data-id="{{ file['id'] }}">
+                                {{ file['icon'] }} {{ file['filename'] }}
+                            </a>
+                        </td>
                         <td>{{ call('Toolbox::getSize', [file['filesize']]) }}</td>
                         <td>{{ file['mimetype'] }}</td>
+                        <td>{{ file['p2p'] == 1 ? "<i class='ti ti-check'>" : "" }}</td>
+                        <td>{{ file['uncompress'] == 1 ? "<i class='ti ti-check'>" : "" }}</td>
                         <td><span class='text-muted'>{{ file['sha512'] }}</span></td>
                     </tr>
                 {% endfor %}
@@ -64,3 +67,32 @@
     {% endif %}
     </div>
 </div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    var modal = $('#modal_file');
+    var bs_modal = new bootstrap.Modal(document.getElementById('modal_file'), {});
+
+    $('#add_file').on('click', function() {
+        var id    = $(this).data('id');
+        modal.find('.modal-title').html(__('Add a file', 'deploy'))
+        modal.find('.modal-body').load(CFG_GLPI.root_doc + '/' + GLPI_PLUGINS_PATH.deploy + '/ajax/package.php', {
+            'plugin_deploy_packages_id': {{ plugin_deploy_packages_id }},
+            'action': 'add_file',
+        });
+
+        bs_modal.show();
+    });
+
+    $('.edit_file').on('click', function() {
+        var id    = $(this).data('id');
+        modal.find('.modal-title').html(__('Edit a file', 'deploy'))
+        modal.find('.modal-body').load(CFG_GLPI.root_doc + '/' + GLPI_PLUGINS_PATH.deploy + '/ajax/package.php', {
+            'id': id,
+            'action': 'edit_file',
+        });
+
+        bs_modal.show();
+    });
+});
+</script>

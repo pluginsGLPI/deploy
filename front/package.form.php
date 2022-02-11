@@ -61,8 +61,17 @@ if (isset($_POST["add"])) {
     $package->update($_POST);
     Html::back();
 } else if (isset($_POST["add_file"])) {
+    unset($_POST['id']);
     $file = new PluginDeployFile();
     $file->add($_POST);
+    Html::back();
+} else if (isset($_POST["edit_file"])) {
+    $file = new PluginDeployFile();
+    $file->update($_POST);
+    Html::back();
+} else if (isset($_POST["delete_file"])) {
+    $file = new PluginDeployFile();
+    $file->delete($_POST);
     Html::back();
 } else {
     Html::header(
