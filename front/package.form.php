@@ -79,7 +79,7 @@ if (isset($_POST["add"])) {
         '',
         'tools',
         'plugindeploymenu',
-        'task'
+        'package'
     );
 
     //show question form to add
