@@ -44,8 +44,10 @@ class PluginDeployRepository_File
         $this->path         = $path;
         $this->size         = $size;
         $this->mimetype     = $mimetype;
-        $this->sha512       = hash_file('sha512', $path);
-        $this->short_sha512 = substr($this->sha512, 0, 8);
+        if (strlen($path) > 0) {
+            $this->sha512       = hash_file('sha512', $path);
+            $this->short_sha512 = substr($this->sha512, 0, 8);
+        }
     }
 
     public function addToRepository(): bool {
@@ -57,6 +59,7 @@ class PluginDeployRepository_File
 
         return true;
     }
+
 
     public function getDefinition(): array {
         return [
@@ -70,22 +73,22 @@ class PluginDeployRepository_File
 
     private function isFileExists(): bool {
         // check a filename with sha512 exist in manifest path
-        if (!file_exists(PLUGIN_DEPLOY_MANIFESTS_PATH . $this->sha512)) {
+        if (!file_exists(PLUGIN_DEPLOY_MANIFESTS_PATH . "/{$this->sha512}")) {
             return false;
         }
 
         // check each parts saved in manifest file
         $all_parts_ok = true;
         $nb_parts = 0;
-        $manifest = fopen(PLUGIN_DEPLOY_MANIFESTS_PATH . $this->sha512, "r");
+        $manifest = fopen(PLUGIN_DEPLOY_MANIFESTS_PATH . "/{$this->sha512}", "r");
         $this->parts_sha512 = [];
         while (($part_sha512 = fgets($manifest)) !== false) {
             $nb_parts++;
             $this->parts_sha512[] = $part_sha512;
-            $part_path = $this->getRelativePathBySha512($part_sha512);
+            $part_path = self::getRelativePathBySha512($part_sha512);
 
             //Check part exists
-            if (!file_exists(PLUGIN_DEPLOY_PARTS_PATH . $part_path)) {
+            if (!file_exists(PLUGIN_DEPLOY_PARTS_PATH . "/$part_path")) {
                 $all_parts_ok = false;
                 break;
             }
@@ -101,7 +104,7 @@ class PluginDeployRepository_File
             return false;
         }
 
-        $tmp_part_path = tempnam(GLPI_TMP_DIR, 'plugin_deploy_part_');
+        $tmp_part_path = tempnam(GLPI_TMP_DIR, '/plugin_deploy_part_');
         $this->parts_sha512 = [];
         do {
             if (feof($file_handle) || filesize($tmp_part_path) >= $this->max_part_size) {
@@ -128,7 +131,7 @@ class PluginDeployRepository_File
     public function saveOnePart(string $tmp_part_path = ""): string
     {
         $part_sha512  = hash_file('sha512', $tmp_part_path);
-        $part_basedir = PLUGIN_DEPLOY_PARTS_PATH . $this->getRelativePathBySha512($part_sha512, false);
+        $part_basedir = PLUGIN_DEPLOY_PARTS_PATH . "/" . $this->getRelativePathBySha512($part_sha512, false);
         $part_path    = $part_basedir . '/' . $part_sha512;
 
         if (!file_exists($part_path)) {
@@ -143,7 +146,7 @@ class PluginDeployRepository_File
     public function saveManifest(): bool
     {
         $handle = fopen(
-            PLUGIN_DEPLOY_MANIFESTS_PATH . $this->sha512,
+            PLUGIN_DEPLOY_MANIFESTS_PATH . "/{$this->sha512}",
             "w+"
         );
         if ($handle) {
@@ -157,7 +160,7 @@ class PluginDeployRepository_File
     }
 
 
-    private function getRelativePathBySha512(string $sha512 = "", bool $with_filename = true): string
+    public static function getRelativePathBySha512(string $sha512 = "", bool $with_filename = true): string
     {
         $first  = substr($sha512, 0, 1);
         $second = substr($sha512, 0, 2);

@@ -79,6 +79,48 @@ class PluginDeployRepository
         return $file;
     }
 
+    public function deleteFile(string $sha512 = ""): bool
+    {
+        $manifest_path = PLUGIN_DEPLOY_MANIFESTS_PATH . "/$sha512";
+
+        // file already removed
+        if (!file_exists($manifest_path)) {
+            return true;
+        }
+
+        // remove parts
+        $parts_sha512 = file($manifest_path);
+        foreach ($parts_sha512 as $part_sha512) {
+            $part_relative_dir = PluginDeployRepository_File::getRelativePathBySha512($part_sha512, false);
+            $part_absolute_dir = PLUGIN_DEPLOY_PARTS_PATH . "/$part_relative_dir";
+            $part_parent_dir   = dirname($part_absolute_dir);
+            $part_path         = trim($part_absolute_dir . $part_sha512);
+
+            // remove part
+            unlink($part_path);
+
+            // remove part directory if empty
+            if (is_dir($part_absolute_dir)) {
+                $nb_files_in_dir = count(scandir($part_absolute_dir)) - 2;
+                if ($nb_files_in_dir === 0) {
+                    rmdir($part_absolute_dir);
+                }
+            }
+
+            // remove parent directory if empty
+            if (is_dir($part_parent_dir)) {
+                $nb_folder_in_dir = count(scandir($part_parent_dir)) - 2;
+                if ($nb_folder_in_dir === 0) {
+                    rmdir($part_parent_dir);
+                }
+            }
+
+        }
+
+        // remove manifest
+        return unlink($manifest_path);
+    }
+
 
     public static function install(Migration $migration)
     {

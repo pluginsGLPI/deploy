@@ -126,6 +126,23 @@ class PluginDeployFile extends CommonDBTM
         return $input;
     }
 
+
+    public function pre_deleteItem()
+    {
+        $found_files = $this->find([
+            'sha512' => $this->fields['sha512']
+        ]);
+
+        // do not delete file in repository if it's also used in other packages
+        if (count($found_files) === 1) {
+            $repository = new PluginDeployRepository;
+            $repository->deleteFile($this->fields['sha512']);
+        }
+
+        return true;
+    }
+
+
     public function AddFileFromComputer(): array
     {
         $repository = new PluginDeployRepository;
