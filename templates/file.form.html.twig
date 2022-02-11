@@ -1,0 +1,106 @@
+{% import 'components/form/fields_macros.html.twig' as fields %}
+
+{% if file is not defined %}
+    {% set file = "PluginDeplpyFile"|itemtype_class %}
+{% endif %}
+{% set rand = random() %}
+{% set field_options = {
+   'full_width': true,
+   'rand': rand,
+} %}
+
+<form enctype="multipart/form-data" action="{{ "PluginDeployPackage"|itemtype_form_path }}" method="POST">
+    <input type="hidden" name="plugin_deploy_packages_id" value="{{ plugin_deploy_packages_id }}">
+    <input type="hidden" name="add_file" value="1">
+
+    {% if file.fields['filename']|length == 0 %}
+        {{ fields.dropdownArrayField(
+            'upload_mode',
+            '',
+            {
+                '': '-----',
+                'from_computer': __("Upload from your computer", 'deploy'),
+                'from_server': __("Upload from the server", 'deploy')
+            },
+            __('Upload mode') ~ '<i class="ms-2 ti ti-upload"></i>',
+            field_options
+        ) }}
+    {% else %}
+        TODO field
+        {{ file.fields['filename'] }}
+    {% endif %}
+
+    <div id="file_options" class="d-none">
+        {% if file.fields['filename']|length == 0 %}
+            <div id="from_computer" class="d-none">
+                {% set upload_field %}
+                    <input class="form-control" type="file" id="file_input" name="file">
+                {% endset %}
+                {{ fields.field(
+                    'file',
+                    upload_field,
+                    __('File') ~ '<i class="ms-2 ti ti-file"></i>',
+                    field_options|merge({'id': 'file_input'})
+                ) }}
+            </div>
+
+            <div id="from_server" class="d-none">
+                TODO
+            </div>
+        {% else %}
+            {{ fields.readOnlyField(
+                'filename',
+                file.fields['filename'],
+                __('File') ~ '<i class="ms-2 ti ti-file"></i>',
+                field_options
+            ) }}
+        {% endif %}
+
+        {{ fields.checkboxField(
+            'uncompress',
+            '',
+            __('Uncompress', 'deploy') ~ '<i class="ms-2 ti ti-file-zip"></i>',
+            field_options
+        ) }}
+
+        {{ fields.checkboxField(
+            'p2p',
+            '',
+            __('Enable p2p', 'deploy') ~ '<i class="ms-2 ti ti-affiliate"></i>',
+            field_options
+        ) }}
+
+        {{ fields.numberField(
+            'p2p_retention_days',
+            '',
+            __('Retention days', 'deploy') ~ '<i class="ms-2 ti ti-calendar-time"></i>',
+            field_options
+        ) }}
+    </div>
+
+    <div class="d-flex flex-row-reverse align-items-start flex-wrap mt-4 pt-4 border-top">
+        <button type="submit" class="btn btn-primary">
+            <i class="ti ti-plus"></i>
+            <span>{{ __('add', 'deploy') }}</span>
+        </button>
+    </div>
+</form>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#dropdown_upload_mode{{ rand }}').on('select2:select', function() {
+        $('#file_options, #from_computer, #from_server').addClass('d-none');
+
+        var mode = $(this).val();
+        if (mode.length > 0) {
+            $('#file_options').removeClass('d-none');
+            if (mode == 'from_computer') {
+                $('#from_computer').removeClass('d-none');
+            }
+            if (mode == 'from_server') {
+                $('#from_server').removeClass('d-none');
+            }
+        }
+    });
+});
+</script>

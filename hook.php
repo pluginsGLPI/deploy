@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * deploy plugin for GLPI
@@ -28,13 +29,26 @@
  * --------------------------------------------------------------------------
  */
 
-/**
- * Plugin install process
- *
- * @return boolean
- */
-function plugin_deploy_install() {
-   return true;
+function plugin_deploy_install()
+{
+    $version   = plugin_version_deploy();
+    $migration = new Migration($version['version']);
+
+    // Parse inc directory
+    foreach (glob(dirname(__FILE__) . '/inc/*') as $filepath) {
+        // Load *.class.php files and get the class name
+        if (preg_match("/inc.(.+)\.class.php$/", $filepath, $matches)) {
+            $classname = 'PluginDeploy' . ucfirst($matches[1]);
+            include_once($filepath);
+            // If the install method exists, load it
+            if (method_exists($classname, 'install')) {
+                $classname::install($migration);
+            }
+        }
+    }
+    $migration->executeMigration();
+
+    return true;
 }
 
 /**
@@ -42,6 +56,22 @@ function plugin_deploy_install() {
  *
  * @return boolean
  */
-function plugin_deploy_uninstall() {
-   return true;
+function plugin_deploy_uninstall()
+{
+    $migration = new Migration(PLUGIN_DEPLOY_VERSION);
+
+    // Parse inc directory
+    foreach (glob(dirname(__FILE__) . '/inc/*') as $filepath) {
+        // Load *.class.php files and get the class name
+        if (preg_match("/inc.(.+)\.class.php/", $filepath, $matches)) {
+            $classname = 'PluginDeploy' . ucfirst($matches[1]);
+            include_once($filepath);
+            // If the install method exists, load it
+            if (method_exists($classname, 'uninstall')) {
+                $classname::uninstall($migration);
+            }
+        }
+    }
+    return true;
 }
+

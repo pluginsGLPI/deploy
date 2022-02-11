@@ -1,4 +1,5 @@
 <?php
+
 /**
  * -------------------------------------------------------------------------
  * deploy plugin for GLPI
@@ -29,6 +30,9 @@
  */
 
 define('PLUGIN_DEPLOY_VERSION', '0.0.1');
+define('PLUGIN_DEPLOY_REPOSITORY_PATH', GLPI_PLUGIN_DOC_DIR . "/deploy/repository");
+define('PLUGIN_DEPLOY_MANIFESTS_PATH',  PLUGIN_DEPLOY_REPOSITORY_PATH . "/manifests");
+define('PLUGIN_DEPLOY_PARTS_PATH',      PLUGIN_DEPLOY_REPOSITORY_PATH . "/parts");
 
 /**
  * Init hooks of the plugin.
@@ -36,10 +40,26 @@ define('PLUGIN_DEPLOY_VERSION', '0.0.1');
  *
  * @return void
  */
-function plugin_init_deploy() {
-   global $PLUGIN_HOOKS;
+function plugin_init_deploy()
+{
+    global $PLUGIN_HOOKS;
 
-   $PLUGIN_HOOKS['csrf_compliant']['deploy'] = true;
+    $PLUGIN_HOOKS['csrf_compliant']['deploy'] = true;
+
+    include_once(Plugin::getPhpDir("deploy") . "/vendor/autoload.php");
+
+    $plugin = new Plugin();
+    if (
+        !$plugin->isInstalled('deploy')
+        || !$plugin->isActivated('deploy')
+    ) {
+        return false;
+    }
+
+    $PLUGIN_HOOKS['menu_toadd']['deploy'] = [
+        'tools' => 'PluginDeployMenu',
+    ];
+    $PLUGIN_HOOKS['config_page']['deploy'] = 'front/task.php';
 }
 
 
@@ -49,19 +69,20 @@ function plugin_init_deploy() {
  *
  * @return array
  */
-function plugin_version_deploy() {
-   return [
-      'name'           => 'deploy',
-      'version'        => PLUGIN_DEPLOY_VERSION,
-      'author'         => '<a href="http://www.teclib.com">Teclib\'</a>',
-      'license'        => '',
-      'homepage'       => '',
-      'requirements'   => [
-         'glpi' => [
-            'min' => '9.5',
-         ]
-      ]
-   ];
+function plugin_version_deploy()
+{
+    return [
+        'name'           => 'deploy',
+        'version'        => PLUGIN_DEPLOY_VERSION,
+        'author'         => '<a href="http://www.teclib.com">Teclib\'</a>',
+        'license'        => '',
+        'homepage'       => '',
+        'requirements'   => [
+            'glpi' => [
+                'min' => '9.5',
+            ]
+        ]
+    ];
 }
 
 /**
@@ -70,9 +91,10 @@ function plugin_version_deploy() {
  *
  * @return boolean
  */
-function plugin_deploy_check_prerequisites() {
+function plugin_deploy_check_prerequisites()
+{
 
-   return true;
+    return true;
 }
 
 /**
@@ -82,13 +104,14 @@ function plugin_deploy_check_prerequisites() {
  *
  * @return boolean
  */
-function plugin_deploy_check_config($verbose = false) {
-   if (true) { // Your configuration check
-      return true;
-   }
+function plugin_deploy_check_config($verbose = false)
+{
+    if (true) { // Your configuration check
+        return true;
+    }
 
-   if ($verbose) {
-      echo __('Installed / not configured', 'deploy');
-   }
-   return false;
+    if ($verbose) {
+        echo __('Installed / not configured', 'deploy');
+    }
+    return false;
 }

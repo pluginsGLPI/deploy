@@ -1,0 +1,66 @@
+{% import 'components/form/modals_macros.html.twig' as modals %}
+
+<div class="container-fluid">
+    <div class="mb-2">
+        <button class="btn btn-primary mb-2"
+        data-bs-toggle="modal" data-bs-target="#add_file">
+            <i class="ti ti-file-upload"></i>
+            <span>{{ __('add a file', 'deploy') }}</span>
+        </button>
+    </div>
+
+    <div class="modal fade" id="add_file" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">{{ __('Add a file', 'deploy') }}</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('Close') }}"></button>
+                </div>
+                <div class="modal-body">
+                    {% include '@deploy/file.form.html.twig' with {
+                        'plugin_deploy_packages_id': plugin_deploy_packages_id
+                    } only %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-sm search-card">
+    {% if count == 0 %}
+        <div class="alert alert-info mb-0 rounded-0 border-top-0 border-bottom-0 border-right-0" role="alert">
+            {{ __('No files found', 'deploy') }}
+        </div>
+    {% else %}
+        <div class="table-responsive">
+            <table class="search-results table table-hover table-card">
+                <thead>
+                {% set headings = [
+                    __('filename', 'deploy'),
+                    __('size', 'deploy'),
+                    __('mimetype', 'deploy'),
+                    __('SHA', 'deploy'),
+                 ] %}
+
+                <tr>
+                {% for label in headings %}
+                    <th>
+                        {{ label }}
+                    </th>
+                {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for file in files %}
+                    <tr>
+                        <td>{{ file['icon'] }} {{ file['filename'] }}</td>
+                        <td>{{ call('Toolbox::getSize', [file['filesize']]) }}</td>
+                        <td>{{ file['mimetype'] }}</td>
+                        <td><span class='text-muted'>{{ file['sha512'] }}</span></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+    </div>
+</div>
