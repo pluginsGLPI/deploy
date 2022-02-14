@@ -75,7 +75,7 @@ if (isset($_POST["add"])) {
     Html::back();
 } else {
     Html::header(
-        PluginDeployTask::getTypeName(Session::getPluralNumber()),
+        PluginDeployPackage::getTypeName(Session::getPluralNumber()),
         '',
         'tools',
         'plugindeploymenu',
