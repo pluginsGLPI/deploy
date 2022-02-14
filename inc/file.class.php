@@ -109,10 +109,12 @@ class PluginDeployFile extends CommonDBTM
 
     public function prepareInputForAdd($input)
     {
+        $repository = new PluginDeployRepository;
         switch ($input['upload_mode'])
         {
             case "from_computer":
-                $input = array_merge($input, $this->AddFileFromComputer());
+                $r_file = $repository->AddFileFromComputer();
+                $input  = $r_file->getDefinition();
 
                 break;
             case "from_server":
@@ -140,14 +142,6 @@ class PluginDeployFile extends CommonDBTM
         }
 
         return true;
-    }
-
-
-    public function AddFileFromComputer(): array
-    {
-        $repository = new PluginDeployRepository;
-        $repository_file = $repository->AddFileFromComputer();
-        return $repository_file->getDefinition();
     }
 
 
