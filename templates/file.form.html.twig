@@ -36,12 +36,28 @@
                     'file',
                     upload_field,
                     __('File') ~ '<i class="ms-2 ti ti-file"></i>',
-                    field_options|merge({'id': 'file_input'})
+                    field_options|merge({
+                        'id': 'file_input',
+                    })
                 ) }}
             </div>
 
             <div id="from_server" class="d-none">
-                TODO
+                {% set fancytree_html %}
+                    <input type="text" id="server_file_input" class="form-control" name="server_file">
+                    <div id="server_files_tree">{{ server_files_tree|raw }}</div>
+                {% endset %}
+                {{ fields.field(
+                    'server_file',
+                    fancytree_html,
+                    __('File') ~ '<i class="ms-2 ti ti-file"></i>',
+                    field_options|merge({
+                        'id': 'server_file_input',
+                        'add_field_html': '<span class="form-help" data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true" data-bs-content="
+' ~ __("Upload your files to %s folder")|replace({'%s': constant("GLPI_UPLOAD_DIR")}) ~ '
+">?</span>',
+                    })
+                ) }}
             </div>
         {% else %}
             {{ fields.readOnlyField(
@@ -114,6 +130,22 @@ $(document).ready(function() {
                 $('#from_server').removeClass('d-none');
             }
         }
+    });
+
+    $('#server_files_tree').fancytree({
+        // load plugins
+        extensions: ['glyph'],
+
+        // enable font-awesome icons
+        glyph: {
+            preset: "awesome5",
+            map: {}
+        },
+
+        // copy path on node click
+        activate: function(event, data) {
+            $('#server_file_input').val((data.node.data.path ?? ""));
+        },
     });
 });
 </script>

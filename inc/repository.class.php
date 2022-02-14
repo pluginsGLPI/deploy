@@ -79,6 +79,20 @@ class PluginDeployRepository
         return $file;
     }
 
+    public function addFileFromServer(string $path = ""): PluginDeployRepository_File
+    {
+        $tmp_name = GLPI_UPLOAD_DIR.$path;
+        if (false !== ($file = new PluginDeployRepository_File(
+            basename($tmp_name),
+            $tmp_name,
+            filesize($tmp_name),
+            mime_content_type($tmp_name),
+        ))) {
+            $file->addToRepository();
+        }
+        return $file;
+    }
+
     public function deleteFile(string $sha512 = ""): bool
     {
         $manifest_path = PLUGIN_DEPLOY_MANIFESTS_PATH . "/$sha512";

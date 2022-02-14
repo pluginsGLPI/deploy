@@ -79,7 +79,8 @@ class PluginDeployFile extends CommonDBTM
         $file_instance->getEmpty();
         $file_instance->fields['plugin_deploy_packages_id'] = $plugin_deploy_packages_id;
         TemplateRenderer::getInstance()->display('@deploy/file.form.html.twig', [
-            'file_instance' => $file_instance,
+            'file_instance'     => $file_instance,
+            'server_files_tree' => self::getFilesTreeFromServer(),
         ]);
     }
 
@@ -114,10 +115,12 @@ class PluginDeployFile extends CommonDBTM
         {
             case "from_computer":
                 $r_file = $repository->AddFileFromComputer();
-                $input  = $r_file->getDefinition();
+                $input  = array_merge($input, $r_file->getDefinition());
 
                 break;
             case "from_server":
+                $r_file = $repository->addFileFromServer($input['server_file']);
+                $input  = array_merge($input, $r_file->getDefinition());
                 break;
         }
 
@@ -142,6 +145,65 @@ class PluginDeployFile extends CommonDBTM
         }
 
         return true;
+    }
+
+
+    public static function getFilesTreeFromServer(): string
+    {
+        $path = GLPI_UPLOAD_DIR;
+
+        $dir_iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::SELF_FIRST);
+        $dom = new DomDocument("1.0");
+        $list = $dom->createElement("ul");
+        $list->setAttribute('id', "treeData");
+        $dom->appendChild($list);
+        $node = $list;
+        $depth = 0;
+        $id = 1;
+        foreach ($dir_iterator as $object) {
+            $rel_path = str_replace($path, '', $object->getPathname());
+            if ($dir_iterator->getDepth() == $depth) {
+                //the depth hasnt changed so just add another li
+                $li = $dom->createElement('li', $object->getFilename());
+                $li->setAttribute('id', $id);
+                $li->setAttribute('data-json', '{"path": "'.$rel_path.'"}');
+                if ($object->isDir()) {
+                    $li->setAttribute('class', 'folder');
+                }
+                $node->appendChild($li);
+            }
+            elseif ($dir_iterator->getDepth() > $depth) {
+                //the depth increased, the last li is a non-empty folder
+                $li = $node->lastChild;
+                $ul = $dom->createElement('ul');
+                $li->appendChild($ul);
+                $li->setAttribute('id', $id);
+                $li->setAttribute('class', 'folder unselectable');
+                $new_li = $dom->createElement('li', $object->getFilename());
+                $new_li->setAttribute('data-json', '{"path": "'.$rel_path.'"}');
+                $ul->appendChild($new_li);
+                $node = $ul;
+            }
+            else{
+                //the depth decreased, going up $difference directories
+                $difference = $depth - $dir_iterator->getDepth();
+                for ($i = 0; $i < $difference; $difference--) {
+                    $node = $node->parentNode->parentNode;
+                }
+                $li = $dom->createElement('li', $object->getFilename());
+                $li->setAttribute('data-json', '{"path": "'.$rel_path.'"}');
+                $li->setAttribute('id', $id);
+                if ($object->isDir()) {
+                    $li->setAttribute('class', 'folder');
+                }
+                $node->appendChild($li);
+            }
+            $depth = $dir_iterator->getDepth();
+
+            $id++;
+        }
+
+        return $dom->saveHtml();
     }
 
 
