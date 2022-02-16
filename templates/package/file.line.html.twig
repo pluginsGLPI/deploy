@@ -1,0 +1,11 @@
+<td>
+    <a href="#" class="edit_{{ subitem_type }}" data-id="{{ entry['id'] }}">
+        {{ entry['icon'] }} {{ entry['filename'] }}
+    </a>
+</td>
+<td>{{ call('Toolbox::getSize', [entry['filesize'] ?? 0]) }}</td>
+<td>{{ entry['mimetype'] }}</td>
+<td>{{ entry['p2p'] == 1 ? "<i class='ti ti-check'>" : "" }}</td>
+<td>{{ entry['p2p'] == 1 ? entry['p2p_retention_days'] : "" }}</td>
+<td>{{ entry['uncompress'] == 1 ? "<i class='ti ti-check'>" : "" }}</td>
+<td><span class='text-muted'>{{ entry['sha512'] }}</span></td>

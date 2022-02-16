@@ -29,7 +29,7 @@
  * --------------------------------------------------------------------------
  */
 
-define('PLUGIN_DEPLOY_VERSION', '0.0.1');
+define('PLUGIN_DEPLOY_VERSION', '0.0.2');
 define('PLUGIN_DEPLOY_REPOSITORY_PATH', GLPI_PLUGIN_DOC_DIR . "/deploy/repository");
 define('PLUGIN_DEPLOY_MANIFESTS_PATH',  PLUGIN_DEPLOY_REPOSITORY_PATH . "/manifests");
 define('PLUGIN_DEPLOY_PARTS_PATH',      PLUGIN_DEPLOY_REPOSITORY_PATH . "/parts");

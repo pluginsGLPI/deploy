@@ -1,0 +1,132 @@
+{% import 'components/form/fields_macros.html.twig' as fields %}
+
+{% set rand = random() %}
+{% set field_options = {
+   'full_width': true,
+   'rand': rand,
+} %}
+
+{% if not is_edit %}
+    {{ fields.dropdownArrayField(
+        'upload_mode',
+        '',
+        {
+            '': '-----',
+            'from_computer': __("Upload from your computer", 'deploy'),
+            'from_server': __("Upload from the server", 'deploy')
+        },
+        __('Upload mode') ~ '<i class="ms-2 ti ti-upload"></i>',
+        field_options
+    ) }}
+{% endif %}
+
+<div id="file_options" class="{{ is_edit ? "" : "d-none" }}">
+    {% if not is_edit %}
+        <div id="from_computer" class="d-none">
+            {% set upload_field %}
+                <input class="form-control" type="file" id="file_input" name="file">
+            {% endset %}
+            {{ fields.field(
+                'file',
+                upload_field,
+                __('File') ~ '<i class="ms-2 ti ti-file"></i>',
+                field_options|merge({
+                    'id': 'file_input',
+                })
+            ) }}
+        </div>
+
+        <div id="from_server" class="d-none">
+            {% set fancytree_html %}
+                <input type="text" id="server_file_input" class="form-control" name="server_file">
+                <div id="server_files_tree">
+                    {{ call('PluginDeployPackage_File::getFilesTreeFromServer')|raw }}
+                </div>
+            {% endset %}
+            {{ fields.field(
+                'server_file',
+                fancytree_html,
+                __('File') ~ '<i class="ms-2 ti ti-file"></i>',
+                field_options|merge({
+                    'id': 'server_file_input',
+                    'add_field_html': '<span class="form-help" data-bs-toggle="popover" data-bs-placement="top" data-bs-html="true" data-bs-content="
+' ~ __("Upload your files to %s folder")|replace({'%s': constant("GLPI_UPLOAD_DIR")}) ~ '
+">?</span>',
+                })
+            ) }}
+        </div>
+    {% else %}
+        {{ fields.readOnlyField(
+            'filename',
+            subitem_instance.fields['filename'],
+            __('File') ~ '<i class="ms-2 ti ti-file"></i>',
+            field_options
+        ) }}
+        {{ fields.field(
+            'filename',
+            '<span class="text-muted d-inline-block text-truncate" style="width: 100%" title="' ~ subitem_instance.fields['sha512'] ~ '">' ~ subitem_instance.fields['sha512'] ~ '</span>',
+            '<i class="ms-2 ti ti-fingerprint"></i>',
+            field_options
+        ) }}
+    {% endif %}
+
+    {{ fields.checkboxField(
+        'uncompress',
+        subitem_instance.fields['uncompress'],
+        __('Uncompress', 'deploy') ~ '<i class="ms-2 ti ti-file-zip"></i>',
+        field_options
+    ) }}
+
+    {{ fields.checkboxField(
+        'p2p',
+        subitem_instance.fields['p2p'],
+        __('Enable p2p', 'deploy') ~ '<i class="ms-2 ti ti-affiliate"></i>',
+        field_options
+    ) }}
+
+    {{ fields.numberField(
+        'p2p_retention_days',
+        subitem_instance.fields['p2p_retention_days'],
+        __('Retention days', 'deploy') ~ '<i class="ms-2 ti ti-calendar-time"></i>',
+        field_options
+    ) }}
+</div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    {% if not is_edit %}
+        $('#form-footer').addClass('d-none');
+    {% endif %}
+    $('#dropdown_upload_mode{{ rand }}').on('select2:select', function() {
+        $('#file_options, #from_computer, #from_server, #form-footer').addClass('d-none');
+
+        var mode = $(this).val();
+        if (mode.length > 0) {
+            $('#file_options').removeClass('d-none');
+            $('#form-footer').removeClass('d-none');
+            if (mode == 'from_computer') {
+                $('#from_computer').removeClass('d-none');
+            }
+            if (mode == 'from_server') {
+                $('#from_server').removeClass('d-none');
+            }
+        }
+    });
+
+    $('#server_files_tree').fancytree({
+        // load plugins
+        extensions: ['glyph'],
+
+        // enable font-awesome icons
+        glyph: {
+            preset: "awesome5",
+            map: {}
+        },
+
+        // copy path on node click
+        activate: function(event, data) {
+            $('#server_file_input').val((data.node.data.path ?? ""));
+        },
+    });
+});
+</script>

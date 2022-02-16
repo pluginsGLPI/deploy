@@ -1,0 +1,85 @@
+{% import 'components/form/modals_macros.html.twig' as modals %}
+{% set rand = random() %}
+
+<div class="container-fluid">
+    <div class="mb-2">
+        <button class="btn btn-primary mb-2" id="add_{{ subitem_type }}">
+            <i class="ti ti-file-upload"></i>
+            <span>{{ add_title }}</span>
+        </button>
+    </div>
+
+    <div class="modal fade" id="modal_{{ subitem_type }}" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"></h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('Close') }}"></button>
+                </div>
+                <div class="modal-body"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-sm search-card">
+    {% if count == 0 %}
+        <div class="alert alert-info mb-0 rounded-0 border-top-0 border-bottom-0 border-right-0" role="alert">
+            {{ none_found }}
+        </div>
+    {% else %}
+        <div class="table-responsive">
+            <table class="search-results table table-hover table-card">
+                <thead>
+                <tr>
+                {% for label in headings %}
+                    <th>
+                        {{ label }}
+                    </th>
+                {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for entry in entries %}
+                    <tr>
+                        {% include subitem_line with {
+                            'entry': entry,
+                            'subitem_type': subitem_type,
+                        } only %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+    </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    var modal = $('#modal_{{ subitem_type }}');
+    var bs_modal = new bootstrap.Modal(document.getElementById('modal_{{ subitem_type }}'), {});
+    var ajax_url = CFG_GLPI.root_doc + '/' + GLPI_PLUGINS_PATH.deploy + '/ajax/package.php';
+
+    $('#add_{{ subitem_type }}').on('click', function() {
+        var id    = $(this).data('id');
+        modal.find('.modal-title').html('{{ add_title }}')
+        modal.find('.modal-body').load(ajax_url, {
+            'plugin_deploy_packages_id': {{ plugin_deploy_packages_id }},
+            'action': 'add_{{ subitem_type }}',
+        });
+
+        bs_modal.show();
+    });
+
+    $('.edit_{{ subitem_type }}').on('click', function() {
+        var id    = $(this).data('id');
+        modal.find('.modal-title').html('{{ edit_title }}')
+        modal.find('.modal-body').load(ajax_url, {
+            'id': id,
+            'action': 'edit_{{ subitem_type }}',
+        });
+
+        bs_modal.show();
+    });
+});
+</script>

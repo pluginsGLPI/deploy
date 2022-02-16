@@ -26,11 +26,12 @@
  --------------------------------------------------------------------------
  */
 
-use Glpi\Application\View\TemplateRenderer;
-
 class PluginDeployPackage_File extends CommonDBTM
 {
+    use PluginDeployPackage_Subitem;
+
     public static $rightname = 'entity';
+    private const SUBITEM_TYPE = 'file';
 
     public static function getTypeName($nb = 0)
     {
@@ -44,67 +45,17 @@ class PluginDeployPackage_File extends CommonDBTM
     }
 
 
-    public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
+    private static function getheadings(): array
     {
-        if ($item->getType() == 'PluginDeployPackage') {
-            $files  = self::getForPackage($item);
-            $number = count($files);
-            return self::createTabEntry(self::getTypeName($number), $number);
-        }
-        return '';
-    }
-
-
-    public static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
-    {
-        if ($item->getType() == 'PluginDeployPackage') {
-            self::showForPackage($item);
-        }
-    }
-
-
-    public static function showForPackage(PluginDeployPackage $package)
-    {
-        $files = self::getForPackage($package);
-        TemplateRenderer::getInstance()->display('@deploy/files.html.twig', [
-            'plugin_deploy_packages_id' => $package->fields['id'],
-            'count'                     => count($files),
-            'files'                     => $files,
-        ]);
-    }
-
-    public static function showAdd(int $plugin_deploy_packages_id = 0)
-    {
-        $file_instance = new self;
-        $file_instance->getEmpty();
-        $file_instance->fields['plugin_deploy_packages_id'] = $plugin_deploy_packages_id;
-        TemplateRenderer::getInstance()->display('@deploy/file.form.html.twig', [
-            'file_instance'     => $file_instance,
-            'server_files_tree' => self::getFilesTreeFromServer(),
-        ]);
-    }
-
-    public static function showEdit(int $ID = 0)
-    {
-        $file_instance = new self();
-        $file_instance->getFromDB($ID);
-        TemplateRenderer::getInstance()->display('@deploy/file.form.html.twig', [
-            'file_instance' => $file_instance,
-        ]);
-    }
-
-
-    public static function getForPackage(PluginDeployPackage $package): DBmysqlIterator
-    {
-        $DBread   = DBConnection::getReadConnection();
-        $iterator = $DBread->request([
-            'FROM'  => self::getTable(),
-            'WHERE' => [
-                'plugin_deploy_packages_id' => $package->fields['id']
-            ]
-        ]);
-
-        return $iterator;
+        return [
+            'filename'           => __('filename', 'deploy'),
+            'size'               => __('size', 'deploy'),
+            'mimetype'           => __('mimetype', 'deploy'),
+            'p2p'                => __('P2P', 'deploy'),
+            'p2p_retention_days' => __('P2P Retention day', 'deploy'),
+            'uncompress'         => __('Uncompress', 'deploy'),
+            'sha512'             => __('SHA', 'deploy'),
+        ];
     }
 
 
@@ -237,13 +188,5 @@ class PluginDeployPackage_File extends CommonDBTM
             ) ENGINE=InnoDB DEFAULT CHARSET={$default_charset} COLLATE={$default_collation} ROW_FORMAT=DYNAMIC;";
             $DB->query($query) or die($DB->error());
         }
-    }
-
-
-    public static function uninstall(Migration $migration)
-    {
-        $table = self::getTable();
-        $migration->displayMessage("Uninstalling $table");
-        $migration->dropTable($table);
     }
 }
