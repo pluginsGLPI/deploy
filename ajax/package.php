@@ -32,9 +32,9 @@ Session::checkLoginUser();
 
 switch (($_POST['action'] ?? "")) {
     case "add_file":
-        PluginDeployFile::showAdd((int) ($_POST['plugin_deploy_packages_id'] ?? 0));
+        PluginDeployPackage_File::showAdd((int) ($_POST['plugin_deploy_packages_id'] ?? 0));
         break;
     case "edit_file":
-        PluginDeployFile::showEdit((int) ($_POST['id'] ?? 0));
+        PluginDeployPackage_File::showEdit((int) ($_POST['id'] ?? 0));
         break;
 }

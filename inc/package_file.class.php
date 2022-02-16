@@ -28,7 +28,7 @@
 
 use Glpi\Application\View\TemplateRenderer;
 
-class PluginDeployFile extends CommonDBTM
+class PluginDeployPackage_File extends CommonDBTM
 {
     public static $rightname = 'entity';
 

@@ -45,10 +45,10 @@ class PluginDeployPackage extends CommonDBTM
 
         $ong = [];
         $this->addDefaultFormTab($ong)
-            ->addStandardTab('PluginDeployFile', $ong, $options)
-            ->addStandardTab('PluginDeployCheck', $ong, $options)
-            ->addStandardTab('PluginDeployAction', $ong, $options)
-            ->addStandardTab('PluginDeployInteraction', $ong, $options);
+            ->addStandardTab('PluginDeployPackage_File', $ong, $options)
+            ->addStandardTab('PluginDeployPackage_Check', $ong, $options)
+            ->addStandardTab('PluginDeployPackage_Action', $ong, $options)
+            ->addStandardTab('PluginDeployPackage_Interaction', $ong, $options);
 
         return $ong;
     }
