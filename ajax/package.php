@@ -31,6 +31,12 @@ include ("../../../inc/includes.php");
 Session::checkLoginUser();
 
 switch (($_POST['action'] ?? "")) {
+    case "add_check":
+        PluginDeployPackage_Check::showAdd((int) ($_POST['plugin_deploy_packages_id'] ?? 0));
+        break;
+    case "edit_check":
+        PluginDeployPackage_Check::showEdit((int) ($_POST['id'] ?? 0));
+        break;
     case "add_file":
         PluginDeployPackage_File::showAdd((int) ($_POST['plugin_deploy_packages_id'] ?? 0));
         break;

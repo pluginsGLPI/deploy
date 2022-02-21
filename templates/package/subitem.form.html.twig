@@ -1,4 +1,12 @@
 {% set is_edit = subitem_instance.fields['id'] > 0 %}
+{% set rand = random() %}
+{% set field_options = {
+    'full_width': true,
+    'full_width_adapt_column': false,
+    'rand': rand,
+    'label_class': 'col-xxl-3',
+    'input_class': 'col-xxl-9',
+} %}
 
 <form enctype="multipart/form-data" action="{{ "PluginDeployPackage"|itemtype_form_path }}" method="POST">
     <input type="hidden" name="id" value="{{ subitem_instance.fields['id'] }}">

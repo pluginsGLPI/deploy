@@ -1,0 +1,63 @@
+{% import 'components/form/fields_macros.html.twig' as fields %}
+
+{% set types = call("PluginDeployPackage_Check::getTypes") %}
+
+{% set parent_type_field %}
+<div class="form-selectgroup mb-2">
+    {% for type_group_key, type_group in types %}
+        <label class="form-selectgroup-item">
+            <input type="radio" name="parent_type" value="{{ type_group_key }}" class="form-selectgroup-input">
+            <span class="form-selectgroup-label d-flex align-items-center">
+                {{ type_group['label'] }}
+                <i class="fa-fw fa-lg ms-3 {{ type_group['icon'] }}"></i>
+            </span>
+        </label>
+    {% endfor %}
+</div>
+{% endset %}
+{{ fields.field(
+    'file',
+    parent_type_field,
+    __('Check type', 'deploy') ~ '<i class="ms-2 ti ti-check"></i>',
+    field_options
+) }}
+
+{% for type_group_key, type_group in types %}
+<div id="subtype-{{ type_group_key }}" class="subtype d-none">
+    {% set subtype_select_field %}
+        <select class="form-select">
+            <option value="}">--</option>
+            {% for type_key, type in type_group['subtypes'] %}
+                <option value="{{ type_key }}">{{ type }}</option>
+            {% endfor %}
+        </select>
+    {% endset %}
+    {{ fields.field(
+        'file',
+        subtype_select_field,
+        type_group['label'] ~ '<i class="ms-2 ' ~ type_group['icon'] ~ '"></i>',
+        field_options
+    ) }}
+</div>
+{% endfor %}
+
+<div id="return-block" class="d-none">
+    {{ fields.dropdownArrayField(
+        'return',
+        subitem_instance.fields['return'],
+        call("PluginDeployPackage_Check::getReturnValues"),
+        __("If not succesfull", 'deploy') ~ '<i class="ms-2 ti ti-alert-triangle"></i>',
+        field_options
+    ) }}
+</div>
+
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $('[name="parent_type"]').change(function() {
+        $('.subtype').addClass('d-none');
+        $('#return-block').removeClass('d-none');
+        $('#subtype-' + $(this).val()).removeClass('d-none');
+    });
+});
+</script>
