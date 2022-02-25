@@ -9,12 +9,13 @@
 } %}
 
 <form enctype="multipart/form-data" action="{{ "PluginDeployPackage"|itemtype_form_path }}" method="POST">
+
     <input type="hidden" name="id" value="{{ subitem_instance.fields['id'] }}">
     <input type="hidden" name="plugin_deploy_packages_id" value="{{ subitem_instance.fields['plugin_deploy_packages_id'] }}">
 
     {% include subitem_form %}
 
-    <div id="form-footer" class="d-flex flex-row-reverse align-items-start flex-wrap mt-4 pt-4 border-top">
+    <div id="form-footer" class="{{ is_edit ? '' : 'd-none' }} modal-footer border-top pt-2">
         {% if is_edit %}
             <button type="submit" class="btn btn-primary mx-1" name="edit_{{ subitem_type }}" value="1">
                 <i class="ti ti-device-floppy"></i>
@@ -32,3 +33,5 @@
         {% endif %}
     </div>
 </form>
+
+

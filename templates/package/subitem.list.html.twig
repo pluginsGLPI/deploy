@@ -16,7 +16,7 @@
                     <h4 class="modal-title"></h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ __('Close') }}"></button>
                 </div>
-                <div class="modal-body"></div>
+                <div class="modal-ajax-content"></div>
             </div>
         </div>
     </div>
@@ -61,9 +61,9 @@ $(document).ready(function() {
     var ajax_url = CFG_GLPI.root_doc + '/' + GLPI_PLUGINS_PATH.deploy + '/ajax/package.php';
 
     $('#add_{{ subitem_type }}').on('click', function() {
-        var id    = $(this).data('id');
-        modal.find('.modal-title').html('{{ add_title }}')
-        modal.find('.modal-body').load(ajax_url, {
+        var id = $(this).data('id');
+        modal.find('.modal-title').html('{{ add_title }}');
+        modal.find('.modal-ajax-content').load(ajax_url, {
             'plugin_deploy_packages_id': {{ plugin_deploy_packages_id }},
             'action': 'add_{{ subitem_type }}',
         });
@@ -72,9 +72,9 @@ $(document).ready(function() {
     });
 
     $('.edit_{{ subitem_type }}').on('click', function() {
-        var id    = $(this).data('id');
-        modal.find('.modal-title').html('{{ edit_title }}')
-        modal.find('.modal-body').load(ajax_url, {
+        var id = $(this).data('id');
+        modal.find('.modal-title').html('{{ edit_title }}');
+        modal.find('.modal-ajax-content').load(ajax_url, {
             'id': id,
             'action': 'edit_{{ subitem_type }}',
         });
