@@ -1,10 +1,12 @@
 <td>
     <a href="#" class="edit_{{ subitem_type }}" data-id="{{ entry['id'] }}">
-        {{ entry['icon'] }} {{ entry['filename'] }}
+        <i class="fa-fw fa-lg {{ call('PluginDeployPackage_File::getMimetypeFaIcon', [entry['mimetype']]) }}"
+           title="{{ entry['mimetype'] }}"
+           data-bs-toggle="tooltip"></i>
+        <span>{{ entry['filename'] }}</span>
     </a>
 </td>
 <td>{{ call('Toolbox::getSize', [entry['filesize'] ?? 0]) }}</td>
-<td>{{ entry['mimetype'] }}</td>
 <td>{{ entry['p2p'] == 1 ? "<i class='ti ti-check'>" : "" }}</td>
 <td>{{ entry['p2p'] == 1 ? entry['p2p_retention_days'] : "" }}</td>
 <td>{{ entry['uncompress'] == 1 ? "<i class='ti ti-check'>" : "" }}</td>

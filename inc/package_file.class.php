@@ -50,7 +50,6 @@ class PluginDeployPackage_File extends CommonDBTM
         return [
             'filename'           => __('filename', 'deploy'),
             'size'               => __('size', 'deploy'),
-            'mimetype'           => __('mimetype', 'deploy'),
             'p2p'                => __('P2P', 'deploy'),
             'p2p_retention_days' => __('P2P Retention day', 'deploy'),
             'uncompress'         => __('Uncompress', 'deploy'),
@@ -155,6 +154,50 @@ class PluginDeployPackage_File extends CommonDBTM
         }
 
         return $dom->saveHtml();
+    }
+
+    public static function getMimetypeFaIcon(string $mimetype = ""): string
+    {
+        $matches = [
+            // Media (type is generally type/subtype like image/gif)
+            'image' => 'fas fa-file-image',
+            'audio' => 'fas fa-file-audio',
+            'video' => 'fas fa-file-video',
+
+            // Documents
+            'application/pdf'                                                => 'fas fa-file-pdf',
+            'application/msword'                                             => 'fas fa-file-word',
+            'application/vnd.ms-word'                                        => 'fas fa-file-word',
+            'application/vnd.oasis.opendocument.text'                        => 'fas fa-file-word',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml' => 'fas fa-file-word',
+            'application/vnd.ms-excel'                                       => 'fas fa-file-excel',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml'    => 'fas fa-file-excel',
+            'application/vnd.oasis.opendocument.spreadsheet'                 => 'fas fa-file-excel',
+            'application/vnd.ms-powerpoint'                                  => 'fas fa-file-powerpoint',
+            'application/vnd.openxmlformats-officedocument.presentationml'   => 'fas fa-file-powerpoint',
+            'application/vnd.oasis.opendocument.presentation'                => 'fas fa-file-powerpoint',
+            'text/plain'                                                     => 'fas fa-file-text',
+            'text/html'                                                      => 'fas fa-file-code',
+            'text/x-php'                                                     => 'fas fa-file-code',
+            'application/json'                                               => 'fas fa-file-code',
+
+            // Archives
+            'application/gzip'             => 'fas fa-file-archive',
+            'application/zip'              => 'fas fa-file-archive',
+            'application/x-rar-compressed' => 'fas fa-file-archive',
+            'application/x-tar'            => 'fas fa-file-archive',
+            'application/x-bzip'           => 'fas fa-file-archive',
+            'application/x-bzip2'          => 'fas fa-file-archive',
+            'application/x-7z-compressed'  => 'fas fa-file-archive',
+        ];
+
+        foreach ($matches as $text => $icon) {
+            if (strpos($mimetype, $text) === 0) {
+                return $icon;
+            }
+        }
+
+        return 'fas fa-file';
     }
 
 
