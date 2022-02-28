@@ -34,22 +34,50 @@ class PluginDeployPackage_Action extends CommonDBTM
 
     private const SUBITEM_TYPE = 'action';
 
+    public const ACTION_CMD    = 'cmd';
+    public const ACTION_MOVE   = 'move';
+    public const ACTION_COPY   = 'copy';
+    public const ACTION_DELETE = 'delete';
+    public const ACTION_MKDIR  = 'delete';
+
     public static function getTypeName($nb = 0)
     {
         return _n('Action', 'Actions', $nb, 'deploy');
     }
+
 
     public static function getIcon()
     {
         return 'ti ti-bolt';
     }
 
+
     private static function getheadings(): array
     {
         return [
-
+            'type' => __('Action type', 'deploy'),
         ];
     }
+
+
+    public static function getTypes(): array
+    {
+        return [
+            SELF::ACTION_CMD    => __('Run command', 'deploy'),
+            SELF::ACTION_MOVE   => __('Move file', 'deploy'),
+            SELF::ACTION_COPY   => __('Copy file', 'deploy'),
+            SELF::ACTION_DELETE => __('Delete file', 'deploy'),
+            SELF::ACTION_MKDIR  => __('Create directory', 'deploy'),
+        ];
+    }
+
+
+    public static function getLabelForType(string $type = null): string
+    {
+        $types = self::getTypes();
+        return $types[$type] ?? "";
+    }
+
 
     public static function install(Migration $migration)
     {

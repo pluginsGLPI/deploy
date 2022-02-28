@@ -1,0 +1,35 @@
+{% import 'components/form/fields_macros.html.twig' as fields %}
+
+{% set types = call("PluginDeployPackage_Action::getTypes") %}
+
+<div class="modal-body">
+
+    {% set type_select_field %}
+        <select class="form-select" id="actiontype">
+            <option value="">--</option>
+            {% for type_key, type in types %}
+                <option value="{{ type_key }}" {{ subitem_instance.fields['type'] == type_key ? "selected" : "" }}>
+                    {{ type }}
+                </option>
+            {% endfor %}
+        </select>
+    {% endset %}
+    {{ fields.field(
+        'type',
+        type_select_field,
+        __("Action", 'deploy') ~ '<i class="ms-2 ' ~ call("PluginDeployPackage_Action::getIcon") ~ '"></i>',
+        field_options
+    ) }}
+
+    <div class="subfields {{ is_edit ? "" : "d-none" }}">
+
+    </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#actiontype').on('change', function() {
+
+    });
+});
+</script>

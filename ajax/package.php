@@ -43,4 +43,10 @@ switch (($_POST['action'] ?? "")) {
     case "edit_file":
         PluginDeployPackage_File::showEdit((int) ($_POST['id'] ?? 0));
         break;
+    case "add_action":
+        PluginDeployPackage_Action::showAdd((int) ($_POST['plugin_deploy_packages_id'] ?? 0));
+        break;
+    case "edit_action":
+        PluginDeployPackage_Action::showEdit((int) ($_POST['id'] ?? 0));
+        break;
 }
