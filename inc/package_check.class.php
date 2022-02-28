@@ -79,6 +79,17 @@ class PluginDeployPackage_Check extends CommonDBTM
     }
 
 
+    private static function getheadings(): array
+    {
+        return [
+            'name'   => __('Label', 'deploy'),
+            'type'   => __('Check type', 'deploy'),
+            'path'   => __('Path', 'deploy'),
+            'return' => __('If not successful', 'deploy'),
+        ];
+    }
+
+
     public static function getTypes(bool $flat = false): array
     {
         $types = [
@@ -137,6 +148,21 @@ class PluginDeployPackage_Check extends CommonDBTM
     }
 
 
+    public static function getIconForParentType(string $parent_type = null): string
+    {
+        $types = self::getTypes(false);
+        return $types[$parent_type]['icon'] ?? "";
+    }
+
+
+
+    public static function getLabelForType(string $type = null): string
+    {
+        $types = self::getTypes(true);
+        return $types[$type] ?? "";
+    }
+
+
     public static function getRegistryTypes(): array
     {
         return [
@@ -151,15 +177,27 @@ class PluginDeployPackage_Check extends CommonDBTM
         ];
     }
 
-    public static function getReturnValues(): array
+    public static function getReturnValues(bool $with_icon = false): array
     {
         return  [
-            self::RET_ERROR    => __("Abort job", 'deploy'),
-            self::RET_SKIP     => __("Skip job", 'deploy'),
-            self::RET_STARTNOW => __("Start job now", 'deploy'),
-            self::RET_INFO     => __("Report info", 'deploy'),
-            self::RET_WARNING  => __("Report warning", 'deploy')
+            self::RET_ERROR    => ($with_icon ? '<i class="fa-fw me-1 ti ti-circle-x"></i>' : "")
+                                  . __("Abort job", 'deploy'),
+            self::RET_SKIP     => ($with_icon ? '<i class="fa-fw me-1 ti ti-player-skip-forward"></i>' : "")
+                                  . __("Skip job", 'deploy'),
+            self::RET_STARTNOW => ($with_icon ? '<i class="fa-fw me-1 ti ti-player-play"></i>' : "")
+                                  . __("Start job now", 'deploy'),
+            self::RET_INFO     => ($with_icon ? '<i class="fa-fw me-1 ti ti-info-cirle"></i>' : "")
+                                  . __("Report info", 'deploy'),
+            self::RET_WARNING  => ($with_icon ? '<i class="fa-fw me-1 ti ti-alert-triangler"></i>' : "")
+                                  . __("Report warning", 'deploy')
         ];
+    }
+
+
+    public static function getLabelForReturnValue(string $value = null, bool $with_icon = false): string
+    {
+        $values = self::getReturnValues($with_icon);
+        return $values[$value] ?? "";
     }
 
 
@@ -194,5 +232,38 @@ class PluginDeployPackage_Check extends CommonDBTM
         ]);
 
         return $iterator;
+    }
+
+
+
+
+    public static function install(Migration $migration)
+    {
+        global $DB;
+
+        $table = self::getTable();
+        if (!$DB->tableExists($table)) {
+            $migration->displayMessage("Installing $table");
+
+            $default_charset = DBConnection::getDefaultCharset();
+            $default_collation = DBConnection::getDefaultCollation();
+
+            $query = "CREATE TABLE IF NOT EXISTS `$table` (
+                `id` int NOT NULL AUTO_INCREMENT,
+                `plugin_deploy_packages_id` int unsigned NOT NULL DEFAULT '0',
+                `parent_type` varchar(50) DEFAULT NULL,
+                `type` varchar(50) DEFAULT NULL,
+                `name` varchar(255) DEFAULT NULL,
+                `path` text,
+                `return` varchar(255) DEFAULT NULL,
+                `date_creation` timestamp NULL DEFAULT NULL,
+                `date_mod` timestamp NULL DEFAULT NULL,
+                PRIMARY KEY (`id`),
+                KEY `plugin_deploy_packages_id` (`plugin_deploy_packages_id`),
+                KEY `date_creation` (`date_creation`),
+                KEY `date_mod` (`date_mod`)
+            ) ENGINE=InnoDB DEFAULT CHARSET={$default_charset} COLLATE={$default_collation} ROW_FORMAT=DYNAMIC;";
+            $DB->query($query) or die($DB->error());
+        }
     }
 }

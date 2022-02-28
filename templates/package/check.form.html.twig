@@ -7,7 +7,8 @@
     <div class="form-selectgroup mb-2">
         {% for type_group_key, type_group in types %}
             <label class="form-selectgroup-item">
-                <input type="radio" name="parent_type" value="{{ type_group_key }}" class="form-selectgroup-input">
+                <input type="radio" name="parent_type" value="{{ type_group_key }}" class="form-selectgroup-input"
+                       {{ subitem_instance.fields['parent_type'] == type_group_key ? "checked" : "" }}>
                 <span class="form-selectgroup-label d-flex align-items-center">
                     {{ type_group['label'] }}
                     <i class="fa-fw fa-lg ms-3 {{ type_group['icon'] }}"></i>
@@ -24,12 +25,14 @@
     ) }}
 
     {% for type_group_key, type_group in types %}
-    <div id="subtype-{{ type_group_key }}" class="subtype d-none">
+    <div id="subtype-{{ type_group_key }}" class="subtype {{ is_edit and subitem_instance.fields['parent_type'] == type_group_key ? "" : "d-none" }}">
         {% set subtype_select_field %}
-            <select class="form-select">
-                <option value="}">--</option>
+            <select class="form-select checktype">
+                <option value="">--</option>
                 {% for type_key, type in type_group['subtypes'] %}
-                    <option value="{{ type_key }}">{{ type }}</option>
+                    <option value="{{ type_key }}" {{ subitem_instance.fields['type'] == type_key ? "selected" : "" }}>
+                        {{ type }}
+                    </option>
                 {% endfor %}
             </select>
         {% endset %}
@@ -41,9 +44,32 @@
         ) }}
     </div>
     {% endfor %}
+    <input type="hidden" name="type" id="checktype_value" value="{{ subitem_instance.fields['type'] }}">
+
+    <div class="subfields {{ is_edit ? "" : "d-none" }}">
+        {{ fields.textField(
+            'name',
+            subitem_instance.fields['name'],
+            __("Label", 'deploy') ~ '<i class="ms-2 ti ti-tag"></i>',
+            field_options
+        ) }}
+
+        {% set extra_help %}
+            <small id="extra-help" class="form-hint"></small>
+        {% endset %}
+
+        {{ fields.textField(
+            'path',
+            subitem_instance.fields['path'],
+            __("Path", 'deploy') ~ '<i class="ms-2 ti ti-folder"></i>',
+            field_options|merge({
+                'add_field_html': extra_help
+            })
+        ) }}
+    </div>
 </div>
 
-<div id="return-block" class="d-none modal-body bg-warning-lt">
+<div id="return-block" class="{{ is_edit ? "" : "d-none" }} modal-body bg-warning-lt">
     {{ fields.dropdownArrayField(
         'return',
         subitem_instance.fields['return'],
@@ -56,14 +82,36 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
-    $('[name="parent_type"]').change(function() {
-        $('.subtype, #return-bloc, #form-footer').addClass('d-none');
+    $('[name="parent_type"]').on('change', function() {
+        $('.subtype, .subfields, #return-bloc, #form-footer').addClass('d-none');
 
 
         var parent_type = $(this).val();
         if (parent_type.length > 0) {
             $('#return-block, #form-footer').removeClass('d-none');
             $('#subtype-' + $(this).val()).removeClass('d-none');
+        }
+    });
+
+    $('.checktype').on('change', function() {
+        var parentype = $('[name="parent_type"]:checked').val();
+        var checktype = $(this).val();
+        $('.subfields').removeClass('d-none');
+
+        $('#checktype_value').val(checktype);
+        $('#extra-help').html('');
+        switch (parentype) {
+            case 'registry':
+                $('#extra-help').html(__("Path to the registry key (ex: \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Glpi-Agent\\\")", 'deploy'));
+                break;
+
+            case 'file':
+                $('#extra-help').html(__("Path to the file (ex: \"/etc/passwd\")", 'deploy'));
+                break;
+
+            case 'directory':
+                $('#extra-help').html(__("Path to the directory (ex: \"/tmp\")", 'deploy'));
+                break;
         }
     });
 });

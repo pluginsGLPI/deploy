@@ -10,6 +10,7 @@
 
 <form enctype="multipart/form-data" action="{{ "PluginDeployPackage"|itemtype_form_path }}" method="POST">
 
+    <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}" />
     <input type="hidden" name="id" value="{{ subitem_instance.fields['id'] }}">
     <input type="hidden" name="plugin_deploy_packages_id" value="{{ subitem_instance.fields['plugin_deploy_packages_id'] }}">
 

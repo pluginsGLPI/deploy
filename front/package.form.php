@@ -73,6 +73,20 @@ if (isset($_POST["add"])) {
     $file = new PluginDeployPackage_File();
     $file->delete($_POST);
     Html::back();
+} else if (isset($_POST["add_check"])) {
+    unset($_POST['id']);
+    $check = new PluginDeployPackage_Check();
+    $check->add($_POST);
+    Html::back();
+} else if (isset($_POST["edit_check"])) {
+    $check = new PluginDeployPackage_Check();
+    \Toolbox::logDebug($_POST);
+    $check->update($_POST);
+    Html::back();
+} else if (isset($_POST["delete_check"])) {
+    $check = new PluginDeployPackage_Check();
+    $check->delete($_POST);
+    Html::back();
 } else {
     Html::header(
         PluginDeployPackage::getTypeName(Session::getPluralNumber()),

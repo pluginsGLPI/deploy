@@ -1,0 +1,11 @@
+<td>
+    <a href="#" class="edit_{{ subitem_type }}" data-id="{{ entry['id'] }}">
+        <span>{{ entry['name'] }}</span>
+    </a>
+</td>
+<td>
+    <i class="fa-fw {{ call("PluginDeployPackage_Check::getIconForParentType", [entry['parent_type']]) }}"></i>
+    {{ call("PluginDeployPackage_Check::getLabelForType", [entry['type']]) }}
+</td>
+<td>{{ entry['path'] }}</td>
+<td>{{ call("PluginDeployPackage_Check::getLabelForReturnValue", [entry['return'], true])|raw }}</td>

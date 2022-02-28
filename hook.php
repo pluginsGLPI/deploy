@@ -39,9 +39,9 @@ function plugin_deploy_install()
         // Load *.class.php files and get the class name
         if (preg_match("/inc.(.+)\.class.php$/", $filepath, $matches)) {
             $classname = 'PluginDeploy' . ucfirst($matches[1]);
-            include_once($filepath);
+            $refl = new ReflectionClass($classname);
             // If the install method exists, load it
-            if (method_exists($classname, 'install')) {
+            if (method_exists($classname, 'install') && !$refl->isTrait()) {
                 $classname::install($migration);
             }
         }
@@ -65,9 +65,9 @@ function plugin_deploy_uninstall()
         // Load *.class.php files and get the class name
         if (preg_match("/inc.(.+)\.class.php/", $filepath, $matches)) {
             $classname = 'PluginDeploy' . ucfirst($matches[1]);
-            include_once($filepath);
+            $refl = new ReflectionClass($classname);
             // If the install method exists, load it
-            if (method_exists($classname, 'uninstall')) {
+            if (method_exists($classname, 'uninstall') && !$refl->isTrait()) {
                 $classname::uninstall($migration);
             }
         }
