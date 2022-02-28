@@ -30,13 +30,11 @@ use Glpi\Application\View\TemplateRenderer;
 
 trait PluginDeployPackage_Subitem
 {
-    public static $rightname = 'entity';
-
     public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
     {
         if ($item->getType() == 'PluginDeployPackage') {
-            $checks  = self::getForPackage($item);
-            $number = count($checks);
+            $entries = self::getForPackage($item);
+            $number  = count($entries);
             return self::createTabEntry(self::getTypeName($number), $number);
         }
         return '';
@@ -75,6 +73,7 @@ trait PluginDeployPackage_Subitem
     {
         $entries = self::getForPackage($package);
         TemplateRenderer::getInstance()->display('@deploy/package/subitem.list.html.twig', [
+            'icon'                      => self::getIcon(),
             'subitem_type'              => self::SUBITEM_TYPE,
             'plugin_deploy_packages_id' => $package->fields['id'],
             'count'                     => count($entries),

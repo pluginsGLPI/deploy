@@ -201,40 +201,6 @@ class PluginDeployPackage_Check extends CommonDBTM
     }
 
 
-    public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
-    {
-        if ($item->getType() == 'PluginDeployPackage') {
-            $checks  = self::getForPackage($item);
-            $number = count($checks);
-            return self::createTabEntry(self::getTypeName($number), $number);
-        }
-        return '';
-    }
-
-
-    public static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
-    {
-        if ($item->getType() == 'PluginDeployPackage') {
-            self::showForPackage($item);
-        }
-    }
-
-
-
-    public static function getForPackage(PluginDeployPackage $package): DBmysqlIterator
-    {
-        $DBread   = DBConnection::getReadConnection();
-        $iterator = $DBread->request([
-            'FROM'  => self::getTable(),
-            'WHERE' => [
-                'plugin_deploy_packages_id' => $package->fields['id']
-            ]
-        ]);
-
-        return $iterator;
-    }
-
-
 
 
     public static function install(Migration $migration)

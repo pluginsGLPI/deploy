@@ -31,6 +31,7 @@ class PluginDeployPackage_File extends CommonDBTM
     use PluginDeployPackage_Subitem;
 
     public static $rightname = 'entity';
+
     private const SUBITEM_TYPE = 'file';
 
     public static function getTypeName($nb = 0)
@@ -41,7 +42,7 @@ class PluginDeployPackage_File extends CommonDBTM
 
     public static function getIcon()
     {
-        return 'ti ti-file';
+        return 'ti ti-file-upload';
     }
 
 
