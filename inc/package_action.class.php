@@ -38,7 +38,7 @@ class PluginDeployPackage_Action extends CommonDBTM
     public const ACTION_MOVE   = 'move';
     public const ACTION_COPY   = 'copy';
     public const ACTION_DELETE = 'delete';
-    public const ACTION_MKDIR  = 'delete';
+    public const ACTION_MKDIR  = 'mkdir';
 
     public static function getTypeName($nb = 0)
     {
