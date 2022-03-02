@@ -7,5 +7,5 @@
     <i class="fa-fw {{ call("PluginDeployPackage_Check::getIconForParentType", [entry['parent_type']]) }}"></i>
     {{ call("PluginDeployPackage_Check::getLabelForType", [entry['type']]) }}
 </td>
-<td>{{ entry['path'] }}</td>
+<td><code>{{ entry['path'] }}</code></td>
 <td>{{ call("PluginDeployPackage_Check::getLabelForReturnValue", [entry['return'], true])|raw }}</td>

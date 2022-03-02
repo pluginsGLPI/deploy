@@ -186,9 +186,9 @@ class PluginDeployPackage_Check extends CommonDBTM
                                   . __("Skip job", 'deploy'),
             self::RET_STARTNOW => ($with_icon ? '<i class="fa-fw me-1 ti ti-player-play"></i>' : "")
                                   . __("Start job now", 'deploy'),
-            self::RET_INFO     => ($with_icon ? '<i class="fa-fw me-1 ti ti-info-cirle"></i>' : "")
+            self::RET_INFO     => ($with_icon ? '<i class="fa-fw me-1 ti ti-info-circle"></i>' : "")
                                   . __("Report info", 'deploy'),
-            self::RET_WARNING  => ($with_icon ? '<i class="fa-fw me-1 ti ti-alert-triangler"></i>' : "")
+            self::RET_WARNING  => ($with_icon ? '<i class="fa-fw me-1 ti ti-alert-triangle"></i>' : "")
                                   . __("Report warning", 'deploy')
         ];
     }
@@ -197,7 +197,21 @@ class PluginDeployPackage_Check extends CommonDBTM
     public static function getLabelForReturnValue(string $value = null, bool $with_icon = false): string
     {
         $values = self::getReturnValues($with_icon);
-        return $values[$value] ?? "";
+        $string = $values[$value] ?? "";
+
+        switch ($value) {
+            case self::RET_ERROR:
+                $string = "<span class='text-danger'>$string</span>";
+                break;
+            case self::RET_INFO:
+                $string = "<span class='text-info'>$string</span>";
+                break;
+            case self::RET_WARNING:
+                $string = "<span class='text-warning'>$string</span>";
+                break;
+        }
+
+        return $string;
     }
 
 
