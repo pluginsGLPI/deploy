@@ -65,24 +65,45 @@
             ) }}
         {% endif %}
 
+    </div>
+</div>
+<div id="file_more_options" class="modal-body mt-n3 bg-blue-lt {{ is_edit ? "" : "d-none" }}">
+
+        {% set p2p_field %}
+            {{ fields.checkboxField(
+                'p2p',
+                subitem_instance.fields['p2p'],
+                '',
+                {
+                    'label_class': 'pt-0',
+                    'input_class': 'col-xxl-12',
+                }
+            ) }}
+
+            {{ fields.numberField(
+                'p2p_retention_days',
+                subitem_instance.fields['p2p_retention_days'],
+                __('Retention days', 'deploy') ~ '<i class="ms-2 ti ti-calendar-time"></i>',
+                {
+                    'label_class': 'col-xxl-8',
+                    'input_class': 'col-xxl-4',
+                }
+            ) }}
+        {% endset %}
+
+        {{ fields.field(
+            '',
+            p2p_field,
+            __("P2P", 'deploy') ~ '<i class="ms-2 ti ti-affiliate"></i>',
+            field_options|merge({
+                input_class: 'col-xxl-9 d-flex align-items-start',
+            })
+        ) }}
+
         {{ fields.checkboxField(
             'uncompress',
             subitem_instance.fields['uncompress'],
             __('Uncompress', 'deploy') ~ '<i class="ms-2 ti ti-file-zip"></i>',
-            field_options
-        ) }}
-
-        {{ fields.checkboxField(
-            'p2p',
-            subitem_instance.fields['p2p'],
-            __('Enable p2p', 'deploy') ~ '<i class="ms-2 ti ti-affiliate"></i>',
-            field_options
-        ) }}
-
-        {{ fields.numberField(
-            'p2p_retention_days',
-            subitem_instance.fields['p2p_retention_days'],
-            __('Retention days', 'deploy') ~ '<i class="ms-2 ti ti-calendar-time"></i>',
             field_options
         ) }}
     </div>
@@ -91,14 +112,14 @@
 <script type="text/javascript">
 $(document).ready(function() {
     {% if not is_edit %}
-        $('#form-footer').addClass('d-none');
+        $('.modal-footer').addClass('d-none');
     {% endif %}
     $('#dropdown_upload_mode{{ rand }}').on('select2:select', function() {
-        $('#file_options, #from_computer, #from_server, #form-footer').addClass('d-none');
+        $('#file_options, #file_more_options, #from_computer, #from_server, .modal-footer').addClass('d-none');
 
         var mode = $(this).val();
         if (mode.length > 0) {
-            $('#file_options, #form-footer').removeClass('d-none');
+            $('#file_options, #file_more_options, .modal-footer').removeClass('d-none');
             if (mode == 'from_computer') {
                 $('#from_computer').removeClass('d-none');
             }

@@ -1,6 +1,15 @@
 {% import 'components/form/fields_macros.html.twig' as fields %}
 
 <div class="modal-body">
+    {{ fields.textField(
+        'name',
+        subitem_instance.fields['name'],
+        __("Label", 'deploy') ~ '<i class="ms-2 ti ti-tag"></i>',
+        field_options|merge({
+            mb: 'mb-4',
+        })
+    ) }}
+
     {% set type_select_field %}
         <select class="form-select" id="actiontype">
             <option value="">--</option>
@@ -18,81 +27,80 @@
         field_options
     ) }}
 
-    <div class="subfields {{ is_edit ? "" : "d-none" }}">
-        {{ fields.textField(
-            'name',
-            subitem_instance.fields['name'],
-            __("Label", 'deploy') ~ '<i class="ms-2 ti ti-tag"></i>',
+    {% set show_exec = is_edit and subitem_instance.fields['name'] == constant("PluginDeployPackage_Action::ACTION_CMD") %}
+    <div id="execfields" class="specificfields {{ show_exec ? "" : "d-none" }}">
+        {{ fields.textareaField(
+            'exec',
+            subitem_instance.fields['exec'],
+            __("Command", 'deploy') ~ '<i class="ms-2 ti ti-terminal"></i>',
             field_options
         ) }}
+    </div>
 
-        <div id="execfields" class="specificfields {{ is_edit and subitem_instance.fields['name'] == constant("PluginDeployPackage_Action::ACTION_CMD") ? "" : "d-none" }}">
-            {{ fields.textareaField(
-                'exec',
-                subitem_instance.fields['exec'],
-                __("Command", 'deploy') ~ '<i class="ms-2 ti ti-terminal"></i>',
-                field_options
-            ) }}
-        </div>
-
-        {% set show_double = is_edit and (
-               subitem_instance.fields['name'] == constant("PluginDeployPackage_Action::ACTION_MOVE")
-            or subitem_instance.fields['name'] == constant("PluginDeployPackage_Action::ACTION_COPY")
-        ) %}
-        <div id="doublepathfields" class="specificfields {{ show_double ? "" : "d-none" }}">
-            {% set subfields_options = {
-                'label_class': 'col-xxl-3',
-                'input_class': 'col-xxl-9',
-            } %}
-            {% set from_to_fields %}
-                {{ fields.textField(
-                    'from',
-                    subitem_instance.fields['from'],
-                    __("From", 'deploy'),
-                    subfields_options
-                ) }}
-
-                {{ fields.textField(
-                    'to',
-                    subitem_instance.fields['to'],
-                    __("To", 'deploy'),
-                    subfields_options
-                ) }}
-            {% endset %}
-
-            {{ fields.field(
-                '',
-                from_to_fields,
-                __("Paths", 'deploy') ~ '<i class="ms-2 ti ti-arrow-right-square"></i>',
-                field_options|merge({
-                    input_class: 'col-xxl-9 d-flex'
-                })
-            ) }}
-        </div>
-
-        {% set show_single = is_edit and (
-               subitem_instance.fields['name'] == constant("PluginDeployPackage_Action::ACTION_DELETE")
-            or subitem_instance.fields['name'] == constant("PluginDeployPackage_Action::ACTION_MKDIR")
-        ) %}
-        <div id="singlepathfields" class="specificfields {{ show_single ? "" : "d-none" }}">
+    {% set show_double = is_edit and (
+            subitem_instance.fields['name'] == constant("PluginDeployPackage_Action::ACTION_MOVE")
+        or subitem_instance.fields['name'] == constant("PluginDeployPackage_Action::ACTION_COPY")
+    ) %}
+    <div id="doublepathfields" class="specificfields {{ show_double ? "" : "d-none" }}">
+        {% set subfields_options = {
+            'label_class': 'col-xxl-3',
+            'input_class': 'col-xxl-9',
+        } %}
+        {% set from_to_fields %}
             {{ fields.textField(
-                'path',
-                subitem_instance.fields['path'],
-                __("Path", 'deploy') ~ '<i class="ms-2 ti ti-terminal"></i>',
-                field_options
+                'from',
+                subitem_instance.fields['from'],
+                __("From", 'deploy'),
+                subfields_options
             ) }}
-        </div>
+
+            {{ fields.textField(
+                'to',
+                subitem_instance.fields['to'],
+                __("To", 'deploy'),
+                subfields_options
+            ) }}
+        {% endset %}
+
+        {{ fields.field(
+            '',
+            from_to_fields,
+            __("Paths", 'deploy') ~ '<i class="ms-2 ti ti-arrow-right-square"></i>',
+            field_options|merge({
+                input_class: 'col-xxl-9 d-flex'
+            })
+        ) }}
+    </div>
+
+    {% set show_single = is_edit and (
+            subitem_instance.fields['name'] == constant("PluginDeployPackage_Action::ACTION_DELETE")
+        or subitem_instance.fields['name'] == constant("PluginDeployPackage_Action::ACTION_MKDIR")
+    ) %}
+    <div id="singlepathfields" class="specificfields {{ show_single ? "" : "d-none" }}">
+        {% set extra_help %}
+            <small class="form-hint fst-italic">
+                {{ __("You can write a different path per line", 'deploy') }}
+            </small>
+        {% endset %}
+        {{ fields.textareaField(
+            'list',
+            subitem_instance.fields['path'],
+            __("Path", 'deploy') ~ '<i class="ms-2 ti ti-terminal"></i>',
+            field_options|merge({
+                'add_field_html': extra_help,
+            })
+        ) }}
     </div>
 </div>
 
 <script type="text/javascript">
 $(document).ready(function() {
     $('#actiontype').on('change', function() {
-        $('.specificfields, .subfields').addClass('d-none');
+        $('.specificfields, .modal-footer').addClass('d-none');
         var actiontype = $(this).val();
 
         if (actiontype != "") {
-            $('.subfields, #form-footer').removeClass('d-none');
+            $('.modal-footer').removeClass('d-none');
         }
 
         switch (actiontype) {

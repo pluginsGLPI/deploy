@@ -3,19 +3,28 @@
 {% set types = call("PluginDeployPackage_Check::getTypes") %}
 
 <div class="modal-body">
+    {{ fields.textField(
+        'name',
+        subitem_instance.fields['name'],
+        __("Label", 'deploy') ~ '<i class="ms-2 ti ti-tag"></i>',
+        field_options|merge({
+            mb: 'mb-4',
+        })
+    ) }}
+
     {% set parent_type_field %}
-    <div class="form-selectgroup mb-2">
-        {% for type_group_key, type_group in types %}
-            <label class="form-selectgroup-item">
-                <input type="radio" name="parent_type" value="{{ type_group_key }}" class="form-selectgroup-input"
-                       {{ subitem_instance.fields['parent_type'] == type_group_key ? "checked" : "" }}>
-                <span class="form-selectgroup-label d-flex align-items-center">
-                    {{ type_group['label'] }}
-                    <i class="fa-fw fa-lg ms-3 {{ type_group['icon'] }}"></i>
-                </span>
-            </label>
-        {% endfor %}
-    </div>
+        <div class="form-selectgroup">
+            {% for type_group_key, type_group in types %}
+                <label class="form-selectgroup-item">
+                    <input type="radio" name="parent_type" value="{{ type_group_key }}" class="form-selectgroup-input"
+                        {{ subitem_instance.fields['parent_type'] == type_group_key ? "checked" : "" }}>
+                    <span class="form-selectgroup-label d-flex align-items-center">
+                        {{ type_group['label'] }}
+                        <i class="fa-fw fa-lg ms-3 {{ type_group['icon'] }}"></i>
+                    </span>
+                </label>
+            {% endfor %}
+        </div>
     {% endset %}
     {{ fields.field(
         'file',
@@ -39,23 +48,16 @@
         {{ fields.field(
             'type',
             subtype_select_field,
-            type_group['label'] ~ '<i class="ms-2 ' ~ type_group['icon'] ~ '"></i>',
+            '',
             field_options
         ) }}
     </div>
     {% endfor %}
     <input type="hidden" name="type" id="checktype_value" value="{{ subitem_instance.fields['type'] }}">
 
-    <div class="subfields {{ is_edit ? "" : "d-none" }}">
-        {{ fields.textField(
-            'name',
-            subitem_instance.fields['name'],
-            __("Label", 'deploy') ~ '<i class="ms-2 ti ti-tag"></i>',
-            field_options
-        ) }}
-
+    <div class="subfields mt-1 {{ is_edit ? "" : "d-none" }}">
         {% set extra_help %}
-            <small id="extra-help" class="form-hint"></small>
+            <small id="extra-help" class="form-hint fst-italic"></small>
         {% endset %}
 
         {{ fields.textField(
@@ -83,12 +85,12 @@
 <script type="text/javascript">
 $(document).ready(function() {
     $('[name="parent_type"]').on('change', function() {
-        $('.subtype, .subfields, #return-bloc, #form-footer').addClass('d-none');
+        $('.subtype, .subfields, #return-bloc, .modal-footer').addClass('d-none');
 
 
         var parent_type = $(this).val();
         if (parent_type.length > 0) {
-            $('#return-block, #form-footer').removeClass('d-none');
+            $('#return-block').removeClass('d-none');
             $('#subtype-' + $(this).val()).removeClass('d-none');
         }
     });
@@ -96,7 +98,7 @@ $(document).ready(function() {
     $('.checktype').on('change', function() {
         var parentype = $('[name="parent_type"]:checked').val();
         var checktype = $(this).val();
-        $('.subfields').removeClass('d-none');
+        $('.subfields, .modal-footer').removeClass('d-none');
 
         $('#checktype_value').val(checktype);
         $('#extra-help').html('');
