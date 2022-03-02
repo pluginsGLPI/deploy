@@ -80,12 +80,26 @@ if (isset($_POST["add"])) {
     Html::back();
 } else if (isset($_POST["edit_check"])) {
     $check = new PluginDeployPackage_Check();
-    \Toolbox::logDebug($_POST);
     $check->update($_POST);
     Html::back();
 } else if (isset($_POST["delete_check"])) {
     $check = new PluginDeployPackage_Check();
     $check->delete($_POST);
+    Html::back();
+} else if (isset($_POST["add_action"])) {
+    unset($_POST['id']);
+    $action = new PluginDeployPackage_Action();
+    $_POST['json'] = $_UPOST['json'] ?? "";
+    $action->add($_POST);
+    Html::back();
+} else if (isset($_POST["edit_action"])) {
+    $action = new PluginDeployPackage_Action();
+    $_POST['json'] = $_UPOST['json'] ?? "";
+    $action->update($_POST);
+    Html::back();
+} else if (isset($_POST["delete_action"])) {
+    $action = new PluginDeployPackage_Action();
+    $action->delete($_POST);
     Html::back();
 } else {
     Html::header(

@@ -11,7 +11,7 @@
     ) }}
 
     {% set type_select_field %}
-        <select class="form-select" id="actiontype">
+        <select class="form-select" id="actiontype" name="type">
             <option value="">--</option>
             {% for type_key, type in call("PluginDeployPackage_Action::getTypes") %}
                 <option value="{{ type_key }}" {{ subitem_instance.fields['type'] == type_key ? "selected" : "" }}>
@@ -27,7 +27,7 @@
         field_options
     ) }}
 
-    {% set show_exec = is_edit and subitem_instance.fields['name'] == constant("PluginDeployPackage_Action::ACTION_CMD") %}
+    {% set show_exec = is_edit and subitem_instance.fields['type'] == constant("PluginDeployPackage_Action::ACTION_CMD") %}
     <div id="execfields" class="specificfields {{ show_exec ? "" : "d-none" }}">
         {{ fields.textareaField(
             'exec',
@@ -38,8 +38,8 @@
     </div>
 
     {% set show_double = is_edit and (
-            subitem_instance.fields['name'] == constant("PluginDeployPackage_Action::ACTION_MOVE")
-        or subitem_instance.fields['name'] == constant("PluginDeployPackage_Action::ACTION_COPY")
+            subitem_instance.fields['type'] == constant("PluginDeployPackage_Action::ACTION_MOVE")
+         or subitem_instance.fields['type'] == constant("PluginDeployPackage_Action::ACTION_COPY")
     ) %}
     <div id="doublepathfields" class="specificfields {{ show_double ? "" : "d-none" }}">
         {% set subfields_options = {
@@ -73,8 +73,8 @@
     </div>
 
     {% set show_single = is_edit and (
-            subitem_instance.fields['name'] == constant("PluginDeployPackage_Action::ACTION_DELETE")
-        or subitem_instance.fields['name'] == constant("PluginDeployPackage_Action::ACTION_MKDIR")
+            subitem_instance.fields['type'] == constant("PluginDeployPackage_Action::ACTION_DELETE")
+         or subitem_instance.fields['type'] == constant("PluginDeployPackage_Action::ACTION_MKDIR")
     ) %}
     <div id="singlepathfields" class="specificfields {{ show_single ? "" : "d-none" }}">
         {% set extra_help %}

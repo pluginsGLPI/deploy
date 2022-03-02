@@ -1,0 +1,11 @@
+<td>
+    <a href="#" class="edit_{{ subitem_type }}" data-id="{{ entry['id'] }}">
+        <span>{{ entry['name'] }}</span>
+    </a>
+</td>
+<td>
+    {{ call("PluginDeployPackage_Action::getLabelForType", [entry['type'], true])|raw }}
+</td>
+<td>
+    {{ call("PluginDeployPackage_Action::getFormattedData", [entry['json'], entry['type']])|raw }}
+</td>

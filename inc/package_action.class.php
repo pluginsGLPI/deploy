@@ -55,27 +55,126 @@ class PluginDeployPackage_Action extends CommonDBTM
     private static function getheadings(): array
     {
         return [
+            'name' => __('Label', 'deploy'),
             'type' => __('Action type', 'deploy'),
+            'json' => __('Action data', 'deploy'),
         ];
     }
 
 
-    public static function getTypes(): array
+    public static function getTypes(bool $with_icon = false): array
     {
         return [
-            SELF::ACTION_CMD    => __('Run command', 'deploy'),
-            SELF::ACTION_MOVE   => __('Move file', 'deploy'),
-            SELF::ACTION_COPY   => __('Copy file', 'deploy'),
-            SELF::ACTION_DELETE => __('Delete file', 'deploy'),
-            SELF::ACTION_MKDIR  => __('Create directory', 'deploy'),
+            SELF::ACTION_CMD    => ($with_icon ? '<i class="fa-fw me-1 ti ti-terminal"></i>' : "")
+                                   . __('Run command', 'deploy'),
+            SELF::ACTION_MOVE   => ($with_icon ? '<i class="fa-fw me-1 ti ti-drag-drop-2"></i>' : "")
+                                   . __('Move file', 'deploy'),
+            SELF::ACTION_COPY   => ($with_icon ? '<i class="fa-fw me-1 ti ti-copy"></i>' : "")
+                                   . __('Copy file', 'deploy'),
+            SELF::ACTION_DELETE => ($with_icon ? '<i class="fa-fw me-1 ti ti-file-minus"></i>' : "")
+                                   . __('Delete file', 'deploy'),
+            SELF::ACTION_MKDIR  => ($with_icon ? '<i class="fa-fw me-1 ti ti-folder-plus"></i>' : "")
+                                   . __('Create directory', 'deploy'),
         ];
     }
 
 
-    public static function getLabelForType(string $type = null): string
+    public static function getLabelForType(string $type = null, bool $with_icon = false): string
     {
-        $types = self::getTypes();
+        $types = self::getTypes($with_icon);
         return $types[$type] ?? "";
+    }
+
+
+    public static function getFormattedData(string $json = "", string $type = ""): string
+    {
+        $data_str = "";
+        $json_fields = self::jsonToArray($json, $type);
+
+        switch ($type) {
+            case self::ACTION_CMD:
+                $data_str = '<pre>' . $json_fields['exec']. '</pre>';
+                break;
+            case self::ACTION_MOVE:
+            case self::ACTION_COPY:
+                $data_str = sprintf(
+                    __("From %s to %s", 'deploy'),
+                    '<code>' .$json_fields['from']. '</code>',
+                    '<code>' .$json_fields['to']. '</code>'
+                );
+                break;
+            case self::ACTION_DELETE:
+                $data_str = '<del><code>' . implode('</code></del><br><del><code>', $json_fields['list']). '</code></del>';
+                break;
+            case self::ACTION_MKDIR:
+                $data_str = '<code>' . implode('</code><br><code>', $json_fields['list']). '</code>';
+                break;
+        }
+
+        return $data_str;
+    }
+
+
+    public function prepareInputForAdd($input)
+    {
+        $input = $this->prepareJsonInput($input);
+
+        return $input;
+    }
+
+    public function prepareInputForUpdate($input)
+    {
+        $input = $this->prepareJsonInput($input);
+
+        return $input;
+    }
+
+    public function post_getFromDB()
+    {
+        $json_fields = $this->jsonToArray($this->fields['json'], $this->fields['type']);
+        $this->fields = array_merge($this->fields, $json_fields);
+    }
+
+
+    private static function jsonToArray(string $json = "", string $type = ""): array
+    {
+        $json_fields = json_decode($json, true);
+        $json_fields = $json_fields[$type] ?? [];
+        unset($json_fields['name']);
+        return $json_fields;
+    }
+
+
+    private function prepareJsonInput(array $input = []): array
+    {
+        if (!isset($input['type'])) {
+            return $input;
+        }
+
+        $json_array = [
+            $input['type'] => [
+                'name' => $input['name'] ?? "",
+            ]
+        ];
+        switch ($input['type']) {
+            case self::ACTION_CMD:
+                $json_array[$input['type']]['exec'] = $input['exec'] ?? "";
+                break;
+            case self::ACTION_MOVE:
+            case self::ACTION_COPY:
+                $json_array[$input['type']]['from'] = $input['from'] ?? "";
+                $json_array[$input['type']]['to']   = $input['to'] ?? "";
+                break;
+            case self::ACTION_DELETE:
+            case self::ACTION_MKDIR:
+                $list = explode('\n', trim($input['list']) ?? "");
+                $list = array_map('trim', $list);
+                $json_array[$input['type']]['list'] = $list;
+                break;
+        }
+
+        $input['json'] = json_encode($json_array);
+        return $input;
     }
 
 
@@ -93,6 +192,9 @@ class PluginDeployPackage_Action extends CommonDBTM
             $query = "CREATE TABLE IF NOT EXISTS `$table` (
                 `id` int NOT NULL AUTO_INCREMENT,
                 `plugin_deploy_packages_id` int unsigned NOT NULL DEFAULT '0',
+                `name` varchar(255) DEFAULT NULL,
+                `type` varchar(50) DEFAULT NULL,
+                `json` text,
                 `date_creation` timestamp NULL DEFAULT NULL,
                 `date_mod` timestamp NULL DEFAULT NULL,
                 PRIMARY KEY (`id`),
