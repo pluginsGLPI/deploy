@@ -79,7 +79,7 @@ class PluginDeployPackage extends CommonDBTM
             'associatedFiles' => $files,
         ];
 
-        return json_encode($json_array, $pretty_json ? JSON_PRETTY_PRINT : 0);
+        return json_encode($json_array, $pretty_json ? (JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) : 0);
     }
 
 

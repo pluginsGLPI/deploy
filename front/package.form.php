@@ -89,12 +89,10 @@ if (isset($_POST["add"])) {
 } else if (isset($_POST["add_action"])) {
     unset($_POST['id']);
     $action = new PluginDeployPackage_Action();
-    $_POST['json'] = $_UPOST['json'] ?? "";
     $action->add($_POST);
     Html::back();
 } else if (isset($_POST["edit_action"])) {
     $action = new PluginDeployPackage_Action();
-    $_POST['json'] = $_UPOST['json'] ?? "";
     $action->update($_POST);
     Html::back();
 } else if (isset($_POST["delete_action"])) {

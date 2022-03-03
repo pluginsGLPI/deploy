@@ -167,7 +167,8 @@ class PluginDeployPackage_Action extends CommonDBTM
                 break;
             case self::ACTION_DELETE:
             case self::ACTION_MKDIR:
-                $list = explode('\n', trim($input['list']) ?? "");
+                $list = str_replace('\r', '', $input['list']);
+                $list = explode('\n', trim($list) ?? "");
                 $list = array_map('trim', $list);
                 $json_array[$input['type']]['list'] = $list;
                 break;

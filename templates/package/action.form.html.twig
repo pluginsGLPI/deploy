@@ -84,7 +84,7 @@
         {% endset %}
         {{ fields.textareaField(
             'list',
-            subitem_instance.fields['path'],
+            subitem_instance.fields['list']|join("\n"),
             __("Path", 'deploy') ~ '<i class="ms-2 ti ti-terminal"></i>',
             field_options|merge({
                 'add_field_html': extra_help,
