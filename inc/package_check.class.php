@@ -251,6 +251,14 @@ class PluginDeployPackage_Check extends CommonDBTM
     }
 
 
+    public function prepareInputForAdd($input)
+    {
+        $input["order"] = $input['order'] ?? $this->getNextOrder();
+
+        return $input;
+    }
+
+
     public static function install(Migration $migration)
     {
         global $DB;
@@ -271,6 +279,7 @@ class PluginDeployPackage_Check extends CommonDBTM
                 `path` text,
                 `value` text,
                 `return` varchar(255) DEFAULT NULL,
+                `order` smallint unsigned NOT NULL DEFAULT '0',
                 `date_creation` timestamp NULL DEFAULT NULL,
                 `date_mod` timestamp NULL DEFAULT NULL,
                 PRIMARY KEY (`id`),

@@ -79,6 +79,8 @@ class PluginDeployPackage_File extends CommonDBTM
             return false;
         }
 
+        $input["order"] = $input['order'] ?? $this->getNextOrder();
+
         return $input;
     }
 
@@ -237,8 +239,9 @@ class PluginDeployPackage_File extends CommonDBTM
                 `mimetype` varchar(255) DEFAULT NULL,
                 `sha512` varchar(128) DEFAULT NULL,
                 `p2p` tinyint(1) NOT NULL DEFAULT '0',
-                `p2p_retention_days` int(11) NOT NULL DEFAULT '0',
+                `p2p_retention_days` smallint unsigned NOT NULL DEFAULT '0',
                 `uncompress` tinyint(1) NOT NULL DEFAULT '0',
+                `order` smallint unsigned NOT NULL DEFAULT '0',
                 `date_creation` timestamp NULL DEFAULT NULL,
                 `date_mod` timestamp NULL DEFAULT NULL,
                 PRIMARY KEY (`id`),

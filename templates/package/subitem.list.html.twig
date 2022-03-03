@@ -31,20 +31,33 @@
             <table class="search-results table table-hover table-card">
                 <thead>
                 <tr>
-                {% for label in headings %}
                     <th>
-                        {{ label }}
+                        <input type="checkbox" class="form-check-input" title="{{ __("Check all") }}"
+                               data-bs-toggle="tooltip">
                     </th>
-                {% endfor %}
+                    {% for label in headings %}
+                        <th>
+                            {{ label }}
+                        </th>
+                    {% endfor %}
+                    <th>{# ordering #}</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody class="sortable-subitems">
                 {% for entry in entries %}
-                    <tr>
+                    <tr data-subitem-id="{{ entry['id'] }}">
+                        <td>
+                            <input type="checkbox" class="form-check-input">
+                        </td>
                         {% include subitem_line with {
                             'entry': entry,
                             'subitem_type': subitem_type,
                         } only %}
+
+                        <td>
+                            <i class="ti ti-grip-horizontal reorder-subitem" title="{{ __("Drag to reorder", 'deploy') }}"
+                               data-bs-toggle="tooltip"></i>
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -80,6 +93,33 @@ $(document).ready(function() {
         });
 
         bs_modal.show();
+    });
+
+    sortable('.sortable-subitems', {
+        handle: '.reorder-subitem',
+        placeholder: '<tr><td colspan="{{ (headings|length + 2) }}" class="sortable-placeholder">&nbsp;</td></tr>'
+    })[0].addEventListener('sortupdate', function(e) {
+        var sort_detail      = e.detail;
+        var subitem_id       = sort_detail.item.dataset.subitemId;
+        var subitem_itemtype = '{{ subitem_itemtype }}';
+        var new_index        = sort_detail.destination.index;
+        var old_index        = sort_detail.origin.index;
+        var ref_id           = sort_detail.destination.itemsBeforeUpdate[new_index].dataset.subitemId;
+        var sort_action      = 'after';
+
+        if (old_index > new_index) {
+            sort_action = 'before';
+        }
+
+        $.post(ajax_url, {
+            'action': 'move_subitem',
+            'subitem_itemtype': subitem_itemtype,
+            'subitem_id': subitem_id,
+            'ref_id': ref_id,
+            'sort_action': sort_action,
+        });
+
+        displayAjaxMessageAfterRedirect();
     });
 });
 </script>

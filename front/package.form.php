@@ -100,6 +100,7 @@ if (isset($_POST["add"])) {
     $action->delete($_POST);
     Html::back();
 } else {
+    Html::requireJs('sortable');
     Html::header(
         PluginDeployPackage::getTypeName(Session::getPluralNumber()),
         '',

@@ -118,6 +118,7 @@ class PluginDeployPackage_Action extends CommonDBTM
     public function prepareInputForAdd($input)
     {
         $input = $this->prepareJsonInput($input);
+        $input["order"] = $input['order'] ?? $this->getNextOrder();
 
         return $input;
     }
@@ -207,6 +208,7 @@ class PluginDeployPackage_Action extends CommonDBTM
                 `name` varchar(255) DEFAULT NULL,
                 `type` varchar(50) DEFAULT NULL,
                 `json` text,
+                `order` smallint unsigned NOT NULL DEFAULT '0',
                 `date_creation` timestamp NULL DEFAULT NULL,
                 `date_mod` timestamp NULL DEFAULT NULL,
                 PRIMARY KEY (`id`),

@@ -56,7 +56,8 @@ trait PluginDeployPackage_Subitem
             'FROM'  => self::getTable(),
             'WHERE' => [
                 'plugin_deploy_packages_id' => $package->fields['id']
-            ]
+            ],
+            'ORDER' => ['order']
         ]);
 
         return $iterator;
@@ -75,6 +76,7 @@ trait PluginDeployPackage_Subitem
         TemplateRenderer::getInstance()->display('@deploy/package/subitem.list.html.twig', [
             'icon'                      => self::getIcon(),
             'subitem_type'              => self::SUBITEM_TYPE,
+            'subitem_itemtype'          => self::getType(),
             'plugin_deploy_packages_id' => $package->fields['id'],
             'count'                     => count($entries),
             'entries'                   => $entries,
@@ -109,6 +111,24 @@ trait PluginDeployPackage_Subitem
             'subitem_instance' => $subitem_instance,
             'subitem_form'     => '@deploy/package/' . self::SUBITEM_TYPE . '.form.html.twig',
         ]);
+    }
+
+
+    public function getNextOrder()
+    {
+        global $DB;
+
+        $iterator = $DB->request([
+            'SELECT' => ['MAX' => 'order'],
+            'FROM'   => self::getTable(),
+            'WHERE'  => ['plugin_deploy_packages_id' => $this->fields['plugin_deploy_packages_id']]
+        ]);
+
+        if (count($iterator)) {
+            $data = $iterator->current();
+            return $data["order"] + 1;
+        }
+        return 0;
     }
 
 

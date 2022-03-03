@@ -31,6 +31,9 @@ class PluginDeployPackage extends CommonDBTM
 {
     public static $rightname = 'entity';
 
+    public const MOVE_BEFORE = 'before';
+    public const MOVE_AFTER = 'after';
+
     public static function getTypeName($nb = 0)
     {
         return _n('Package', 'Packages', $nb, 'deploy');
@@ -80,6 +83,98 @@ class PluginDeployPackage extends CommonDBTM
         ];
 
         return json_encode($json_array, $pretty_json ? (JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) : 0);
+    }
+
+
+    public static function moveSubitem(
+        string $subitem_itemtype,
+        int $ID,
+        int $ref_ID,
+        string $type = self::MOVE_AFTER
+    ): bool
+    {
+        global $DB;
+
+        $used_traits = class_uses($subitem_itemtype);
+        if (!in_array("PluginDeployPackage_Subitem", $used_traits)) {
+            return false;
+        }
+
+        $subitem = new $subitem_itemtype();
+        $subitem->getFromDB($ID);
+        $old_rank   = $subitem->fields['order'];
+        $package_id = $subitem->fields['plugin_deploy_packages_id'];
+
+        // Compute new ranking
+        if ($ref_ID) { // Move after/before an existing line
+            $subitem->getFromDB($ref_ID);
+            $new_rank = $subitem->fields["order"];
+        } else if ($type == self::MOVE_AFTER) {
+            // Move after all
+            $result = $DB->request([
+                'SELECT' => ['MAX' => 'order AS maxi'],
+                'FROM'   => $subitem::getTable(),
+                'WHERE'  => ['plugin_deploy_packages_id' => $package_id]
+            ])->current();
+            $new_rank = $result['maxi'];
+        } else {
+            // Move before all
+            $new_rank = 1;
+        }
+
+        $result = false;
+
+        // Move others lines in the collection
+        if ($old_rank < $new_rank) {
+            if ($type == self::MOVE_BEFORE) {
+                $new_rank--;
+            }
+
+            // Move back all lines between old and new rank
+            $iterator = $DB->request([
+                'SELECT' => ['id', 'order'],
+                'FROM'   => $subitem::getTable(),
+                'WHERE'  => [
+                    'plugin_deploy_packages_id' => $package_id,
+                    ['order' => ['>', $old_rank]],
+                    ['order' => ['<=', $new_rank]]
+                ]
+            ]);
+            foreach ($iterator as $data) {
+                $data['order']--;
+                $result = $subitem->update($data);
+            }
+        } else if ($old_rank > $new_rank) {
+            if ($type == self::MOVE_AFTER) {
+                $new_rank++;
+            }
+
+            // Move forward all lines between old and new rank
+            $iterator = $DB->request([
+                'SELECT' => ['id', 'order'],
+                'FROM'   => $subitem::getTable(),
+                'WHERE'  => [
+                    'plugin_deploy_packages_id' => $package_id,
+                    ['order' => ['>=', $new_rank]],
+                    ['order' => ['<', $old_rank]]
+                ]
+            ]);
+            foreach ($iterator as $data) {
+                $data['order']++;
+                $result = $subitem->update($data);
+            }
+        } else { // $old_rank == $new_rank : nothing to do
+            $result = false;
+        }
+
+        // Move the line
+        if ($result && ($old_rank != $new_rank)) {
+            $result = $subitem->update([
+                'id'    => $ID,
+                'order' => $new_rank
+            ]);
+        }
+        return ($result ? true : false);
     }
 
 
