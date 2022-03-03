@@ -1,6 +1,7 @@
 {% import 'components/form/fields_macros.html.twig' as fields %}
 
 {% set types = call("PluginDeployPackage_Check::getTypes") %}
+{% set types_with_value = call("PluginDeployPackage_Check::getTypesWithValueField") %}
 
 <div class="modal-body">
     {{ fields.textField(
@@ -68,6 +69,20 @@
                 'add_field_html': extra_help
             })
         ) }}
+
+        <div class="valuefield mt-3 {{ subitem_instance.fields['type'] in types_with_value|keys ? "" : "d-none" }}">
+            {% set extra_help %}
+                <small id="value-extra-help" class="form-hint fst-italic"></small>
+            {% endset %}
+            {{ fields.textField(
+                'value',
+                subitem_instance.fields['value'],
+                types_with_value[subitem_instance.fields['type']] ?? (__("Value", 'deploy') ~ '<i class="ms-2 ti ti-forms"></i>'),
+                field_options|merge({
+                    'add_field_html': extra_help
+                })
+            ) }}
+        </div>
     </div>
 </div>
 
@@ -98,6 +113,9 @@ $(document).ready(function() {
     $('.checktype').on('change', function() {
         var parentype = $('[name="parent_type"]:checked').val();
         var checktype = $(this).val();
+
+        $('.valuefield').addClass('d-none')
+            .find('label').html(__("Value", 'deploy') + '<i class="ms-2 ti ti-forms"></i>');
         $('.subfields, .modal-footer').removeClass('d-none');
 
         $('#checktype_value').val(checktype);
@@ -114,6 +132,12 @@ $(document).ready(function() {
             case 'directory':
                 $('#extra-help').html(__("Path to the directory (ex: \"/tmp\")", 'deploy'));
                 break;
+        }
+
+        var types_with_value = {{ types_with_value|json_encode|raw }};
+        if (Object.keys(types_with_value).includes(checktype)) {
+            $('.valuefield').removeClass('d-none')
+                .find('label').html(types_with_value[checktype]);
         }
     });
 });

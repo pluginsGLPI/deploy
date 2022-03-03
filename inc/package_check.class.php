@@ -85,6 +85,7 @@ class PluginDeployPackage_Check extends CommonDBTM
             'name'   => __('Label', 'deploy'),
             'type'   => __('Check type', 'deploy'),
             'path'   => __('Path', 'deploy'),
+            'value'  => __('Value', 'deploy'),
             'return' => __('If not successful', 'deploy'),
         ];
     }
@@ -145,6 +146,24 @@ class PluginDeployPackage_Check extends CommonDBTM
         }
 
         return $types;
+    }
+
+
+    public static function getTypesWithValueField(): array
+    {
+        return [
+            self::WINKEYEQUALS       => __("Value", 'deploy') . '<i class="ms-2 ti ti-equal"></i>',
+            self::WINKEYNOTEQUALS    => __("Value", 'deploy') . '<i class="ms-2 ti ti-equal-not"></i>',
+            self::WINVALUETYPE       => __("Type of value", 'deploy'). '<i class="ms-2 ti ti-forms"></i>',
+
+            self::FILESIZEGREATER    => __("Size", 'deploy') . '<i class="ms-2 fas fa-greater-than"></i>',
+            self::FILESIZEEQUALS     => __("Size", 'deploy') . '<i class="ms-2 ti ti-equal"></i>',
+            self::FILESIZELOWER      => __("Size", 'deploy') . '<i class="ms-2 fas fa-less-than"></i>',
+            self::FILESHA512         => __("SHA512", 'deploy') . '<i class="ms-2 ti ti-hash"></i>',
+            self::FILESHA512MISMATCH => __("SHA512", 'deploy') . '<i class="ms-2 ti ti-hash"></i>',
+
+            self::FREESPACEGREATER   => __("Size", 'deploy') . '<i class="ms-2 fas fa-greater-than"></i>',
+        ];
     }
 
 
