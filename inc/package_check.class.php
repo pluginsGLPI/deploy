@@ -215,6 +215,21 @@ class PluginDeployPackage_Check extends CommonDBTM
     }
 
 
+    public static function getFormattedArrayForPackage(PluginDeployPackage $package): array
+    {
+        $checks = [];
+        foreach (self::getForPackage($package) as $entry) {
+            $checks[] = [
+                'name'   => $entry['name'] ?? "",
+                'type'   => $entry['type'] ?? "",
+                'path'   => $entry['path'] ?? "",
+                'value'  => $entry['value'] ?? "",
+                'return' => $entry['return'] ?? "",
+            ];
+        }
+
+        return $checks;
+    }
 
 
     public static function install(Migration $migration)
@@ -235,6 +250,7 @@ class PluginDeployPackage_Check extends CommonDBTM
                 `type` varchar(50) DEFAULT NULL,
                 `name` varchar(255) DEFAULT NULL,
                 `path` text,
+                `value` text,
                 `return` varchar(255) DEFAULT NULL,
                 `date_creation` timestamp NULL DEFAULT NULL,
                 `date_mod` timestamp NULL DEFAULT NULL,

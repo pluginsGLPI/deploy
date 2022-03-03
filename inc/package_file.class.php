@@ -202,6 +202,22 @@ class PluginDeployPackage_File extends CommonDBTM
     }
 
 
+    public static function getFormattedArrayForPackage(PluginDeployPackage $package): array
+    {
+        $files = [];
+        foreach (self::getForPackage($package) as $entry) {
+            $files[$entry['sha512']] = [
+                'name'                   => $entry['filename'] ?? "",
+                'p2p'                    => (int) $entry['p2p'] ?? 0,
+                'p2p-retention-duration' => (int) $entry['p2p_retention_days'] ?? 0,
+                'uncompress'             => (int) $entry['uncompress'] ?? 0,
+            ];
+        }
+
+        return $files;
+    }
+
+
     public static function install(Migration $migration)
     {
         global $DB;

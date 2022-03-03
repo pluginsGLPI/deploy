@@ -25,6 +25,7 @@
  along with Deploy. If not, see <http://www.gnu.org/licenses/>.
  --------------------------------------------------------------------------
  */
+use Glpi\Application\View\TemplateRenderer;
 
 class PluginDeployPackage extends CommonDBTM
 {
@@ -48,9 +49,37 @@ class PluginDeployPackage extends CommonDBTM
             ->addStandardTab('PluginDeployPackage_Check', $ong, $options)
             ->addStandardTab('PluginDeployPackage_File', $ong, $options)
             ->addStandardTab('PluginDeployPackage_Action', $ong, $options)
-            ->addStandardTab('PluginDeployPackage_Interaction', $ong, $options);
+            ->addStandardTab('PluginDeployPackage_Interaction', $ong, $options)
+            ->addStandardTab(__CLASS__, $ong, $options);
 
         return $ong;
+    }
+
+
+    public function showDebug()
+    {
+        TemplateRenderer::getInstance()->display('@deploy/package/debug_json.html.twig', [
+            'json' => self::getJson($this, true)
+        ]);
+    }
+
+
+    public static function getJson(PluginDeployPackage $package, bool $pretty_json = false): string
+    {
+        $checks  = PluginDeployPackage_Check::getFormattedArrayForPackage($package);
+        $files   = PluginDeployPackage_File::getFormattedArrayForPackage($package);
+        $actions = PluginDeployPackage_Action::getFormattedArrayForPackage($package);
+
+        $json_array = [
+            'jobs' => [
+                'checks'          => $checks,
+                'associatedFiles' => array_keys($files),
+                'actions'         => $actions
+            ],
+            'associatedFiles' => $files,
+        ];
+
+        return json_encode($json_array, $pretty_json ? JSON_PRETTY_PRINT : 0);
     }
 
 

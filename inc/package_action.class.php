@@ -178,6 +178,17 @@ class PluginDeployPackage_Action extends CommonDBTM
     }
 
 
+    public static function getFormattedArrayForPackage(PluginDeployPackage $package): array
+    {
+        $files = [];
+        foreach (self::getForPackage($package) as $entry) {
+            $files[] = json_decode($entry['json'], true);
+        }
+
+        return $files;
+    }
+
+
     public static function install(Migration $migration)
     {
         global $DB;
