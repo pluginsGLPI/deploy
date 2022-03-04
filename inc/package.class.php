@@ -52,7 +52,7 @@ class PluginDeployPackage extends CommonDBTM
             ->addStandardTab('PluginDeployPackage_Check', $ong, $options)
             ->addStandardTab('PluginDeployPackage_File', $ong, $options)
             ->addStandardTab('PluginDeployPackage_Action', $ong, $options)
-            ->addStandardTab('PluginDeployPackage_Interaction', $ong, $options)
+            ->addStandardTab('PluginDeployPackage_UserInteraction', $ong, $options)
             ->addStandardTab(__CLASS__, $ong, $options);
 
         return $ong;
@@ -69,15 +69,17 @@ class PluginDeployPackage extends CommonDBTM
 
     public static function getJson(PluginDeployPackage $package, bool $pretty_json = false): string
     {
-        $checks  = PluginDeployPackage_Check::getFormattedArrayForPackage($package);
-        $files   = PluginDeployPackage_File::getFormattedArrayForPackage($package);
-        $actions = PluginDeployPackage_Action::getFormattedArrayForPackage($package);
+        $checks           = PluginDeployPackage_Check::getFormattedArrayForPackage($package);
+        $files            = PluginDeployPackage_File::getFormattedArrayForPackage($package);
+        $actions          = PluginDeployPackage_Action::getFormattedArrayForPackage($package);
+        $userinteractions = PluginDeployPackage_UserInteraction::getFormattedArrayForPackage($package);
 
         $json_array = [
             'jobs' => [
-                'checks'          => $checks,
-                'associatedFiles' => array_keys($files),
-                'actions'         => $actions
+                'checks'           => $checks,
+                'associatedFiles'  => array_keys($files),
+                'actions'          => $actions,
+                'userinteractions' => $userinteractions
             ],
             'associatedFiles' => $files,
         ];

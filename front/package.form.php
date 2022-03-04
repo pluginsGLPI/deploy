@@ -99,6 +99,19 @@ if (isset($_POST["add"])) {
     $action = new PluginDeployPackage_Action();
     $action->delete($_POST);
     Html::back();
+} else if (isset($_POST["add_userinteraction"])) {
+    unset($_POST['id']);
+    $userinteraction = new PluginDeployPackage_UserInteraction();
+    $userinteraction->add($_POST);
+    Html::back();
+} else if (isset($_POST["edit_userinteraction"])) {
+    $userinteraction = new PluginDeployPackage_UserInteraction();
+    $userinteraction->update($_POST);
+    Html::back();
+} else if (isset($_POST["delete_userinteraction"])) {
+    $userinteraction = new PluginDeployPackage_UserInteraction();
+    $userinteraction->delete($_POST);
+    Html::back();
 } else {
     Html::requireJs('sortable');
     Html::header(

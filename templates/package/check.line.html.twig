@@ -8,5 +8,12 @@
     {{ call("PluginDeployPackage_Check::getLabelForType", [entry['type']]) }}
 </td>
 <td><code>{{ entry['path'] }}</code></td>
-<td>{{ entry['value']|length ? ('<code>' ~ entry['value'] ~ '</code>')|raw : '' }}</td>
+<td>
+    <span class="d-inline-block text-truncate"
+          style="max-width: 350px"
+          title="{{ entry['value'] }}"
+          data-bs-toggle="tooltip">
+        {{ entry['value']|length ? ('<code>' ~ entry['value'] ~ '</code>')|raw : '' }}
+    </span>
+</td>
 <td>{{ call("PluginDeployPackage_Check::getLabelForReturnValue", [entry['return'], true])|raw }}</td>

@@ -49,6 +49,12 @@ switch (($_POST['action'] ?? "")) {
     case "edit_action":
         PluginDeployPackage_Action::showEdit((int) ($_POST['id'] ?? 0));
         break;
+    case "add_userinteraction":
+        PluginDeployPackage_UserInteraction::showAdd((int) ($_POST['plugin_deploy_packages_id'] ?? 0));
+        break;
+    case "edit_userinteraction":
+        PluginDeployPackage_UserInteraction::showEdit((int) ($_POST['id'] ?? 0));
+        break;
     case "move_subitem":
         PluginDeployPackage::moveSubitem(
             $_POST['subitem_itemtype'],
