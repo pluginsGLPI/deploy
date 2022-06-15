@@ -64,18 +64,38 @@ class PluginDeployPackage_Action extends CommonDBTM
 
     public static function getTypes(bool $with_icon = false): array
     {
+        $base_icon = '<i class="fa-fw me-1 %s"></i>';
         return [
-            SELF::ACTION_CMD    => ($with_icon ? '<i class="fa-fw me-1 ti ti-terminal"></i>' : "")
+            SELF::ACTION_CMD    => ($with_icon ? sprintf($base_icon, self::getTypeIconClass(SELF::ACTION_CMD)) : "")
                                    . __('Run command', 'deploy'),
-            SELF::ACTION_MOVE   => ($with_icon ? '<i class="fa-fw me-1 ti ti-drag-drop-2"></i>' : "")
-                                   . __('Move file', 'deploy'),
-            SELF::ACTION_COPY   => ($with_icon ? '<i class="fa-fw me-1 ti ti-copy"></i>' : "")
-                                   . __('Copy file', 'deploy'),
-            SELF::ACTION_DELETE => ($with_icon ? '<i class="fa-fw me-1 ti ti-file-minus"></i>' : "")
-                                   . __('Delete file', 'deploy'),
-            SELF::ACTION_MKDIR  => ($with_icon ? '<i class="fa-fw me-1 ti ti-folder-plus"></i>' : "")
+            SELF::ACTION_MOVE   => ($with_icon ? sprintf($base_icon, self::getTypeIconClass(SELF::ACTION_MOVE)) : "")
+            . __('Move file', 'deploy'),
+            SELF::ACTION_COPY   => ($with_icon ? sprintf($base_icon, self::getTypeIconClass(SELF::ACTION_COPY)) : "")
+            . __('Copy file', 'deploy'),
+            SELF::ACTION_DELETE => ($with_icon ? sprintf($base_icon, self::getTypeIconClass(SELF::ACTION_DELETE)) : "")
+            . __('Delete file', 'deploy'),
+            SELF::ACTION_MKDIR => ($with_icon ? sprintf($base_icon, self::getTypeIconClass(SELF::ACTION_MKDIR)) : "")
                                    . __('Create directory', 'deploy'),
         ];
+    }
+
+
+    public static function getTypeIconClass($type = ""): string
+    {
+        switch ($type) {
+            case SELF::ACTION_CMD:
+                return 'ti ti-terminal';
+            case SELF::ACTION_MOVE:
+                return 'ti ti-drag-drop-2';
+            case SELF::ACTION_COPY:
+                return 'ti ti-copy';
+            case SELF::ACTION_DELETE:
+                return 'ti ti-file-minus';
+            case SELF::ACTION_MKDIR:
+                return 'ti ti-folder-plus';
+        }
+
+        return "";
     }
 
 

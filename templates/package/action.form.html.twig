@@ -62,10 +62,11 @@
             ) }}
         {% endset %}
 
+        {% set icon_cls = call("PluginDeployPackage_Action::getTypeIconClass", [subitem_instance.fields['type']]) %}
         {{ fields.field(
             '',
             from_to_fields,
-            __("Paths", 'deploy') ~ '<i class="ms-2 ti ti-arrow-right-square"></i>',
+            __("Paths", 'deploy') ~ '<i class="ms-2 action-icon-type ' ~ icon_cls ~ '"></i>',
             field_options|merge({
                 input_class: 'col-xxl-9 d-flex'
             })
@@ -82,10 +83,11 @@
                 {{ __("You can write a different path per line", 'deploy') }}
             </small>
         {% endset %}
+        {% set icon_cls = call("PluginDeployPackage_Action::getTypeIconClass", [subitem_instance.fields['type']]) %}
         {{ fields.textareaField(
             'list',
             subitem_instance.fields['list']|join("\n"),
-            __("Path", 'deploy') ~ '<i class="ms-2 ti ti-terminal"></i>',
+            __("Path", 'deploy') ~ '<i class="ms-2 action-icon-type ' ~ icon_cls ~ '"></i>',
             field_options|merge({
                 'add_field_html': extra_help,
             })
@@ -103,17 +105,30 @@ $(document).ready(function() {
             $('.modal-footer').removeClass('d-none');
         }
 
+        $('.action-icon-type')
+            .attr('class', '')
+            .addClass('ms-2 action-icon-type');
+
         switch (actiontype) {
             case '{{ constant("PluginDeployPackage_Action::ACTION_CMD") }}':
                 $('#execfields').removeClass('d-none');
+                $('.action-icon-type').addClass('{{ call("PluginDeployPackage_Action::getTypeIconClass", [constant("PluginDeployPackage_Action::ACTION_CMD")]) }}');
                 break;
             case '{{ constant("PluginDeployPackage_Action::ACTION_MOVE") }}':
+                $('#doublepathfields').removeClass('d-none');
+                $('.action-icon-type').addClass('{{ call("PluginDeployPackage_Action::getTypeIconClass", [constant("PluginDeployPackage_Action::ACTION_MOVE")]) }}');
+                break;
             case '{{ constant("PluginDeployPackage_Action::ACTION_COPY") }}':
                 $('#doublepathfields').removeClass('d-none');
+                $('.action-icon-type').addClass('{{ call("PluginDeployPackage_Action::getTypeIconClass", [constant("PluginDeployPackage_Action::ACTION_COPY")]) }}');
                 break;
             case '{{ constant("PluginDeployPackage_Action::ACTION_DELETE") }}':
+                $('#singlepathfields').removeClass('d-none');
+                $('.action-icon-type').addClass('{{ call("PluginDeployPackage_Action::getTypeIconClass", [constant("PluginDeployPackage_Action::ACTION_DELETE")]) }}');
+                break;
             case '{{ constant("PluginDeployPackage_Action::ACTION_MKDIR") }}':
                 $('#singlepathfields').removeClass('d-none');
+                $('.action-icon-type').addClass('{{ call("PluginDeployPackage_Action::getTypeIconClass", [constant("PluginDeployPackage_Action::ACTION_MKDIR")]) }}');
                 break;
         }
     });
