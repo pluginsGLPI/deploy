@@ -25,9 +25,17 @@
  along with Deploy. If not, see <http://www.gnu.org/licenses/>.
  --------------------------------------------------------------------------
  */
+
+namespace GlpiPlugin\Deploy;
+
+use CommonDBTM;
+use Migration;
+use DBConnection;
+use DisplayPreference;
+use Entity;
 use Glpi\Application\View\TemplateRenderer;
 
-class PluginDeployPackage extends CommonDBTM
+class Package extends CommonDBTM
 {
     public static $rightname = 'entity';
 
@@ -49,10 +57,10 @@ class PluginDeployPackage extends CommonDBTM
 
         $ong = [];
         $this->addDefaultFormTab($ong)
-            ->addStandardTab('PluginDeployPackage_Check', $ong, $options)
-            ->addStandardTab('PluginDeployPackage_File', $ong, $options)
-            ->addStandardTab('PluginDeployPackage_Action', $ong, $options)
-            ->addStandardTab('PluginDeployPackage_UserInteraction', $ong, $options)
+            ->addStandardTab(Package_Check::getType(), $ong, $options)
+            ->addStandardTab(Package_File::getType(), $ong, $options)
+            ->addStandardTab(Package_Action::getType(), $ong, $options)
+            ->addStandardTab(Package_UserInteraction::getType(), $ong, $options)
             ->addStandardTab(__CLASS__, $ong, $options);
 
         return $ong;
@@ -67,12 +75,12 @@ class PluginDeployPackage extends CommonDBTM
     }
 
 
-    public static function getJson(PluginDeployPackage $package, bool $pretty_json = false): string
+    public static function getJson(Package $package, bool $pretty_json = false): string
     {
-        $checks           = PluginDeployPackage_Check::getFormattedArrayForPackage($package);
-        $files            = PluginDeployPackage_File::getFormattedArrayForPackage($package);
-        $actions          = PluginDeployPackage_Action::getFormattedArrayForPackage($package);
-        $userinteractions = PluginDeployPackage_UserInteraction::getFormattedArrayForPackage($package);
+        $checks           = Package_Check::getFormattedArrayForPackage($package);
+        $files            = Package_File::getFormattedArrayForPackage($package);
+        $actions          = Package_Action::getFormattedArrayForPackage($package);
+        $userinteractions = Package_UserInteraction::getFormattedArrayForPackage($package);
 
         $json_array = [
             'jobs' => [
@@ -98,7 +106,7 @@ class PluginDeployPackage extends CommonDBTM
         global $DB;
 
         $used_traits = class_uses($subitem_itemtype);
-        if (!in_array("PluginDeployPackage_Subitem", $used_traits)) {
+        if (!in_array("Package_Subitem", $used_traits)) {
             return false;
         }
 

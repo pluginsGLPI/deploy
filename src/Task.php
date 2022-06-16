@@ -26,8 +26,13 @@
  --------------------------------------------------------------------------
  */
 
+namespace GlpiPlugin\Deploy;
 
-class PluginDeployTask extends CommonDBTM
+use CommonDBTM;
+use DBConnection;
+use Migration;
+
+class Task extends CommonDBTM
 {
     public static $rightname = 'entity';
 

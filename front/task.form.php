@@ -25,6 +25,10 @@
  along with Deploy. If not, see <http://www.gnu.org/licenses/>.
  --------------------------------------------------------------------------
  */
+namespace GlpiPlugin\Deploy;
+
+use Html;
+use Session;
 
 include ('../../../inc/includes.php');
 
@@ -34,7 +38,7 @@ if (!isset($_GET["id"])) {
    $_GET["id"] = "";
 }
 
-$task = new PluginDeployTask();
+$task = new Task();
 
 if (isset($_POST["add"])) {
    $task->check(-1, CREATE, $_POST);
@@ -67,10 +71,10 @@ if (isset($_POST["add"])) {
 
 } else {
     Html::header(
-        PluginDeployTask::getTypeName(Session::getPluralNumber()),
+        Task::getTypeName(Session::getPluralNumber()),
         '',
         'tools',
-        'plugindeploymenu',
+        'GlpiPlugin\Deploy\menu',
         'task'
     );
 

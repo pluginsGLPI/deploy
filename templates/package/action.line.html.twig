@@ -4,8 +4,8 @@
     </a>
 </td>
 <td>
-    {{ call("PluginDeployPackage_Action::getLabelForType", [entry['type'], true])|raw }}
+    {{ call("GlpiPlugin\Deploy\Package_Action::getLabelForType", [entry['type'], true])|raw }}
 </td>
 <td>
-    {{ call("PluginDeployPackage_Action::getFormattedData", [entry['json'], entry['type']])|raw }}
+    {{ call("GlpiPlugin\Deploy\Package_Action::getFormattedData", [entry['json'], entry['type']])|raw }}
 </td>

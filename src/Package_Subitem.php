@@ -26,13 +26,20 @@
  --------------------------------------------------------------------------
  */
 
-use Glpi\Application\View\TemplateRenderer;
+namespace GlpiPlugin\Deploy;
 
-trait PluginDeployPackage_Subitem
+use CommonGLPI;
+use DBConnection;
+use DBmysqlIterator;
+use Glpi\Application\View\TemplateRenderer;
+use Migration;
+use Session;
+
+trait Package_Subitem
 {
     public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
     {
-        if ($item->getType() == 'PluginDeployPackage') {
+        if ($item->getType() == Package::class) {
             $entries = self::getForPackage($item);
             $number  = count($entries);
             return self::createTabEntry(self::getTypeName($number), $number);
@@ -43,13 +50,13 @@ trait PluginDeployPackage_Subitem
 
     public static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
     {
-        if ($item->getType() == 'PluginDeployPackage') {
+        if ($item->getType() == Package::class) {
             self::showForPackage($item);
         }
     }
 
 
-    public static function getForPackage(PluginDeployPackage $package): DBmysqlIterator
+    public static function getForPackage(Package $package): DBmysqlIterator
     {
         $DBread   = DBConnection::getReadConnection();
         $iterator = $DBread->request([
@@ -70,7 +77,7 @@ trait PluginDeployPackage_Subitem
     }
 
 
-    public static function showForPackage(PluginDeployPackage $package)
+    public static function showForPackage(Package $package)
     {
         $entries = self::getForPackage($package);
         TemplateRenderer::getInstance()->display('@deploy/package/subitem.list.html.twig', [

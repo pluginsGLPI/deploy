@@ -26,10 +26,15 @@
  --------------------------------------------------------------------------
  */
 
-class PluginDeployRepository
+namespace GlpiPlugin\Deploy;
+
+use Migration;
+use Session;
+
+class Repository
 {
 
-    public function AddFileFromComputer(): PluginDeployRepository_File
+    public function AddFileFromComputer(): Repository_File
     {
         $filename = $_FILES['file']['name']     ?? "";
         $tmp_name = $_FILES['file']['tmp_name'] ?? UPLOAD_ERR_NO_FILE;
@@ -68,7 +73,7 @@ class PluginDeployRepository
             return false;
         }
 
-        if (false !== ($file = new PluginDeployRepository_File(
+        if (false !== ($file = new Repository_File(
             $filename,
             $tmp_name,
             (int) $filesize,
@@ -79,10 +84,10 @@ class PluginDeployRepository
         return $file;
     }
 
-    public function addFileFromServer(string $path = ""): PluginDeployRepository_File
+    public function addFileFromServer(string $path = ""): Repository_File
     {
         $tmp_name = GLPI_UPLOAD_DIR.$path;
-        if (false !== ($file = new PluginDeployRepository_File(
+        if (false !== ($file = new Repository_File(
             basename($tmp_name),
             $tmp_name,
             filesize($tmp_name),
@@ -105,7 +110,7 @@ class PluginDeployRepository
         // remove parts
         $parts_sha512 = file($manifest_path);
         foreach ($parts_sha512 as $part_sha512) {
-            $part_relative_dir = PluginDeployRepository_File::getRelativePathBySha512($part_sha512, false);
+            $part_relative_dir = Repository_File::getRelativePathBySha512($part_sha512, false);
             $part_absolute_dir = PLUGIN_DEPLOY_PARTS_PATH . "/$part_relative_dir";
             $part_parent_dir   = dirname($part_absolute_dir);
             $part_path         = trim($part_absolute_dir . $part_sha512);

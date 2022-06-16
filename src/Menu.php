@@ -26,7 +26,11 @@
  --------------------------------------------------------------------------
  */
 
-class PluginDeployMenu
+namespace GlpiPlugin\Deploy;
+
+use \Session;
+
+class Menu
 {
     public static function getMenuName()
     {
@@ -44,10 +48,10 @@ class PluginDeployMenu
     {
         $menu = [];
 
-        if (PluginDeployTask::canUpdate()) {
+        if (Task::canUpdate()) {
             $links_class = [
-                "PluginDeployTask",
-                "PluginDeployPackage",
+                Task::class,
+                Package::class,
             ];
             $links = [];
             foreach ($links_class as $link) {
@@ -57,35 +61,35 @@ class PluginDeployMenu
 
             $menu = [
                 'title'   => self::getMenuName(),
-                'page'    => PluginDeployTask::getSearchURL(false),
+                'page'    => Task::getSearchURL(false),
                 'icon'    => self::getIcon(),
                 'options' => [],
                 'links'   => $links,
             ];
 
             $menu['options']['package'] = [
-                'title' => PluginDeployPackage::getTypeName(Session::getPluralNumber()),
-                'page'  => PluginDeployPackage::getSearchURL(false),
-                'icon'  => PluginDeployPackage::getIcon(),
+                'title' => Package::getTypeName(Session::getPluralNumber()),
+                'page'  => Package::getSearchURL(false),
+                'icon'  => Package::getIcon(),
                 'links' => $links,
             ];
 
-            if (PluginDeployPackage::canCreate()) {
-                $add_link = PluginDeployPackage::getFormURL(false);
+            if (Package::canCreate()) {
+                $add_link = Package::getFormURL(false);
                 $menu['links']['add'] = $add_link;
                 $menu['options']['package']['links']['add'] = $add_link;
             }
 
             $menu['options']['task'] = [
-                'title' => PluginDeployTask::getTypeName(Session::getPluralNumber()),
-                'page'  => PluginDeployTask::getSearchURL(false),
-                'icon'  => PluginDeployTask::getIcon(),
+                'title' => Task::getTypeName(Session::getPluralNumber()),
+                'page'  => Task::getSearchURL(false),
+                'icon'  => Task::getIcon(),
                 'links' => $links
             ];
 
-            if (PluginDeployTask::canCreate()) {
-                $menu['options']['task']['options']['add'] = PluginDeployTask::getFormURL(false);
-                $menu['options']['task']['links']['add']   = PluginDeployTask::getFormURL(false);
+            if (Task::canCreate()) {
+                $menu['options']['task']['options']['add'] = Task::getFormURL(false);
+                $menu['options']['task']['links']['add']   = Task::getFormURL(false);
             }
         }
 

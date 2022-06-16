@@ -26,37 +26,39 @@
  --------------------------------------------------------------------------
  */
 
+namespace GlpiPlugin\Deploy;
+
 include ("../../../inc/includes.php");
 
-Session::checkLoginUser();
+\Session::checkLoginUser();
 
 switch (($_POST['action'] ?? "")) {
     case "add_check":
-        PluginDeployPackage_Check::showAdd((int) ($_POST['plugin_deploy_packages_id'] ?? 0));
+        Package_Check::showAdd((int) ($_POST['plugin_deploy_packages_id'] ?? 0));
         break;
     case "edit_check":
-        PluginDeployPackage_Check::showEdit((int) ($_POST['id'] ?? 0));
+        Package_Check::showEdit((int) ($_POST['id'] ?? 0));
         break;
     case "add_file":
-        PluginDeployPackage_File::showAdd((int) ($_POST['plugin_deploy_packages_id'] ?? 0));
+        Package_File::showAdd((int) ($_POST['plugin_deploy_packages_id'] ?? 0));
         break;
     case "edit_file":
-        PluginDeployPackage_File::showEdit((int) ($_POST['id'] ?? 0));
+        Package_File::showEdit((int) ($_POST['id'] ?? 0));
         break;
     case "add_action":
-        PluginDeployPackage_Action::showAdd((int) ($_POST['plugin_deploy_packages_id'] ?? 0));
+        Package_Action::showAdd((int) ($_POST['plugin_deploy_packages_id'] ?? 0));
         break;
     case "edit_action":
-        PluginDeployPackage_Action::showEdit((int) ($_POST['id'] ?? 0));
+        Package_Action::showEdit((int) ($_POST['id'] ?? 0));
         break;
     case "add_userinteraction":
-        PluginDeployPackage_UserInteraction::showAdd((int) ($_POST['plugin_deploy_packages_id'] ?? 0));
+        Package_UserInteraction::showAdd((int) ($_POST['plugin_deploy_packages_id'] ?? 0));
         break;
     case "edit_userinteraction":
-        PluginDeployPackage_UserInteraction::showEdit((int) ($_POST['id'] ?? 0));
+        Package_UserInteraction::showEdit((int) ($_POST['id'] ?? 0));
         break;
     case "move_subitem":
-        PluginDeployPackage::moveSubitem(
+        Package::moveSubitem(
             $_POST['subitem_itemtype'],
             (int) $_POST['subitem_id'],
             (int) $_POST['ref_id'],

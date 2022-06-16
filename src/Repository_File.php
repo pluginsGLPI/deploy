@@ -26,7 +26,9 @@
  --------------------------------------------------------------------------
  */
 
-class PluginDeployRepository_File
+namespace GlpiPlugin\Deploy;
+
+class Repository_File
 {
     private $max_part_size = 1024 * 1024;
 

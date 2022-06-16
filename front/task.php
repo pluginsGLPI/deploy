@@ -26,21 +26,27 @@
  --------------------------------------------------------------------------
  */
 
+namespace GlpiPlugin\Deploy;
+
+use Html;
+use Search;
+use Session;
+
 include ('../../../inc/includes.php');
 
 Session::checkRight("dashboard", UPDATE);
 
 Html::header(
-   PluginDeployTask::getTypeName(Session::getPluralNumber()),
+   Task::getTypeName(Session::getPluralNumber()),
    '',
    'tools',
-   'plugindeploymenu',
+   'glpiplugin\deploy\menu',
    'task'
 );
 
-$task = new PluginDeployTask();
+$task = new Task();
 if ($task->canView()) {
-   Search::show('PluginDeployTask');
+   Search::show('GlpiPlugin\Deploy\Task');
 } else {
    Html::displayRightError();
 }

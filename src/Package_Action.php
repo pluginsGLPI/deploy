@@ -26,9 +26,15 @@
  --------------------------------------------------------------------------
  */
 
-class PluginDeployPackage_Action extends CommonDBTM
+namespace GlpiPlugin\Deploy;
+
+use CommonDBTM;
+use DBConnection;
+use Migration;
+
+class Package_Action extends CommonDBTM
 {
-    use PluginDeployPackage_Subitem;
+    use Package_Subitem;
 
     public static $rightname = 'entity';
 
@@ -200,7 +206,7 @@ class PluginDeployPackage_Action extends CommonDBTM
     }
 
 
-    public static function getFormattedArrayForPackage(PluginDeployPackage $package): array
+    public static function getFormattedArrayForPackage(Package $package): array
     {
         $files = [];
         foreach (self::getForPackage($package) as $entry) {

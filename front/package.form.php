@@ -26,6 +26,12 @@
  --------------------------------------------------------------------------
  */
 
+
+namespace GlpiPlugin\Deploy;
+
+use Html;
+use Session;
+
 include('../../../inc/includes.php');
 
 Session::checkRight("entity", UPDATE);
@@ -34,7 +40,7 @@ if (!isset($_GET["id"])) {
     $_GET["id"] = "";
 }
 
-$package = new PluginDeployPackage();
+$package = new Package();
 
 if (isset($_POST["add"])) {
     $package->check(-1, CREATE, $_POST);
@@ -62,63 +68,63 @@ if (isset($_POST["add"])) {
     Html::back();
 } else if (isset($_POST["add_file"])) {
     unset($_POST['id']);
-    $file = new PluginDeployPackage_File();
+    $file = new Package_File();
     $file->add($_POST);
     Html::back();
 } else if (isset($_POST["edit_file"])) {
-    $file = new PluginDeployPackage_File();
+    $file = new Package_File();
     $file->update($_POST);
     Html::back();
 } else if (isset($_POST["delete_file"])) {
-    $file = new PluginDeployPackage_File();
+    $file = new Package_File();
     $file->delete($_POST);
     Html::back();
 } else if (isset($_POST["add_check"])) {
     unset($_POST['id']);
-    $check = new PluginDeployPackage_Check();
+    $check = new Package_Check();
     $check->add($_POST);
     Html::back();
 } else if (isset($_POST["edit_check"])) {
-    $check = new PluginDeployPackage_Check();
+    $check = new Package_Check();
     $check->update($_POST);
     Html::back();
 } else if (isset($_POST["delete_check"])) {
-    $check = new PluginDeployPackage_Check();
+    $check = new Package_Check();
     $check->delete($_POST);
     Html::back();
 } else if (isset($_POST["add_action"])) {
     unset($_POST['id']);
-    $action = new PluginDeployPackage_Action();
+    $action = new Package_Action();
     $action->add($_POST);
     Html::back();
 } else if (isset($_POST["edit_action"])) {
-    $action = new PluginDeployPackage_Action();
+    $action = new Package_Action();
     $action->update($_POST);
     Html::back();
 } else if (isset($_POST["delete_action"])) {
-    $action = new PluginDeployPackage_Action();
+    $action = new Package_Action();
     $action->delete($_POST);
     Html::back();
 } else if (isset($_POST["add_userinteraction"])) {
     unset($_POST['id']);
-    $userinteraction = new PluginDeployPackage_UserInteraction();
+    $userinteraction = new Package_UserInteraction();
     $userinteraction->add($_POST);
     Html::back();
 } else if (isset($_POST["edit_userinteraction"])) {
-    $userinteraction = new PluginDeployPackage_UserInteraction();
+    $userinteraction = new Package_UserInteraction();
     $userinteraction->update($_POST);
     Html::back();
 } else if (isset($_POST["delete_userinteraction"])) {
-    $userinteraction = new PluginDeployPackage_UserInteraction();
+    $userinteraction = new Package_UserInteraction();
     $userinteraction->delete($_POST);
     Html::back();
 } else {
     Html::requireJs('sortable');
     Html::header(
-        PluginDeployPackage::getTypeName(Session::getPluralNumber()),
+        Package::getTypeName(Session::getPluralNumber()),
         '',
         'tools',
-        'plugindeploymenu',
+        'glpiplugin\deploy\menu',
         'package'
     );
 

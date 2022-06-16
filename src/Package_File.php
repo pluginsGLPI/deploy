@@ -26,9 +26,19 @@
  --------------------------------------------------------------------------
  */
 
-class PluginDeployPackage_File extends CommonDBTM
+namespace GlpiPlugin\Deploy;
+
+use CommonDBTM;
+use DBConnection;
+use DOMDocument;
+use FilesystemIterator;
+use Migration;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+
+class Package_File extends CommonDBTM
 {
-    use PluginDeployPackage_Subitem;
+    use Package_Subitem;
 
     public static $rightname = 'entity';
 
@@ -61,7 +71,7 @@ class PluginDeployPackage_File extends CommonDBTM
 
     public function prepareInputForAdd($input)
     {
-        $repository = new PluginDeployRepository;
+        $repository = new Repository;
         switch ($input['upload_mode'])
         {
             case "from_computer":
@@ -93,7 +103,7 @@ class PluginDeployPackage_File extends CommonDBTM
 
         // do not delete file in repository if it's also used in other packages
         if (count($found_files) === 1) {
-            $repository = new PluginDeployRepository;
+            $repository = new Repository;
             $repository->deleteFile($this->fields['sha512']);
         }
 
@@ -204,7 +214,7 @@ class PluginDeployPackage_File extends CommonDBTM
     }
 
 
-    public static function getFormattedArrayForPackage(PluginDeployPackage $package): array
+    public static function getFormattedArrayForPackage(Package $package): array
     {
         $files = [];
         foreach (self::getForPackage($package) as $entry) {
