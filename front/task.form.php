@@ -25,50 +25,46 @@
  along with Deploy. If not, see <http://www.gnu.org/licenses/>.
  --------------------------------------------------------------------------
  */
+
 namespace GlpiPlugin\Deploy;
 
 use Html;
 use Session;
 
-include ('../../../inc/includes.php');
+include('../../../inc/includes.php');
 
 Session::checkRight("entity", UPDATE);
 
 if (!isset($_GET["id"])) {
-   $_GET["id"] = "";
+    $_GET["id"] = "";
 }
 
 $task = new Task();
 
 if (isset($_POST["add"])) {
-   $task->check(-1, CREATE, $_POST);
-   if ($task->add($_POST)) {
-      if ($_SESSION['glpibackcreated']) {
-         Html::redirect($task->getLinkURL());
-      }
-   }
-   Html::back();
-
+    $task->check(-1, CREATE, $_POST);
+    if ($task->add($_POST)) {
+        if ($_SESSION['glpibackcreated']) {
+            Html::redirect($task->getLinkURL());
+        }
+    }
+    Html::back();
 } else if (isset($_POST["delete"])) {
-   $task->check($_POST['id'], DELETE);
-   $task->delete($_POST);
-   $task->redirectToList();
-
+    $task->check($_POST['id'], DELETE);
+    $task->delete($_POST);
+    $task->redirectToList();
 } else if (isset($_POST["restore"])) {
-   $task->check($_POST['id'], DELETE);
-   $task->restore($_POST);
-   $task->redirectToList();
-
+    $task->check($_POST['id'], DELETE);
+    $task->restore($_POST);
+    $task->redirectToList();
 } else if (isset($_POST["purge"])) {
-   $task->check($_POST['id'], PURGE);
-   $task->delete($_POST, 1);
-   $task->redirectToList();
-
+    $task->check($_POST['id'], PURGE);
+    $task->delete($_POST, 1);
+    $task->redirectToList();
 } else if (isset($_POST["update"])) {
-   $task->check($_POST['id'], UPDATE);
-   $task->update($_POST);
-   Html::back();
-
+    $task->check($_POST['id'], UPDATE);
+    $task->update($_POST);
+    Html::back();
 } else if (isset($_POST["add_package"])) {
     if ($_POST['plugin_deploy_packages_id'] > 0) {
         $task->check($_POST['plugin_deploy_tasks_id'], UPDATE);
@@ -79,7 +75,6 @@ if (isset($_POST["add"])) {
         ]);
     }
     Html::back();
-
 } else {
     Html::header(
         Task::getTypeName(Session::getPluralNumber()),
@@ -89,9 +84,9 @@ if (isset($_POST["add"])) {
         'task'
     );
 
-   //show question form to add
-   $task->display([
-      'id' => (int) $_GET["id"],
-   ]);
-   Html::footer();
+    //show question form to add
+    $task->display([
+        'id' => (int) $_GET["id"],
+    ]);
+    Html::footer();
 }

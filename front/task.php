@@ -32,23 +32,23 @@ use Html;
 use Search;
 use Session;
 
-include ('../../../inc/includes.php');
+include('../../../inc/includes.php');
 
 Session::checkRight("dashboard", UPDATE);
 
 Html::header(
-   Task::getTypeName(Session::getPluralNumber()),
-   '',
-   'tools',
-   'glpiplugin\deploy\menu',
-   'task'
+    Task::getTypeName(Session::getPluralNumber()),
+    '',
+    'tools',
+    'glpiplugin\deploy\menu',
+    'task'
 );
 
 $task = new Task();
 if ($task->canView()) {
-   Search::show('GlpiPlugin\Deploy\Task');
+    Search::show('GlpiPlugin\Deploy\Task');
 } else {
-   Html::displayRightError();
+    Html::displayRightError();
 }
 
 Html::footer();
