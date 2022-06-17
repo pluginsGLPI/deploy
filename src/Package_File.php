@@ -238,12 +238,13 @@ class Package_File extends CommonDBTM
         if (!$DB->tableExists($table)) {
             $migration->displayMessage("Installing $table");
 
-            $default_charset = DBConnection::getDefaultCharset();
+            $default_charset   = DBConnection::getDefaultCharset();
             $default_collation = DBConnection::getDefaultCollation();
+            $sign              = DBConnection::getDefaultPrimaryKeySignOption();
 
             $query = "CREATE TABLE IF NOT EXISTS `$table` (
-                `id` int NOT NULL AUTO_INCREMENT,
-                `plugin_deploy_packages_id` int unsigned NOT NULL DEFAULT '0',
+                `id` int $sign NOT NULL AUTO_INCREMENT,
+                `plugin_deploy_packages_id` int $sign NOT NULL DEFAULT '0',
                 `filename` text,
                 `filesize` varchar(255) DEFAULT NULL,
                 `mimetype` varchar(255) DEFAULT NULL,

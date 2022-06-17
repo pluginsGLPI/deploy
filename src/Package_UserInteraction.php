@@ -160,12 +160,13 @@ class Package_UserInteraction extends CommonDBTM
         if (!$DB->tableExists($table)) {
             $migration->displayMessage("Installing $table");
 
-            $default_charset = DBConnection::getDefaultCharset();
+            $default_charset   = DBConnection::getDefaultCharset();
             $default_collation = DBConnection::getDefaultCollation();
+            $sign              = DBConnection::getDefaultPrimaryKeySignOption();
 
             $query = "CREATE TABLE IF NOT EXISTS `$table` (
-                `id` int NOT NULL AUTO_INCREMENT,
-                `plugin_deploy_packages_id` int unsigned NOT NULL DEFAULT '0',
+                `id` int $sign NOT NULL AUTO_INCREMENT,
+                `plugin_deploy_packages_id` int $sign NOT NULL DEFAULT '0',
                 `name` varchar(255) DEFAULT NULL,
                 `title` varchar(255) DEFAULT NULL,
                 `text` text,

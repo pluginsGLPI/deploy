@@ -54,12 +54,13 @@ class Task extends CommonDBTM
         if (!$DB->tableExists($table)) {
             $migration->displayMessage("Installing $table");
 
-            $default_charset = DBConnection::getDefaultCharset();
+            $default_charset   = DBConnection::getDefaultCharset();
             $default_collation = DBConnection::getDefaultCollation();
+            $sign              = DBConnection::getDefaultPrimaryKeySignOption();
 
             $query = "CREATE TABLE IF NOT EXISTS `$table` (
-                `id` int NOT NULL AUTO_INCREMENT,
-                `entities_id` int unsigned NOT NULL DEFAULT '0',
+                `id` int $sign NOT NULL AUTO_INCREMENT,
+                `entities_id` int $sign NOT NULL DEFAULT '0',
                 `is_recursive` tinyint NOT NULL DEFAULT '0',
                 `name` varchar(255) DEFAULT NULL,
                 `is_deleted` tinyint NOT NULL DEFAULT '0',
