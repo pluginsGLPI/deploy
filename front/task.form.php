@@ -69,6 +69,17 @@ if (isset($_POST["add"])) {
    $task->update($_POST);
    Html::back();
 
+} else if (isset($_POST["add_package"])) {
+    if ($_POST['plugin_deploy_packages_id'] > 0) {
+        $task->check($_POST['plugin_deploy_tasks_id'], UPDATE);
+        $task_package = new Task_Package();
+        $task_package->add([
+            'plugin_deploy_tasks_id'    => (int) $_POST['plugin_deploy_tasks_id'],
+            'plugin_deploy_packages_id' => (int) $_POST['plugin_deploy_packages_id'],
+        ]);
+    }
+    Html::back();
+
 } else {
     Html::header(
         Task::getTypeName(Session::getPluralNumber()),

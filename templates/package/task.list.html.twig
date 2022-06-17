@@ -1,0 +1,37 @@
+<div class="container-fluid">
+    <div class="card card-sm search-card">
+        {% if tasks|length == 0 %}
+            <div class="alert alert-info mb-0 rounded-0 border-top-0 border-bottom-0 border-right-0 mb-0" role="alert">
+                {{ __("No task uses this package", 'deploy') }}
+            </div>
+        {% else %}
+            <div class="table-responsive">
+                <table class="search-results table table-hover table-card">
+                    <thead>
+                            <th>
+                                {{ __("Task name", 'deploy') }}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in tasks %}
+                            <tr>
+                                <td>
+                                    {% set task_icon = call("GlpiPlugin\\Deploy\\Task::getIcon") %}
+                                    {% set task_active = (task.fields['is_active'] == "1") %}
+                                    {% if not task_active %}
+                                        {% set task_icon = "ti ti-moon text-muted" %}
+                                    {% endif %}
+                                    <i class="{{ task_icon }} me-2"></i>
+                                    {{ task.getLink({
+                                        'linkoption': task_active ? "" : "class='link-muted' title='" ~ __("Task is not active", 'deploy') ~ "' data-bs-toggle='tooltip'",
+                                    })|raw }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+</div>

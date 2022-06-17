@@ -61,11 +61,11 @@ class Package extends CommonDBTM
             ->addStandardTab(Package_File::getType(), $ong, $options)
             ->addStandardTab(Package_Action::getType(), $ong, $options)
             ->addStandardTab(Package_UserInteraction::getType(), $ong, $options)
+            ->addStandardTab(Task_Package::getType(), $ong, $options)
             ->addStandardTab(__CLASS__, $ong, $options);
 
         return $ong;
     }
-
 
     public function showDebug()
     {

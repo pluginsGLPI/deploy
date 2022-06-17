@@ -41,6 +41,15 @@ class Task extends CommonDBTM
         return _n('Task', 'Tasks', $nb, 'deploy');
     }
 
+    public function defineTabs($options = [])
+    {
+        $tabs = [];
+        $this->addDefaultFormTab($tabs);
+        $this->addStandardTab(Task_Package::class, $tabs, $options);
+
+        return $tabs;
+    }
+
     public static function getIcon()
     {
         return 'ti ti-list-check';
