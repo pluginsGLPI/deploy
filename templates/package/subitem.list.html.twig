@@ -2,11 +2,18 @@
 {% set rand = random() %}
 
 <div class="container-fluid">
-    <div class="mb-2">
+    <div class="mb-2 d-flex justify-content-between">
         <button class="btn btn-primary mb-2" id="add_{{ subitem_type }}">
             <i class="{{ icon }}"></i>
             <span>{{ add_title }}</span>
         </button>
+
+        {% if not (subitem_type == "useralert") %}
+            <button class="btn btn-ghost-secondary next-tab">
+                <i class="ti ti-arrow-right"></i>
+                <span>{{ __("Next") }}</span>
+            </button>
+        {% endif %}
     </div>
 
     <form name="massaction_{{ rand }}" id="massaction_{{ rand }}" method="post"
@@ -116,6 +123,12 @@ $(document).ready(function() {
         });
 
         bs_modal.show();
+    });
+
+    $(".next-tab").on('click', function() {
+        const next_tab_el = $("#tabspanel li a.active").parent('li').next('li').find("a")[0];
+        const next_tab = new bootstrap.Tab(next_tab_el);
+        next_tab.show();
     });
 
     sortable('.sortable-subitems', {
