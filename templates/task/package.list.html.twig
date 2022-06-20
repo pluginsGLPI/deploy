@@ -1,145 +1,35 @@
 {% import 'components/form/fields_macros.html.twig' as fields %}
+{% extends "@deploy/task/subitem.list.html.twig" %}
 
-{% set rand = random() %}
+{% block subitem_form %}
+    {% set add_pkg_btn %}
+        <button class="btn btn-primary"
+                type="submit"
+                name="add_package">
+            <i class="{{ pkg_icon }}"></i>
+            <span>{{ __("Add package", 'deploy') }}</span>
+        </button>
+    {% endset %}
 
-{% set task_pkg_itemtype = "GlpiPlugin\\Deploy\\Task_Package" %}
-{% set pkg_itemtype = "GlpiPlugin\\Deploy\\Package" %}
-{% set pkg_icon = call("GlpiPlugin\\Deploy\\Package::getIcon") %}
-
-<div class="container-fluid">
-    <div class="mb-2">
-        {% if task_active == 0 %}
-            <form method="post" class="mb-2" action="{{ call("GlpiPlugin\\Deploy\\Task::getFormUrl()") }}">
-                <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}">
-                <input type="hidden" name="plugin_deploy_tasks_id" value="{{ task.fields['id'] }}">
-
-                <div class="d-flex justify-content-between">
-                    <div class="d-flex flex-grow-1">
-                        {% set add_pkg_btn %}
-                            <button class="btn btn-primary"
-                                    type="submit"
-                                    name="add_package">
-                                <i class="{{ pkg_icon }}"></i>
-                                <span>{{ __("Add package", 'deploy') }}</span>
-                            </button>
-                        {% endset %}
-
-                        {{ fields.dropdownField(
-                            'GlpiPlugin\\Deploy\\Package',
-                            'plugin_deploy_packages_id',
-                            0,
-                            '',
-                            {
-                                'full_width': true,
-                                'full_width_adapt_column': false,
-                                'is_horizontal': true,
-                                'label_class': '',
-                                'field_class': 'col-12',
-                                'mb': '',
-                                'add_field_html': add_pkg_btn,
-                                'condition': {
-                                    'is_active': 1,
-                                    'is_deleted': 0,
-                                },
-                                'width': '150px',
-                                'used': used,
-                            }
-                        ) }}
-                    </div>
-
-                    <button class="btn btn-ghost-secondary next-tab" type="button">
-                        <i class="ti ti-arrow-right"></i>
-                        <span>{{ __("Next") }}</span>
-                    </button>
-                </div>
-            </form>
-        {% else %}
-            <div class="alert alert-warning">
-                <i class="ti ti-alert-triangle"></i>
-                {{ __("You can't add packages to an active task", 'deploy') }}
-            </div>
-        {% endif %}
-    </div>
-
-    <form name="massaction_{{ rand }}" id="massaction_{{ rand }}" method="post"
-        action="{{ path('/front/massiveaction.php') }}" data-submit-once>
-        <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}">
-        <input type="hidden" name="action" value="purge">
-        <input type="hidden" name="action_name" value="purge">
-        <input type="hidden" name="processor" value="MassiveAction">
-
-        <div class="card card-sm search-card">
-            {% if packages|length == 0 %}
-                <div class="alert alert-info mb-0 rounded-0 border-top-0 border-bottom-0 border-right-0 mb-0" role="alert">
-                    {{ none_found }}
-                </div>
-            {% else %}
-                <div class="table-responsive">
-                    <table class="search-results table table-hover table-card" id="package_list_{{ rand }}">
-                        <thead>
-                            <tr>
-                                {% if task_active == 0 %}
-                                    <th style="width: 32px;">
-                                        <input class="form-check-input" type="checkbox" id="checkall_{{ rand }}"
-                                            value="" title="{{ __('Check all as') }}"
-                                            data-bs-toggle="tooltip"
-                                            onclick="checkAsCheckboxes('checkall_{{ rand }}', 'package_list_{{ rand }}');" />
-                                    </th>
-                                {% endif %}
-                                <th>
-                                    {{ __("Name") }}
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for tsk_pkg_id, package in packages %}
-                                <tr>
-                                    {% if task_active == 0 %}
-                                        <td>
-                                            {% set checked = session('glpimassiveactionselected')[task_pkg_itemtype][tsk_pkg_id] ?? false %}
-                                            <input type="checkbox" class="form-check-input"
-                                                name="items[{{ task_pkg_itemtype }}][{{ tsk_pkg_id }}]"
-                                                data-glpicore-ma-tags="common"
-                                                value="{{ tsk_pkg_id }}"
-                                                {% if checked %}checked="checked"{% endif %}>
-                                        </td>
-                                    {% endif %}
-                                    <td>
-                                        {% set pkg_active = (package.fields['is_active'] == "1") %}
-                                        {% if not pkg_active %}
-                                            {% set pkg_icon = "ti ti-alert-triangle text-warning" %}
-                                        {% endif %}
-
-                                        <i class="{{ pkg_icon }} me-1"></i>
-                                        {{ package.getLink({
-                                            'linkoption': pkg_active ? "" : "class='link-warning' title='" ~ __("Package is not active", 'deploy') ~ "' data-bs-toggle='tooltip'",
-                                        })|raw }}
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% endif %}
-
-        </div>
-
-        {% if packages|length > 0 and task_active == 0 %}
-            <button class="btn btn-sm btn-ghost-secondary my-1 ms-1" type="submit" value="massiveaction">
-                <i class="ti ti-corner-left-up mt-1"></i>
-                <span>{{ __("Delete") }}</span>
-            </button>
-        {% endif %}
-    </form>
-
-</div>
-
-<script type="text/javascript">
-$(document).ready(function() {
-    $(".next-tab").on('click', function() {
-        const next_tab_el = $("#tabspanel li a.active").parent('li').next('li').find("a")[0];
-        const next_tab = new bootstrap.Tab(next_tab_el);
-        next_tab.show();
-    });
-});
-</script>
+    {{ fields.dropdownField(
+        'GlpiPlugin\\Deploy\\Package',
+        'plugin_deploy_packages_id',
+        0,
+        '',
+        {
+            'full_width': true,
+            'full_width_adapt_column': false,
+            'is_horizontal': true,
+            'label_class': '',
+            'field_class': 'col-12',
+            'mb': '',
+            'add_field_html': add_pkg_btn,
+            'condition': {
+                'is_active': 1,
+                'is_deleted': 0,
+            },
+            'width': '150px',
+            'used': used,
+        }
+    ) }}
+{% endblock %}

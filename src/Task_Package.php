@@ -104,10 +104,11 @@ class Task_Package extends CommonDBRelation
 
         TemplateRenderer::getInstance()->display('@deploy/task/package.list.html.twig', [
             'task'        => $task,
-            'packages'    => $packages,
+            'subitems'    => $packages,
             'used'        => $used,
             'none_found'  => sprintf(__('No %s found', 'deploy'), Package::getTypeName(Session::getPluralNumber())),
             'task_active' => $task->fields['is_active'],
+            'ma_itemtype' => self::class,
         ]);
 
     }

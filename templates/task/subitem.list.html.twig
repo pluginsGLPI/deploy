@@ -1,0 +1,119 @@
+{% import 'components/form/fields_macros.html.twig' as fields %}
+
+{% set rand = random() %}
+
+{% set pkg_icon = call("GlpiPlugin\\Deploy\\Package::getIcon") %}
+
+<div class="container-fluid">
+    <div class="mb-2">
+        {% if task_active == 0 %}
+            <form method="post" class="mb-2" action="{{ call("GlpiPlugin\\Deploy\\Task::getFormUrl()") }}">
+                <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="plugin_deploy_tasks_id" value="{{ task.fields['id'] }}">
+
+                <div class="d-flex justify-content-between">
+                    <div class="d-flex flex-grow-1">
+                        {% block subitem_form %}
+
+                        {% endblock %}
+                    </div>
+
+                    {% if subitems|length > 0 %}
+                        <button class="btn btn-ghost-secondary next-tab" type="button">
+                            <i class="ti ti-arrow-right"></i>
+                            <span>{{ __("Next") }}</span>
+                        </button>
+                    {% endif %}
+                </div>
+            </form>
+        {% else %}
+            <div class="alert alert-warning">
+                <i class="ti ti-alert-triangle"></i>
+                {{ none_found }}
+            </div>
+        {% endif %}
+    </div>
+
+    <form name="massaction_{{ rand }}" id="massaction_{{ rand }}" method="post"
+        action="{{ path('/front/massiveaction.php') }}" data-submit-once>
+        <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="action" value="purge">
+        <input type="hidden" name="action_name" value="purge">
+        <input type="hidden" name="processor" value="MassiveAction">
+
+        <div class="card card-sm search-card">
+            {% if subitems|length == 0 %}
+                <div class="alert alert-info mb-0 rounded-0 border-top-0 border-bottom-0 border-right-0 mb-0" role="alert">
+                    {{ none_found }}
+                </div>
+            {% else %}
+                <div class="table-responsive">
+                    <table class="search-results table table-hover table-card" id="package_list_{{ rand }}">
+                        <thead>
+                            <tr>
+                                {% if task_active == 0 %}
+                                    <th style="width: 32px;">
+                                        <input class="form-check-input" type="checkbox" id="checkall_{{ rand }}"
+                                            value="" title="{{ __('Check all as') }}"
+                                            data-bs-toggle="tooltip"
+                                            onclick="checkAsCheckboxes('checkall_{{ rand }}', 'package_list_{{ rand }}');" />
+                                    </th>
+                                {% endif %}
+                                <th>
+                                    {{ __("Name") }}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for subitem_id, subitem in subitems %}
+                                <tr>
+                                    {% if task_active == 0 %}
+                                        <td>
+                                            {% set checked = session('glpimassiveactionselected')[ma_itemtype][subitem_id] ?? false %}
+                                            <input type="checkbox" class="form-check-input"
+                                                name="items[{{ ma_itemtype }}][{{ subitem_id }}]"
+                                                data-glpicore-ma-tags="common"
+                                                value="{{ subitem_id }}"
+                                                {% if checked %}checked="checked"{% endif %}>
+                                        </td>
+                                    {% endif %}
+                                    <td>
+                                        {% set subitem_active = ((subitem.fields['is_active'] ?? "1") == "1") %}
+                                        {% set subitem_icon = subitem.getIcon() %}
+                                        {% if not subitem_active %}
+                                            {% set subitem_icon = "ti ti-alert-triangle text-warning" %}
+                                        {% endif %}
+
+                                        <i class="{{ subitem_icon }} me-1"></i>
+                                        {{ subitem.getLink({
+                                            'linkoption': subitem_active ? "" : "class='link-warning' title='" ~ __("Item is not active", 'deploy') ~ "' data-bs-toggle='tooltip'",
+                                        })|raw }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+
+        </div>
+
+        {% if subitems|length > 0 and task_active == 0 %}
+            <button class="btn btn-sm btn-ghost-secondary my-1 ms-1" type="submit" value="massiveaction">
+                <i class="ti ti-corner-left-up mt-1"></i>
+                <span>{{ __("Delete") }}</span>
+            </button>
+        {% endif %}
+    </form>
+
+</div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $(".next-tab").on('click', function() {
+        const next_tab_el = $("#tabspanel li a.active").parent('li').next('li').find("a")[0];
+        const next_tab = new bootstrap.Tab(next_tab_el);
+        next_tab.show();
+    });
+});
+</script>

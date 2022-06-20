@@ -111,9 +111,11 @@ class Task_Target extends CommonDBRelation
 
         TemplateRenderer::getInstance()->display('@deploy/task/target.list.html.twig', [
             'task'        => $task,
-            'targets'     => $targets,
+            'subitems'    => $targets,
             'used'        => $used,
+            'none_found'  => __("No target found for this task", 'deploy'),
             'task_active' => $task->fields['is_active'],
+            'ma_itemtype' => self::class,
         ]);
     }
 
