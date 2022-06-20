@@ -55,6 +55,16 @@ class Task extends CommonDBTM
         return 'ti ti-list-check';
     }
 
+
+    public function cleanDBonPurge()
+    {
+        $this->deleteChildrenAndRelationsFromDb(
+            [
+                Task_Package::class,
+            ]
+        );
+    }
+
     public static function install(Migration $migration)
     {
         global $DB;

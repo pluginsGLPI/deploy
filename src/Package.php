@@ -239,6 +239,17 @@ class Package extends CommonDBTM
         return $tab;
     }
 
+
+    public function cleanDBonPurge()
+    {
+        $this->deleteChildrenAndRelationsFromDb(
+            [
+                Task_Package::class,
+            ]
+        );
+    }
+
+
     public static function install(Migration $migration)
     {
         global $DB;
