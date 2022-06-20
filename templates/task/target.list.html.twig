@@ -9,27 +9,34 @@
                 <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}">
                 <input type="hidden" name="plugin_deploy_tasks_id" value="{{ task.fields['id'] }}">
 
-                <div class="d-flex">
-                    {{ call(
-                        "Dropdown::showSelectItemFromItemtypes",
-                        [
-                            {
-                                'display': false,
-                                'itemtypes': call("GlpiPlugin\\Deploy\\Task_Target::getItemtypes"),
-                                'entity_restrict': task.fields['entities_id'],
-                                'ajax_page': '../ajax/dropdownTargets.php',
-                                'used': used,
-                                'disabled': true
-                            }
-                        ]
-                    )|raw }}
+                <div class="d-flex justify-content-between">
+                    <div class="d-flex">
+                        {{ call(
+                            "Dropdown::showSelectItemFromItemtypes",
+                            [
+                                {
+                                    'display': false,
+                                    'itemtypes': call("GlpiPlugin\\Deploy\\Task_Target::getItemtypes"),
+                                    'entity_restrict': task.fields['entities_id'],
+                                    'ajax_page': '../ajax/dropdownTargets.php',
+                                    'used': used,
+                                    'disabled': true
+                                }
+                            ]
+                        )|raw }}
 
-                    <button class="btn btn-primary"
-                            type="submit"
-                            name="add_target"
-                            {{ task_active == 1 ? "disabled" : "" }}>
-                        <i class="{{ call("GlpiPlugin\\Deploy\\Task_Target::getIcon") }}"></i>
-                        <span>{{ __("Add a new target", 'deploy') }}</span>
+                        <button class="btn btn-primary"
+                                type="submit"
+                                name="add_target"
+                                {{ task_active == 1 ? "disabled" : "" }}>
+                            <i class="{{ call("GlpiPlugin\\Deploy\\Task_Target::getIcon") }}"></i>
+                            <span>{{ __("Add a new target", 'deploy') }}</span>
+                        </button>
+                    </div>
+
+                    <button class="btn btn-ghost-secondary next-tab" type="button">
+                        <i class="ti ti-arrow-right"></i>
+                        <span>{{ __("Next") }}</span>
                     </button>
                 </div>
             </form>
@@ -106,3 +113,13 @@
         {% endif %}
     </form>
 </div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $(".next-tab").on('click', function() {
+        const next_tab_el = $("#tabspanel li a.active").parent('li').next('li').find("a")[0];
+        const next_tab = new bootstrap.Tab(next_tab_el);
+        next_tab.show();
+    });
+});
+</script>

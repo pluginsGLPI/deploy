@@ -13,36 +13,45 @@
                 <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}">
                 <input type="hidden" name="plugin_deploy_tasks_id" value="{{ task.fields['id'] }}">
 
-                {% set add_pkg_btn %}
-                    <button class="btn btn-primary"
-                            type="submit"
-                            name="add_package">
-                        <i class="{{ pkg_icon }}"></i>
-                        <span>{{ __("Add package", 'deploy') }}</span>
-                    </button>
-                {% endset %}
+                <div class="d-flex justify-content-between">
+                    <div class="d-flex flex-grow-1">
+                        {% set add_pkg_btn %}
+                            <button class="btn btn-primary"
+                                    type="submit"
+                                    name="add_package">
+                                <i class="{{ pkg_icon }}"></i>
+                                <span>{{ __("Add package", 'deploy') }}</span>
+                            </button>
+                        {% endset %}
 
-                {{ fields.dropdownField(
-                    'GlpiPlugin\\Deploy\\Package',
-                    'plugin_deploy_packages_id',
-                    0,
-                    '',
-                    {
-                        'full_width': true,
-                        'full_width_adapt_column': false,
-                        'is_horizontal': true,
-                        'label_class': '',
-                        'field_class': 'col-12',
-                        'mb': '',
-                        'add_field_html': add_pkg_btn,
-                        'condition': {
-                            'is_active': 1,
-                            'is_deleted': 0,
-                        },
-                        'width': '150px',
-                        'used': used,
-                    }
-                ) }}
+                        {{ fields.dropdownField(
+                            'GlpiPlugin\\Deploy\\Package',
+                            'plugin_deploy_packages_id',
+                            0,
+                            '',
+                            {
+                                'full_width': true,
+                                'full_width_adapt_column': false,
+                                'is_horizontal': true,
+                                'label_class': '',
+                                'field_class': 'col-12',
+                                'mb': '',
+                                'add_field_html': add_pkg_btn,
+                                'condition': {
+                                    'is_active': 1,
+                                    'is_deleted': 0,
+                                },
+                                'width': '150px',
+                                'used': used,
+                            }
+                        ) }}
+                    </div>
+
+                    <button class="btn btn-ghost-secondary next-tab" type="button">
+                        <i class="ti ti-arrow-right"></i>
+                        <span>{{ __("Next") }}</span>
+                    </button>
+                </div>
             </form>
         {% else %}
             <div class="alert alert-warning">
@@ -124,3 +133,13 @@
     </form>
 
 </div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $(".next-tab").on('click', function() {
+        const next_tab_el = $("#tabspanel li a.active").parent('li').next('li').find("a")[0];
+        const next_tab = new bootstrap.Tab(next_tab_el);
+        next_tab.show();
+    });
+});
+</script>
