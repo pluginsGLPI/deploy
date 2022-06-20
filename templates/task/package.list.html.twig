@@ -1,5 +1,7 @@
 {% import 'components/form/fields_macros.html.twig' as fields %}
 
+{% set rand = random() %}
+
 {% set task_pkg_itemtype = "GlpiPlugin\\Deploy\\Task_Package" %}
 {% set pkg_itemtype = "GlpiPlugin\\Deploy\\Package" %}
 {% set pkg_icon = call("GlpiPlugin\\Deploy\\Package::getIcon") %}
@@ -71,14 +73,14 @@
                 </div>
             {% else %}
                 <div class="table-responsive">
-                    <table class="search-results table table-hover table-card">
+                    <table class="search-results table table-hover table-card" id="package_list_{{ rand }}">
                         <thead>
                             <tr>
                                 <th style="width: 32px;">
                                     <input class="form-check-input" type="checkbox" id="checkall_{{ rand }}"
                                         value="" title="{{ __('Check all as') }}"
                                         data-bs-toggle="tooltip"
-                                        onclick="checkAsCheckboxes('checkall_{{ rand }}', '{{ table_id }}');" />
+                                        onclick="checkAsCheckboxes('checkall_{{ rand }}', 'package_list_{{ rand }}');" />
                                 </th>
                                 <th>
                                     {{ __("Name") }}
