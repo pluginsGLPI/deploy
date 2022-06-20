@@ -75,6 +75,17 @@ if (isset($_POST["add"])) {
         ]);
     }
     Html::back();
+} else if (isset($_POST["add_target"])) {
+    if ($_POST['items_id'] > 0) {
+        $task->check($_POST['plugin_deploy_tasks_id'], UPDATE);
+        $task_target = new Task_Target();
+        $result = $task_target->add([
+            'plugin_deploy_tasks_id' => (int) $_POST['plugin_deploy_tasks_id'],
+            'itemtype' => $_POST['itemtype'],
+            'items_id' => (int) $_POST['items_id'],
+        ]);
+    }
+    Html::back();
 } else {
     Html::header(
         Task::getTypeName(Session::getPluralNumber()),

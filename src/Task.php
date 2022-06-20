@@ -46,6 +46,7 @@ class Task extends CommonDBTM
         $tabs = [];
         $this->addDefaultFormTab($tabs);
         $this->addStandardTab(Task_Package::class, $tabs, $options);
+        $this->addStandardTab(Task_Target::class, $tabs, $options);
 
         return $tabs;
     }
@@ -61,6 +62,7 @@ class Task extends CommonDBTM
         $this->deleteChildrenAndRelationsFromDb(
             [
                 Task_Package::class,
+                Task_Target::class,
             ]
         );
     }
