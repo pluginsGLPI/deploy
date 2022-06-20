@@ -166,4 +166,12 @@ class Task_Package extends CommonDBRelation
             $DB->query($query) or die($DB->error());
         }
     }
+
+
+    public static function uninstall(Migration $migration)
+    {
+        $table = self::getTable();
+        $migration->displayMessage("Uninstalling $table");
+        $migration->dropTable($table);
+    }
 }
