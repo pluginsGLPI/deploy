@@ -65,6 +65,7 @@ class Package_File extends CommonDBTM
             'p2p_retention_days' => __('P2P Retention day', 'deploy'),
             'uncompress'         => __('Uncompress', 'deploy'),
             'sha512'             => __('SHA', 'deploy'),
+            'download'           => __('Download'),
         ];
     }
 
