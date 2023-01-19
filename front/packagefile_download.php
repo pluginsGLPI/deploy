@@ -80,7 +80,6 @@ if ($file_id > 0 && $package_file->getFromDB($file_id)) {
             header('Cache-Control: no-store');
             header('Content-Length: ' . $filesize);
 
-            Toolbox::logDebug($part_path);
             foreach ($part_path as $key => $path) {
                 readgzfile($path);
             }
