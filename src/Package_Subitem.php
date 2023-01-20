@@ -121,14 +121,14 @@ trait Package_Subitem
     }
 
 
-    public function getNextOrder()
+    public function getNextOrder(int $packages_id)
     {
         global $DB;
 
         $iterator = $DB->request([
-            'SELECT' => ['MAX' => 'order'],
+            'SELECT' => ['MAX' => 'order as order'],
             'FROM'   => self::getTable(),
-            'WHERE'  => ['plugin_deploy_packages_id' => $this->fields['plugin_deploy_packages_id']]
+            'WHERE'  => ['plugin_deploy_packages_id' => $packages_id]
         ]);
 
         if (count($iterator)) {

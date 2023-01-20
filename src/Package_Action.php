@@ -144,7 +144,7 @@ class Package_Action extends CommonDBTM
     public function prepareInputForAdd($input)
     {
         $input = $this->prepareJsonInput($input);
-        $input["order"] = $input['order'] ?? $this->getNextOrder();
+        $input["order"] = $input['order'] ?? $this->getNextOrder((int) $input['plugin_deploy_packages_id']);
 
         return $input;
     }

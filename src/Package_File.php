@@ -91,7 +91,7 @@ class Package_File extends CommonDBTM
             return false;
         }
 
-        $input["order"] = $input['order'] ?? $this->getNextOrder();
+        $input["order"] = $input['order'] ?? $this->getNextOrder((int) $input['plugin_deploy_packages_id']);
 
         return $input;
     }
