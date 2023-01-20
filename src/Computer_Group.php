@@ -254,7 +254,7 @@ class Computer_Group extends CommonDBTM
 
 
    static function getIcon() {
-      return "fas fa-list-alt";
+      return "fa-fw ti ti-device-laptop";
    }
 
 
