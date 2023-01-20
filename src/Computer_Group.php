@@ -154,9 +154,12 @@ class Computer_Group extends CommonDBTM
       $rand = mt_rand();
       echo "<tr><td><label for='textfield_name$rand'>".__('Name') . "</label></td>";
       echo "<td>";
-      Html::autocompletionTextField($this, 'name', ['value' => $this->fields["name"],
-                                                    'rand'  => $rand
-                                                   ]);
+      echo Html::input('name',
+         [
+            'value' => $this->fields["name"],
+            'rand'  => $rand
+         ]
+      );
       echo "<td><label for='comment$rand'>".__('Comment')."</label></td>";
       echo "<td>";
       echo "<textarea cols='45' rows='4' id='comment' name='comment' >".
