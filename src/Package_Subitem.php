@@ -121,7 +121,7 @@ trait Package_Subitem
     }
 
 
-    public function getNextOrder($packages_id)
+    public function getNextOrder(int $packages_id)
     {
         global $DB;
 
