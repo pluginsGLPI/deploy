@@ -63,8 +63,9 @@ function plugin_init_deploy()
 
     if (strpos($_SERVER['REQUEST_URI'] ?? '', Plugin::getPhpDir('deploy', false)) !== false) {
         $PLUGIN_HOOKS['add_css']['deploy'] = 'css/userinteraction.css';
-     }
+    }
 
+    Plugin::registerClass('GlpiPlugin\Deploy\Profile', ['addtabon' => ['Profile']]);
 }
 
 

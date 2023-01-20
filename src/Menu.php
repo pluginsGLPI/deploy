@@ -52,8 +52,12 @@ class Menu
             $links_class = [
                 Task::class,
                 Package::class,
-                Computer_Group::class,
             ];
+
+            if (Computer_Group::canCreate()) {
+                $links_class[] = Computer_Group::class;
+            }
+
             $links = [];
             foreach ($links_class as $link) {
                 $link_text = "<span class='d-none d-xxl-block'>" . $link::getTypeName(Session::getPluralNumber()) . "</span>";
@@ -93,14 +97,14 @@ class Menu
                 $menu['options']['task']['links']['add']   = Task::getFormURL(false);
             }
 
-            $menu['options']['computer_group'] = [
-                'title' => Computer_Group::getTypeName(Session::getPluralNumber()),
-                'page'  => Computer_Group::getSearchURL(false),
-                'icon'  => Computer_Group::getIcon(),
-                'links' => $links,
-            ];
-
             if (Computer_Group::canCreate()) {
+                $menu['options']['computer_group'] = [
+                    'title' => Computer_Group::getTypeName(Session::getPluralNumber()),
+                    'page'  => Computer_Group::getSearchURL(false),
+                    'icon'  => Computer_Group::getIcon(),
+                    'links' => $links,
+                ];
+
                 $add_link = Computer_Group::getFormURL(false);
                 $menu['options']['computer_group']['options']['add'] = Computer_Group::getFormURL(false);
                 $menu['options']['computer_group']['links']['add']   = Computer_Group::getFormURL(false);

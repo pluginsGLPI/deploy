@@ -33,7 +33,7 @@ use GlpiPlugin\Deploy\Computer_Group_Static;
 
 include ('../../../inc/includes.php');
 
-Session::checkRight("entity", READ);
+Session::checkRight("computer_group", READ);
 
 if (!isset($_GET["id"])) {
    $_GET["id"] = "";
@@ -68,8 +68,7 @@ if (isset($_POST["add"])) {
       Html::back();
    }
 
-   // TODO : add dedicated right
-   //$computergroupstatic->check(-1, CREATE, $_POST);
+   $computergroupstatic->check(-1, CREATE, $_POST);
    if ($newID = $computergroupstatic->add($_POST)) {
       Event::log($newID, "Computer_Group_Static", 4, "inventory",
                  sprintf(__('%1$s adds the item %2$s'), $_SESSION["glpiname"], $computergroupstatic::getTypeName(0)));

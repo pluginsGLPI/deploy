@@ -52,7 +52,7 @@ class Computer_Group_Static extends CommonDBRelation
    static public $logs_for_item_2     = false;
    public $auto_message_on_action     = false;
 
-   static    $rightname  = 'database_inventory';
+   static    $rightname  = 'computer_group';
 
 
    static function getTypeName($nb = 0) {
@@ -71,8 +71,7 @@ class Computer_Group_Static extends CommonDBRelation
 
 
    static function canPurge() {
-      //TODO : add dedicated right
-      //return Session::haveRight(static::$rightname, UPDATE);
+      return Session::haveRight(static::$rightname, UPDATE);
       return true;
    }
 

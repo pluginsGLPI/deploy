@@ -30,7 +30,7 @@ use GlpiPlugin\Deploy\Computer_Group;
 
 include ('../../../inc/includes.php');
 
-Session::checkRight("entity", UPDATE);
+Session::checkRight("computer_group", UPDATE);
 
 Html::header(
     Computer_Group::getTypeName(Session::getPluralNumber()),

@@ -40,7 +40,7 @@ class Computer_Group extends CommonDBTM
 {
 
    public    $dohistory  = true;
-   public static $rightname = 'entity';
+   public static $rightname = 'computer_group';
 
 
    static function getTypeName($nb = 0) {

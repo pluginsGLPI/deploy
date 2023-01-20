@@ -40,7 +40,7 @@ use Toolbox;
 
 class Computer_Group_Dynamic extends CommonDBTM
 {
-   static    $rightname  = 'entity';
+   static    $rightname  = 'computer_group';
 
    static function getTypeName($nb = 0) {
       return _n('Dynamic groups', 'Dynamic group', $nb, 'deploy');
