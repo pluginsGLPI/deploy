@@ -52,6 +52,7 @@ class Menu
             $links_class = [
                 Task::class,
                 Package::class,
+                Computer_Group::class,
             ];
             $links = [];
             foreach ($links_class as $link) {
@@ -91,6 +92,20 @@ class Menu
                 $menu['options']['task']['options']['add'] = Task::getFormURL(false);
                 $menu['options']['task']['links']['add']   = Task::getFormURL(false);
             }
+
+            $menu['options']['computer_group'] = [
+                'title' => Computer_Group::getTypeName(Session::getPluralNumber()),
+                'page'  => Computer_Group::getSearchURL(false),
+                'icon'  => Computer_Group::getIcon(),
+                'links' => $links,
+            ];
+
+            if (Computer_Group::canCreate()) {
+                $add_link = Computer_Group::getFormURL(false);
+                $menu['options']['computer_group']['options']['add'] = Computer_Group::getFormURL(false);
+                $menu['options']['computer_group']['links']['add']   = Computer_Group::getFormURL(false);
+            }
+
         }
 
         if (count($menu)) {
