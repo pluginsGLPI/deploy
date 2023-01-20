@@ -142,10 +142,9 @@ class Computer_Group_Static extends CommonDBRelation
                "condition" => ["is_dynamic" => true]
             ]
          );
-         echo "</td><td class='center' class='tab_bg_1'>";
 
          echo Html::hidden('plugin_deploy_computers_groups_id', ['value' => $ID]);
-         echo Html::submit(_x('button', 'Add'), ['name' => 'add_staticcomputer']);
+         echo Html::submit(_x('button', 'Add'), ['name' => 'add_staticcomputer', 'class' => 'btn btn-primary m-2']);
          echo "</td></tr>";
          echo "</table>";
          Html::closeForm();
