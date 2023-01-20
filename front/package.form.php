@@ -79,6 +79,11 @@ if (isset($_POST["add"])) {
     $file = new Package_File();
     $file->delete($_POST);
     Html::back();
+} else if (isset($_GET["download_file"])) {
+    $file_id = (int)($_GET["file_id"] ?? 0);
+    $file = new Package_File();
+    $file->downloadFile($file_id);
+    Html::back();
 } else if (isset($_POST["add_check"])) {
     unset($_POST['id']);
     $check = new Package_Check();

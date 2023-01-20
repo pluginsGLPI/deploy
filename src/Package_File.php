@@ -32,6 +32,7 @@ use CommonDBTM;
 use DBConnection;
 use DOMDocument;
 use FilesystemIterator;
+use Html;
 use Migration;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -228,6 +229,67 @@ class Package_File extends CommonDBTM
         }
 
         return $files;
+    }
+
+    public function downloadFile($file_id) {
+        session_write_close(); // unlock session to ensure GLPI is still usable while huge file downloads is done in background
+
+        $package_file = new Package_File();
+        if ($file_id > 0 && $package_file->getFromDB($file_id)) {
+
+            $mimetype = $package_file->fields['mimetype'];
+            $filesize = $package_file->fields['filesize'];
+            $filename = $package_file->fields['filename'];
+            $sha512 = $package_file->fields['sha512'];
+
+            $repository = new Repository_File(
+                $filename,
+                "",
+                $filesize,
+                $mimetype,
+                $sha512
+            );
+
+            if ($repository->isFileExists()) {
+                //get all repository file path
+                $part_path = $repository->getFilePath();
+                if ($filename != '' && $part_path !== false && count($part_path)) {
+                    // Make sure there is nothing in the output buffer (In case stuff was added by core or misbehaving plugin).
+                    // If there is any extra data, the sent file will be corrupted.
+                    // 1. Turn off any extra buffering level. Keep one buffering level if PHP output_buffering directive is not "off".
+                    $ob_config = ini_get('output_buffering');
+                    $max_buffering_level = $ob_config !== false && (strtolower($ob_config) === 'on' || (is_numeric($ob_config) && (int)$ob_config > 0))
+                        ? 1
+                        : 0;
+                    while (ob_get_level() > $max_buffering_level) {
+                        ob_end_clean();
+                    }
+                    // 2. Clean any buffered output in remaining level (output_buffering="on" case).
+                    if (ob_get_level() > 0) {
+                        ob_clean();
+                    }
+
+                    header('Content-Description: File Transfer');
+                    header('Content-Type: ' . ($mimetype ?: 'application/octet-stream'));
+                    header('Content-Disposition: attachment; filename=' . basename($filename));
+                    header('Content-Transfer-Encoding: binary');
+                    header_remove('Pragma');
+                    header('Cache-Control: no-store');
+                    header('Content-Length: ' . $filesize);
+
+                    foreach ($part_path as $key => $path) {
+                        readgzfile($path);
+                    }
+                } else {
+                    Html::displayErrorAndDie(__('An error occurs', 'deploy'), true);
+                }
+            } else {
+                Html::displayErrorAndDie(__('File not found', 'deploy'), true); // Not found
+            }
+        } else {
+            Html::displayErrorAndDie(__('File not found', 'deploy'), true); // Not found
+        }
+
     }
 
 

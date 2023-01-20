@@ -19,9 +19,11 @@
     </span>
 </td>
 <td>
+
+
 {% set plugin_path = call("Plugin::getWebDir", ['deploy']) %}
     <a
-    href="{{ plugin_path }}/front/packagefile_download.php?file_id={{ entry['id'] }}"
+    href="{{ plugin_path }}/front/package.form.php?download_file=1&file_id={{ entry['id'] }}"
     title='{{ __('Download', 'glpiinventory') }}'
     data-bs-toggle='tooltip'
     target='_blank' >
