@@ -130,10 +130,9 @@ if (isset($_POST["add"])) {
   );
 
    //show computergroup form to add
-   if ($_GET['id'] == "") {
-      $computergroup->showForm(-1, ['withtemplate' => $_GET["withtemplate"]]);
-   } else {
-      $computergroup->display($_GET);
-   }
+   $computergroup->display([
+      'id' => (int) $_GET["id"],
+   ]);
+
    Html::footer();
 }
