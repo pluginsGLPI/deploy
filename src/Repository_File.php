@@ -35,20 +35,30 @@ class Repository_File
     private $name         = "";
     private $path         = "";
     private $size         = "";
+    private $mimetype     = "";
     private $sha512       = "";
     private $short_sha512 = "";
     private $parts_sha512 = [];
 
 
-    public function __construct(string $name = "", string $path = "", int $size = 0, string $mimetype = "")
+    public function __construct(string $name = "", string $path = "", int $size = 0, string $mimetype = "", string $sha512 = "")
     {
         $this->name         = $name;
         $this->path         = $path;
         $this->size         = $size;
         $this->mimetype     = $mimetype;
+
         if (strlen($path) > 0) {
             $this->sha512       = hash_file('sha512', $path);
             $this->short_sha512 = substr($this->sha512, 0, 8);
+        } else if (strlen($sha512) > 0) {
+            $this->sha512       = $sha512;
+            $this->short_sha512 = substr($this->sha512, 0, 8);
+        } else {
+            trigger_error(
+                'Repository_File __construct expects to get \'path\' or \'sha512\' arguments, both are missing !!',
+                E_USER_WARNING
+            );
         }
     }
 
@@ -73,7 +83,7 @@ class Repository_File
         ];
     }
 
-    private function isFileExists(): bool {
+    public function isFileExists(): bool {
         // check a filename with sha512 exist in manifest path
         if (!file_exists(PLUGIN_DEPLOY_MANIFESTS_PATH . "/{$this->sha512}")) {
             return false;
@@ -168,5 +178,19 @@ class Repository_File
         $second = substr($sha512, 0, 2);
 
         return "$first/$second/" . ($with_filename ? trim($sha512, "\n") : "");
+    }
+
+
+    public function getFilePath()
+    {
+        $path = [];
+        $manifest = fopen(PLUGIN_DEPLOY_MANIFESTS_PATH . "/{$this->sha512}", "r");
+        $this->parts_sha512 = [];
+        while (($part_sha512 = fgets($manifest)) !== false) {
+            $this->parts_sha512[] = $part_sha512;
+            $path[] = PLUGIN_DEPLOY_PARTS_PATH . "/" . self::getRelativePathBySha512($part_sha512);
+        }
+
+        return $path;
     }
 }

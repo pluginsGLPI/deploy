@@ -18,3 +18,13 @@
         {{ entry['sha512'] }}
     </span>
 </td>
+<td>
+{% set plugin_path = call("Plugin::getWebDir", ['deploy']) %}
+    <a
+    href="{{ plugin_path }}/front/package.form.php?download_file=1&amp;file_id={{ entry['id'] }}"
+    title='{{ __('Download', 'glpiinventory') }}'
+    data-bs-toggle='tooltip'
+    target='_blank' >
+        <i class='ti ti-download'></i>
+    </a>
+</td>
