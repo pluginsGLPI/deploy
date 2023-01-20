@@ -71,7 +71,9 @@ class Computer_Group_Static extends CommonDBRelation
 
 
    static function canPurge() {
-      return Session::haveRight(static::$rightname, UPDATE);
+      //TODO : add dedicated right
+      //return Session::haveRight(static::$rightname, UPDATE);
+      return true;
    }
 
 
@@ -157,13 +159,13 @@ class Computer_Group_Static extends CommonDBRelation
       if ($canread) {
          echo "<div class='spaced'>";
          if ($canedit) {
-            Html::openMassiveActionsForm('mass'.__CLASS__.$rand);
+            Html::openMassiveActionsForm('mass'.'ComputerStatic'.$rand);
             $massiveactionparams= ['num_displayed'
                            => min($_SESSION['glpilist_limit'], $number),
                        'specific_actions'
                            => ['purge' => _x('button', 'Remove')],
                        'container'
-                           => 'mass'.__CLASS__.$rand];
+                           => 'mass'.'ComputerStatic'.$rand];
             Html::showMassiveActions($massiveactionparams);
          }
          echo "<table class='tab_cadre_fixehov'>";
@@ -173,9 +175,9 @@ class Computer_Group_Static extends CommonDBRelation
          $header_end    = '';
 
          if ($canedit) {
-            $header_top    .= "<th width='10'>".Html::getCheckAllAsCheckbox('mass'.__CLASS__.$rand);
+            $header_top    .= "<th width='10'>".Html::getCheckAllAsCheckbox('mass'.'ComputerStatic'.$rand);
             $header_top    .= "</th>";
-            $header_bottom .= "<th width='10'>".Html::getCheckAllAsCheckbox('mass'.__CLASS__.$rand);
+            $header_bottom .= "<th width='10'>".Html::getCheckAllAsCheckbox('mass'.'ComputerStatic'.$rand);
             $header_bottom .=  "</th>";
          }
 
