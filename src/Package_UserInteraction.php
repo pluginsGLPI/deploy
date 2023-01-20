@@ -138,7 +138,7 @@ class Package_UserInteraction extends CommonDBTM
 
     public function prepareInputForAdd($input)
     {
-        $input["order"] = $input['order'] ?? $this->getNextOrder();
+        $input["order"] = $input['order'] ?? $this->getNextOrder($input['plugin_deploy_packages_id']);
 
         return $input;
     }
