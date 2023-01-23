@@ -38,7 +38,7 @@ class Package_UserInteraction extends CommonDBTM
 
     public static $rightname = 'entity';
 
-    private const SUBITEM_TYPE = 'useralert';
+    private const SUBITEM_TYPE = 'userinteraction';
 
     public const BEFORE_DOWLOAD      = "before";
     public const AFTER_DOWLOAD       = "after_download";
@@ -76,7 +76,11 @@ class Package_UserInteraction extends CommonDBTM
     private static function getheadings(): array
     {
         return [
-            'name' => __('Label', 'deploy'),
+            'name'  => __('Label', 'deploy'),
+            'title' => __('Title', 'deploy'),
+            'text'  => __('Text', 'deploy'),
+            'type'  => __('Type', 'deploy'),
+            'icon'  => __('Icon', 'deploy'),
         ];
     }
 
@@ -135,6 +139,12 @@ class Package_UserInteraction extends CommonDBTM
         return $types[$type] ?? "";
     }
 
+    public static function getLabelForIcon(string $icon = null, bool $with_icon = false): string
+    {
+        $icons = self::getIcons($with_icon);
+        return $icons[$icon] ?? "";
+    }
+
 
     public function prepareInputForAdd($input)
     {
@@ -147,6 +157,15 @@ class Package_UserInteraction extends CommonDBTM
     public static function getFormattedArrayForPackage(Package $package): array
     {
         $alerts = [];
+        foreach (self::getForPackage($package) as $entry) {
+            $checks[$entry['id']] = [
+                'name'   => $entry['name'] ?? "",
+                'title'   => $entry['title'] ?? "",
+                'text'   => $entry['text'] ?? "",
+                'type'  => $entry['type'] ?? "",
+                'icon' => $entry['icon'] ?? "",
+            ];
+        }
 
         return $alerts;
     }
@@ -171,6 +190,7 @@ class Package_UserInteraction extends CommonDBTM
                 `title` varchar(255) DEFAULT NULL,
                 `text` text,
                 `type` varchar(50) DEFAULT NULL,
+                `interaction_type` varchar(50) DEFAULT NULL,
                 `icon` varchar(10) DEFAULT NULL,
                 `order` smallint unsigned NOT NULL DEFAULT '0',
                 `date_creation` timestamp NULL DEFAULT NULL,

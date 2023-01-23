@@ -18,13 +18,13 @@
 
     <div id="form-footer" class="{{ is_edit ? '' : 'd-none' }} modal-footer border-top pt-2">
         {% if is_edit %}
-            <button type="submit" class="btn btn-primary mx-1" name="edit_{{ subitem_type }}" value="1">
-                <i class="ti ti-device-floppy"></i>
-                <span>{{ _x('button', 'Save') }}</span>
-            </button>
             <button type="submit" class="btn btn-outline-danger mx-1" name="delete_{{ subitem_type }}" value="1">
                 <i class="ti ti-x"></i>
                 <span>{{ _x('button', 'Delete') }}</span>
+            </button>
+            <button type="submit" class="btn btn-primary mx-1" name="edit_{{ subitem_type }}" value="1">
+                <i class="ti ti-device-floppy"></i>
+                <span>{{ _x('button', 'Save') }}</span>
             </button>
         {% else %}
             <button type="submit" class="btn btn-primary mx-1" name="add_{{ subitem_type }}" value="1">

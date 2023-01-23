@@ -72,7 +72,7 @@ function plugin_init_deploy()
 function plugin_version_deploy()
 {
     return [
-        'name'           => 'deploy',
+        'name'           => 'Deploy',
         'version'        => PLUGIN_DEPLOY_VERSION,
         'author'         => '<a href="http://www.teclib.com">Teclib\'</a>',
         'license'        => '',
