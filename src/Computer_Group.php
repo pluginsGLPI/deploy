@@ -31,6 +31,7 @@ namespace GlpiPlugin\Deploy;
 use CommonDBTM;
 use Computer;
 use DisplayPreference;
+use Glpi\Application\View\TemplateRenderer;
 use Html;
 use Migration;
 use Search;
@@ -146,29 +147,20 @@ class Computer_Group extends CommonDBTM
    }
 
 
-   function showForm($ID, $options = []) {
-      $rand = mt_rand();
-      $this->initForm($ID, $options);
-      $this->showFormHeader($options);
+   public function showForm($id, array $options = [])
+   {
+         if (!empty($id)) {
+            $this->getFromDB($id);
+         } else {
+            $this->getEmpty();
+         }
+         $this->initForm($id, $options);
 
-      $rand = mt_rand();
-      echo "<tr><td><label for='textfield_name$rand'>".__('Name') . "</label></td>";
-      echo "<td>";
-      echo Html::input('name',
-         [
-            'value' => $this->fields["name"],
-            'rand'  => $rand
-         ]
-      );
-      echo "<td><label for='comment$rand'>".__('Comment')."</label></td>";
-      echo "<td>";
-      echo "<textarea cols='45' rows='4' id='comment' name='comment' >".
-      $this->fields["comment"];
-      echo "</textarea>";
-      echo "</td></tr>";
-
-      $this->showFormButtons($options);
-      return true;
+         TemplateRenderer::getInstance()->display('@deploy/computer_group/computer_group.html.twig', [
+            'item'         => $this,
+            'params'       => $options,
+         ]);
+         return true;
    }
 
    function countDynamicItem() {

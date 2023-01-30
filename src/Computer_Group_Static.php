@@ -33,6 +33,7 @@ use CommonGLPI;
 use Computer;
 use Dropdown;
 use Entity;
+use Glpi\Application\View\TemplateRenderer;
 use Html;
 use Migration;
 use Search;
@@ -98,8 +99,20 @@ class Computer_Group_Static extends CommonDBRelation
    }
 
 
+   private static function getheadings(): array
+   {
+       return [
+         'name' => __('Name'),
+         'is_dynamic' => __('Automatic inventory'),
+         'entities_id' => Entity::getTypeName(1),
+         'serial' => __('Serial number'),
+         'otherserial' => __('Inventory number'),
+       ];
+   }
+
+
    static function showForItem(Computer_Group $computergroup) {
-      global $DB;
+      global $DB, $CFG_GLPI;
 
       $ID = $computergroup->getField('id');
       if (!$computergroup->can($ID, UPDATE)) {
@@ -119,39 +132,57 @@ class Computer_Group_Static extends CommonDBRelation
          $datas[] = $data;
          $used [] = $data['computers_id'];
       }
-      $number = count($datas);
 
-      echo "<div class='spaced'>";
       if ($computergroup->canAddItem('itemtype')) {
-         $rand = mt_rand();
-         echo "<div class='firstbloc'>";
-         echo "<form method='post' name='staticcomputer_form$rand'
-                     id='staticcomputer$rand'
-                     action='" . Toolbox::getItemTypeFormURL("GlpiPlugin\Deploy\Computer_Group") . "'>";
-
-         echo "<table class='tab_cadre_fixe'>";
-         echo "<tr class='tab_bg_2'>";
-         echo "<th colspan='2'>" . __('Add an item') . "</th></tr>";
-
-         echo "<tr class='tab_bg_1'><td class='left'>";
-         Dropdown::show("Computer",
-            [
-               "name" => "computers_id",
-               "used" => $used,
-               "condition" => ["is_dynamic" => true]
-            ]
-         );
-
-         echo Html::hidden('plugin_deploy_computers_groups_id', ['value' => $ID]);
-         echo Html::submit(_x('button', 'Add'), ['name' => 'add_staticcomputer', 'class' => 'btn btn-primary m-2']);
-         echo "</td></tr>";
-         echo "</table>";
-         Html::closeForm();
-         echo "</div>";
+         TemplateRenderer::getInstance()->display('@deploy/computer_group/computer_group_static.html.twig', [
+            'form_action'  => Toolbox::getItemTypeFormURL("GlpiPlugin\Deploy\Computer_Group"),
+            'computers_groups_id' => $ID,
+            'computer_used' => $used,
+            'params'       => [],
+         ]);
       }
-      echo "</div>";
 
       $canread = $computergroup->can($ID, READ);
+      $rows = [];
+      if ($canread) {
+        foreach ($datas as $data) {
+            $row = [];
+
+            $computer = new Computer();
+            $computer->getFromDB($data["computers_id"]);
+            $linkname = $computer->fields["name"];
+            $itemtype = Computer::getType();
+            if ($_SESSION["glpiis_ids_visible"] || empty($computer->fields["name"])) {
+               $linkname = sprintf(__('%1$s (%2$s)'), $linkname, $computer->fields["id"]);
+            }
+            $link = $itemtype::getFormURLWithID($computer->fields["id"]);
+            $name = "<a href=\"".$link."\">".$linkname."</a>";
+
+            $row['name'] = $name;
+            $row['id'] = $data["id"];
+            $row['is_deleted'] = $computer->fields["is_deleted"];
+            $row['is_dynamic'] = Dropdown::getYesNo($computer->fields['is_dynamic']);
+            $row['entity'] = Dropdown::getDropdownName("glpi_entities", $computer->fields['entities_id']);
+            $row['serial'] = (isset($computer->fields["serial"])? "".$computer->fields["serial"]."" :"-");
+            $row['otherserial'] = (isset($computer->fields["otherserial"])? "".$computer->fields["otherserial"]."" :"-");
+            $rows[] = $row;
+      }
+
+      TemplateRenderer::getInstance()->display('@deploy/computer_group/computer_group_static_list.html.twig', [
+         'subitem_type'                      => 'ComputerGroupStatic',
+         'itemtype'                  => self::getType(),
+         'plugin_deploy_computers_groups_id' => $ID,
+         'count'                     => count($rows),
+         'entries'                   => $rows,
+         'none_found'                => sprintf(__('No %s found', 'deploy'), self::getTypeName(Session::getPluralNumber())),
+         'headings'                  => self::getheadings(),
+      ]);
+
+      }
+
+
+
+      /*$canread = $computergroup->can($ID, READ);
       $canedit = $computergroup->can($ID, UPDATE);
       echo "<div class='spaced'>";
       if ($canread) {
@@ -228,7 +259,7 @@ class Computer_Group_Static extends CommonDBRelation
          }
          echo "</div>";
       }
-      echo "</div>";
+      echo "</div>";*/
       return true;
    }
 
