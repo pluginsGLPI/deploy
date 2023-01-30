@@ -242,11 +242,11 @@ class Computer_Group_Dynamic extends CommonDBTM
             $data['search']['is_deleted'] = false;
             Search::displayData($data);
 
-            //remove trashbin switch
+            //remove search header(trashbin / map switch)
             echo Html::scriptBlock("
                $(document).ready(
                   function() {
-                     $('div.switch.grey_border').hide();
+                     $('div.search-header').remove();
                   }
                );
             ");
