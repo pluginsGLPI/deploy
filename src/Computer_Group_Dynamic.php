@@ -197,7 +197,6 @@ class Computer_Group_Dynamic extends CommonDBTM
       }
 
       $canedit = $computergroup->canEdit($ID);
-      echo "<div class='spaced'>";
       if ($canedit) {
 
          $firsttime = true;
@@ -252,7 +251,6 @@ class Computer_Group_Dynamic extends CommonDBTM
                );
             ");
          }
-         echo "</div>";
       }
 
       return true;
