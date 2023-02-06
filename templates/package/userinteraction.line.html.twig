@@ -7,6 +7,7 @@
 <td>{{ entry['title'] }}</td>
 <td>{{ entry['text'] }}</td>
 <td>{{ call("GlpiPlugin\\Deploy\\Package_UserInteraction::getLabelForType", [entry['type']]) }}</td>
+<td>{{ call("GlpiPlugin\\Deploy\\Package_UserInteraction::getLabelForInteractionType", [entry['interaction_type']]) }}</td>
 <td>
    <span> {{ call("GlpiPlugin\\Deploy\\Package_UserInteraction::getLabelForIcon", [entry['icon'], 'true'])|raw }} </span>
 </td>

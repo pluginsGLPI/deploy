@@ -76,11 +76,12 @@ class Package_UserInteraction extends CommonDBTM
     private static function getheadings(): array
     {
         return [
-            'name'  => __('Label', 'deploy'),
-            'title' => __('Title', 'deploy'),
-            'text'  => __('Text', 'deploy'),
-            'type'  => __('Type', 'deploy'),
-            'icon'  => __('Icon', 'deploy'),
+            'name'              => __('Label', 'deploy'),
+            'title'             => __('Title', 'deploy'),
+            'text'              => __('Text', 'deploy'),
+            'type'              => __('Type', 'deploy'),
+            'interaction_type'  => __('Interaction type', 'deploy'),
+            'icon'              => __('Icon', 'deploy'),
         ];
     }
 
@@ -132,6 +133,11 @@ class Package_UserInteraction extends CommonDBTM
         ];
     }
 
+    public static function getLabelForInteractionType(string $type = null): string
+    {
+        $types = self::getInteractionTypes();
+        return $types[$type] ?? "";
+    }
 
     public static function getLabelForType(string $type = null, bool $with_icon = false): string
     {
