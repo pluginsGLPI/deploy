@@ -192,9 +192,14 @@ class Package_UserInteraction extends CommonDBTM
 
     public static function Tryit(array $values)
     {
-        $values['text'] = RichText::getEnhancedHtml($values['text']);
+        $entry = [];
+        $entry['title'] = $values['title'] ?? '';
+        $entry['text'] = $values['text'] ?? '';
+        $entry['interaction_type'] = $values['interaction_type'] ?? '';
+        $entry['icon'] = $values['icon'] ?? '';
+
         echo TemplateRenderer::getInstance()->render('@deploy/package/userinteraction.tryit.html.twig', [
-            'entry'     => $values
+            'entry'     => $entry
         ]);
     }
 
