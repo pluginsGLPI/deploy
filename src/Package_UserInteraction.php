@@ -178,11 +178,11 @@ class Package_UserInteraction extends CommonDBTM
         $alerts = [];
         foreach (self::getForPackage($package) as $entry) {
             $checks[$entry['id']] = [
-                'name'   => $entry['name'] ?? "",
-                'title'   => $entry['title'] ?? "",
-                'text'   => $entry['text'] ?? "",
+                'name'  => $entry['name'] ?? "",
+                'title' => $entry['title'] ?? "",
+                'text'  => $entry['text'] ?? "",
                 'type'  => $entry['type'] ?? "",
-                'icon' => $entry['icon'] ?? "",
+                'icon'  => $entry['icon'] ?? "",
             ];
         }
 
