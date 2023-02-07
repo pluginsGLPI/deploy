@@ -1,0 +1,51 @@
+/*!
+ * -------------------------------------------------------------------------
+ * Deploy plugin for GLPI
+ * Copyright (C) 2022 by the Deploy Development Team.
+ *
+ * https://github.com/pluginsGLPI/deploy
+ * -------------------------------------------------------------------------
+ *
+ * LICENSE
+ *
+ * This file is part of Deploy.
+ *
+ * Deploy is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * Deploy is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Deploy. If not, see <http://www.gnu.org/licenses/>.
+ * -------------------------------------------------------------------------
+ */
+
+ .modal-dialog.preview {
+  display: block;
+  width: 100%;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.4285714286;
+  color: inherit;
+  background-color: #fdfdfd;
+  background-clip: padding-box;
+  border: 1px solid #d9dbde;
+  appearance: none;
+  border-radius: 4px;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.modal-title-preview {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.4285714286;
+}
+
+.modal-title-preview > p {
+  margin: auto;
+}

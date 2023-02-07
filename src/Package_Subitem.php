@@ -34,7 +34,6 @@ use DBmysqlIterator;
 use Glpi\Application\View\TemplateRenderer;
 use Migration;
 use Session;
-use Toolbox;
 
 trait Package_Subitem
 {

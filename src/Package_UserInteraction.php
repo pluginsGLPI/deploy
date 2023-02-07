@@ -30,7 +30,10 @@ namespace GlpiPlugin\Deploy;
 
 use CommonDBTM;
 use DBConnection;
+use Glpi\Application\View\TemplateRenderer;
+use Glpi\RichText\RichText;
 use Migration;
+use Toolbox;
 
 class Package_UserInteraction extends CommonDBTM
 {
@@ -118,20 +121,21 @@ class Package_UserInteraction extends CommonDBTM
     }
 
 
-    public static function getIcons(bool $with_icon = false): array
+    public static function getIcons(bool $with_icon = false, bool $with_label = true, string $size_icon = ''): array
     {
         return [
             self::ICON_NONE     => __('None', 'deploy'),
-            self::ICON_WARNING  => ($with_icon ? '<i class="fa-fw me-1 text-warning ti ti-alert-triangle"></i>' : "")
-                                   . __('Warning', 'deploy'),
-            self::ICON_INFO     => ($with_icon ? '<i class="fa-fw me-1 text-info ti ti-info-circle"></i>' : "")
-                                   . __('Information', 'deploy'),
-            self::ICON_ERROR    => ($with_icon ? '<i class="fa-fw me-1 text-danger ti ti-alert-octagon"></i>' : "")
-                                   . __('Error', 'deploy'),
-            self::ICON_QUESTION => ($with_icon ? '<i class="fa-fw me-1 ti ti-question-mark"></i>' : "")
-                                   . __('Question', 'deploy'),
+            self::ICON_WARNING  => ($with_icon ? '<i class="' . $size_icon . ' fa-fw me-1 text-warning ti ti-alert-triangle"></i>' : "")
+                                   . ($with_label ? __('Warning', 'deploy') : ''),
+            self::ICON_INFO     => ($with_icon ? '<i class="' . $size_icon . ' fa-fw me-1 text-info ti ti-info-circle"></i>' : "")
+                                   . ($with_label ? __('Information', 'deploy') : ''),
+            self::ICON_ERROR    => ($with_icon ? '<i class="' . $size_icon . ' fa-fw me-1 text-danger ti ti-alert-octagon"></i>' : "")
+                                   . ($with_label ? __('Error', 'deploy') : ''),
+            self::ICON_QUESTION => ($with_icon ? '<i class="' . $size_icon . ' fa-fw me-1 ti ti-question-mark"></i>' : "")
+                                   . ($with_label ? __('Question', 'deploy') : ''),
         ];
     }
+
 
     public static function getLabelForInteractionType(string $type = null): string
     {
@@ -139,15 +143,24 @@ class Package_UserInteraction extends CommonDBTM
         return $types[$type] ?? "";
     }
 
+
     public static function getLabelForType(string $type = null, bool $with_icon = false): string
     {
         $types = self::getTypes($with_icon);
         return $types[$type] ?? "";
     }
 
-    public static function getLabelForIcon(string $icon = null, bool $with_icon = false): string
+
+    public static function getLabelForIcon(string $icon = null): string
     {
-        $icons = self::getIcons($with_icon);
+        $icons = self::getIcons(false, true);
+        return $icons[$icon] ?? "";
+    }
+
+
+    public static function getIconForLabel(string $icon = null, $size = ''): string
+    {
+        $icons = self::getIcons(true, false, $size);
         return $icons[$icon] ?? "";
     }
 
@@ -174,6 +187,15 @@ class Package_UserInteraction extends CommonDBTM
         }
 
         return $alerts;
+    }
+
+
+    public static function Tryit(array $values)
+    {
+        $values['text'] = RichText::getEnhancedHtml($values['text']);
+        echo TemplateRenderer::getInstance()->render('@deploy/package/userinteraction.tryit.html.twig', [
+            'entry'     => $values
+        ]);
     }
 
 

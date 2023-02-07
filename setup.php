@@ -60,6 +60,11 @@ function plugin_init_deploy()
         'tools' => 'GlpiPlugin\Deploy\Menu',
     ];
     $PLUGIN_HOOKS['config_page']['deploy'] = 'front/task.php';
+
+    if (strpos($_SERVER['REQUEST_URI'] ?? '', Plugin::getPhpDir('deploy', false)) !== false) {
+        $PLUGIN_HOOKS['add_css']['deploy'] = 'css/deploy.css';
+     }
+
 }
 
 
