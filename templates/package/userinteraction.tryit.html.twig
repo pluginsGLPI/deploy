@@ -14,28 +14,28 @@
         </div>
         <div class="modal-footer">
             {% if entry['interaction_type'] == 'ok' or entry['interaction_type'] == 'ok_sync' %}
-                <button type="button"  class="btn btn-primary">OK</button>
+                <button type="button"  class="btn">OK</button>
             {% elseif entry['interaction_type'] == 'okcancel' %}
-                <button type="button" class="btn btn-primary">OK</button>
-                <button type="button" class="btn btn-primary btn-danger">Cancel</button>
+                <button type="button" class="btn">OK</button>
+                <button type="button" class="btn">Cancel</button>
             {% elseif entry['interaction_type'] == 'yesno' %}
-                <button type="button" class="btn btn-primary">Yes</button>
-                <button type="button" class="btn btn-primary btn-danger">No</button>
+                <button type="button" class="btn">Yes</button>
+                <button type="button" class="btn ">No</button>
             {% elseif entry['interaction_type'] == 'abortretryignore' %}
-                <button type="button" class="btn btn-primary btn-danger">Abort</button>
-                <button type="button" class="btn btn-primary">Retry</button>
-                <button type="button" class="btn btn-primary btn-danger">Ignore</button>
+                <button type="button" class="btn ">Abort</button>
+                <button type="button" class="btn">Retry</button>
+                <button type="button" class="btn ">Ignore</button>
             {% elseif entry['interaction_type'] == 'retrycancel' %}
-                <button type="button" class="btn btn-primary">Retry</button>
-                <button type="button" class="btn btn-primary btn-danger">Cancel</button>
+                <button type="button" class="btn">Retry</button>
+                <button type="button" class="btn ">Cancel</button>
             {% elseif entry['interaction_type'] == 'canceltrycontinue' %}
-                <button type="button" class="btn btn-primary btn-danger">Cancel</button>
-                <button type="button" class="btn btn-primary">Try</button>
-                <button type="button" class="btn btn-primary">Continue</button>
+                <button type="button" class="btn ">Cancel</button>
+                <button type="button" class="btn">Try</button>
+                <button type="button" class="btn">Continue</button>
             {% elseif entry['interaction_type'] == 'yesnocancel' %}
-                <button type="button" class="btn btn-primary">Yes</button>
-                <button type="button" class="btn btn-primary btn-danger">No</button>
-                <button type="button" class="btn btn-primary btn-danger">Cancel</button>
+                <button type="button" class="btn">Yes</button>
+                <button type="button" class="btn ">No</button>
+                <button type="button" class="btn ">Cancel</button>
             {% endif %}
         </div>
     </div>
