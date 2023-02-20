@@ -30,7 +30,10 @@ namespace GlpiPlugin\Deploy;
 
 use CommonDBTM;
 use DBConnection;
+use Glpi\Application\View\TemplateRenderer;
+use Glpi\RichText\RichText;
 use Migration;
+use Toolbox;
 
 class Package_UserInteraction extends CommonDBTM
 {
@@ -38,7 +41,7 @@ class Package_UserInteraction extends CommonDBTM
 
     public static $rightname = 'entity';
 
-    private const SUBITEM_TYPE = 'useralert';
+    private const SUBITEM_TYPE = 'userinteraction';
 
     public const BEFORE_DOWLOAD      = "before";
     public const AFTER_DOWLOAD       = "after_download";
@@ -76,7 +79,12 @@ class Package_UserInteraction extends CommonDBTM
     private static function getheadings(): array
     {
         return [
-            'name' => __('Label', 'deploy'),
+            'name'              => __('Label', 'deploy'),
+            'title'             => __('Title', 'deploy'),
+            'text'              => __('Text', 'deploy'),
+            'type'              => __('Type', 'deploy'),
+            'interaction_type'  => __('Interaction type', 'deploy'),
+            'icon'              => __('Icon', 'deploy'),
         ];
     }
 
@@ -113,19 +121,26 @@ class Package_UserInteraction extends CommonDBTM
     }
 
 
-    public static function getIcons(bool $with_icon = false): array
+    public static function getIcons(bool $with_icon = false, bool $with_label = true, string $size_icon = ''): array
     {
         return [
             self::ICON_NONE     => __('None', 'deploy'),
-            self::ICON_WARNING  => ($with_icon ? '<i class="fa-fw me-1 text-warning ti ti-alert-triangle"></i>' : "")
-                                   . __('Warning', 'deploy'),
-            self::ICON_INFO     => ($with_icon ? '<i class="fa-fw me-1 text-info ti ti-info-circle"></i>' : "")
-                                   . __('Information', 'deploy'),
-            self::ICON_ERROR    => ($with_icon ? '<i class="fa-fw me-1 text-danger ti ti-alert-octagon"></i>' : "")
-                                   . __('Error', 'deploy'),
-            self::ICON_QUESTION => ($with_icon ? '<i class="fa-fw me-1 ti ti-question-mark"></i>' : "")
-                                   . __('Question', 'deploy'),
+            self::ICON_WARNING  => ($with_icon ? '<i class="' . $size_icon . ' fa-fw me-1 text-warning ti ti-alert-triangle"></i>' : "")
+                                   . ($with_label ? __('Warning', 'deploy') : ''),
+            self::ICON_INFO     => ($with_icon ? '<i class="' . $size_icon . ' fa-fw me-1 text-info ti ti-info-circle"></i>' : "")
+                                   . ($with_label ? __('Information', 'deploy') : ''),
+            self::ICON_ERROR    => ($with_icon ? '<i class="' . $size_icon . ' fa-fw me-1 text-danger ti ti-alert-octagon"></i>' : "")
+                                   . ($with_label ? __('Error', 'deploy') : ''),
+            self::ICON_QUESTION => ($with_icon ? '<i class="' . $size_icon . ' fa-fw me-1 ti ti-question-mark"></i>' : "")
+                                   . ($with_label ? __('Question', 'deploy') : ''),
         ];
+    }
+
+
+    public static function getLabelForInteractionType(string $type = null): string
+    {
+        $types = self::getInteractionTypes();
+        return $types[$type] ?? "";
     }
 
 
@@ -133,6 +148,20 @@ class Package_UserInteraction extends CommonDBTM
     {
         $types = self::getTypes($with_icon);
         return $types[$type] ?? "";
+    }
+
+
+    public static function getLabelForIcon(string $icon = null): string
+    {
+        $icons = self::getIcons(false, true);
+        return $icons[$icon] ?? "";
+    }
+
+
+    public static function getIconForLabel(string $icon = null, $size = ''): string
+    {
+        $icons = self::getIcons(true, false, $size);
+        return $icons[$icon] ?? "";
     }
 
 
@@ -147,8 +176,31 @@ class Package_UserInteraction extends CommonDBTM
     public static function getFormattedArrayForPackage(Package $package): array
     {
         $alerts = [];
+        foreach (self::getForPackage($package) as $entry) {
+            $checks[$entry['id']] = [
+                'name'  => $entry['name'] ?? "",
+                'title' => $entry['title'] ?? "",
+                'text'  => $entry['text'] ?? "",
+                'type'  => $entry['type'] ?? "",
+                'icon'  => $entry['icon'] ?? "",
+            ];
+        }
 
         return $alerts;
+    }
+
+
+    public static function Tryit(array $values)
+    {
+        $entry = [];
+        $entry['title'] = $values['title'] ?? '';
+        $entry['text'] = $values['text'] ?? '';
+        $entry['interaction_type'] = $values['interaction_type'] ?? '';
+        $entry['icon'] = $values['icon'] ?? '';
+
+        echo TemplateRenderer::getInstance()->render('@deploy/package/userinteraction.tryit.html.twig', [
+            'entry'     => $entry
+        ]);
     }
 
 
@@ -171,6 +223,7 @@ class Package_UserInteraction extends CommonDBTM
                 `title` varchar(255) DEFAULT NULL,
                 `text` text,
                 `type` varchar(50) DEFAULT NULL,
+                `interaction_type` varchar(50) DEFAULT NULL,
                 `icon` varchar(10) DEFAULT NULL,
                 `order` smallint unsigned NOT NULL DEFAULT '0',
                 `date_creation` timestamp NULL DEFAULT NULL,

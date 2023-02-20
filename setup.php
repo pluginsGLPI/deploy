@@ -60,6 +60,11 @@ function plugin_init_deploy()
         'tools' => 'GlpiPlugin\Deploy\Menu',
     ];
     $PLUGIN_HOOKS['config_page']['deploy'] = 'front/task.php';
+
+    if (strpos($_SERVER['REQUEST_URI'] ?? '', Plugin::getPhpDir('deploy', false)) !== false) {
+        $PLUGIN_HOOKS['add_css']['deploy'] = 'css/userinteraction.css';
+     }
+
 }
 
 
@@ -72,7 +77,7 @@ function plugin_init_deploy()
 function plugin_version_deploy()
 {
     return [
-        'name'           => 'deploy',
+        'name'           => 'Deploy',
         'version'        => PLUGIN_DEPLOY_VERSION,
         'author'         => '<a href="http://www.teclib.com">Teclib\'</a>',
         'license'        => '',

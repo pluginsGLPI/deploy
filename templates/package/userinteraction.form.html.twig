@@ -1,0 +1,126 @@
+{% import 'components/form/fields_macros.html.twig' as fields %}
+
+<div class="modal-body">
+  <div class="row">
+    <div class="col-md">
+      {{ fields.textField(
+            'name',
+            subitem_instance.fields['name'],
+            __("Label", 'deploy') ~ '<i class="ms-2 ti ti-tag"></i>',
+            field_options|merge({
+                mb: 'mb-4',
+            })
+        ) }}
+
+        {{ fields.textField(
+            'title',
+            subitem_instance.fields['title'],
+            __("Title", 'deploy') ~ '<i class="ms-2 ti ti-tag"></i>',
+            field_options
+        ) }}
+
+        {{ fields.textareaField(
+                'text',
+                subitem_instance.fields['text']|join("\n"),
+                __("Text", 'deploy') ~ '<i class="ms-2 action-icon-type ti ti-blockquote"></i>',
+                field_options
+            ) }}
+
+        {% set type_field %}
+            <select class="form-select" id="type" name="type">
+                <option value="">--</option>
+                {% for type_key, type in call("GlpiPlugin\\Deploy\\Package_UserInteraction::getTypes") %}
+                    <option value="{{ type_key }}" {{ subitem_instance.fields['type'] == type_key ? "selected" : "" }}>
+                        {{ type }}
+                    </option>
+                {% endfor %}
+            </select>
+        {% endset %}
+        {{ fields.field(
+            'type',
+            type_field,
+            __("Type", 'deploy') ~ '<i class="ms-2 ' ~ call("GlpiPlugin\\Deploy\\Package_UserInteraction::getIcon") ~ '"></i>',
+            field_options
+        ) }}
+
+        {% set interaction_type_field %}
+            <select class="form-select" id="interaction_type" name="interaction_type">
+                <option value="">--</option>
+                {% for interaction_type_key, interaction_type in call("GlpiPlugin\\Deploy\\Package_UserInteraction::getInteractionTypes") %}
+                    <option value="{{ interaction_type_key }}" {{ subitem_instance.fields['interaction_type'] == interaction_type_key ? "selected" : "" }}>
+                        {{ interaction_type }}
+                    </option>
+                {% endfor %}
+            </select>
+        {% endset %}
+        {{ fields.field(
+            'type',
+            interaction_type_field,
+            __("Interaction type", 'deploy') ~ '<i class="ms-2 ' ~ call("GlpiPlugin\\Deploy\\Package_UserInteraction::getIcon") ~ '"></i>',
+            field_options
+        ) }}
+
+        {% set icon_field %}
+            <select class="form-select" id="icon" name="icon">
+                {% for icon_key, icon in call("GlpiPlugin\\Deploy\\Package_UserInteraction::getIcons") %}
+                    <option value="{{ icon_key }}" {{ subitem_instance.fields['icon'] == icon_key ? "selected" : "" }}>
+                        {{ icon }}
+                    </option>
+                {% endfor %}
+            </select>
+        {% endset %}
+        {{ fields.field(
+            'icon',
+            icon_field,
+            __("Icon", 'deploy') ~ '<i class="ms-2 ti ti-flag"></i>',
+            field_options
+        ) }}
+    </div>
+    <div class="col-sm">
+        <h2>{{ __('Preview alert', 'deploy') }}</h2>
+        <div id="preview">
+        </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#type').on('change', function() {
+        $('.specificfields, .modal-footer').addClass('d-none');
+        var actiontype = $(this).val();
+        if (actiontype != "") {
+            $('.modal-footer').removeClass('d-none');
+        }
+    });
+
+    function updatePreview() {
+        var ajax_url = CFG_GLPI.root_doc + '/' + GLPI_PLUGINS_PATH.deploy + '/ajax/userInteraction.php';
+        var data = $('#modal_userinteraction').find('form:first').serializeArray().reduce(
+            function(obj, item) {
+                obj[item.name] = item.value;
+                return obj;
+            },
+            {}
+        );
+
+        $.ajax({
+            url: ajax_url,
+            method: "GET",
+            data: data,
+        success:function(response) {
+            $('#preview').html(response);
+        },
+        error:function(){
+            alert("error");
+        }
+      });
+    };
+
+    $('#modal_userinteraction').find('form:first').on('keyup change paste', 'input, select, textarea', function(){
+        updatePreview();
+    });
+
+    updatePreview();
+});
+</script>
