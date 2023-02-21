@@ -111,8 +111,9 @@ class Computer_Group_Static extends CommonDBRelation
    }
 
 
-   static function showForItem(Computer_Group $computergroup) {
-      global $DB, $CFG_GLPI;
+   static function showForItem(Computer_Group $computergroup)
+   {
+      global $DB;
 
       $ID = $computergroup->getField('id');
       if (!$computergroup->can($ID, UPDATE)) {
@@ -145,7 +146,7 @@ class Computer_Group_Static extends CommonDBRelation
       $canread = $computergroup->can($ID, READ);
       $rows = [];
       if ($canread) {
-        foreach ($datas as $data) {
+         foreach ($datas as $data) {
             $row = [];
 
             $computer = new Computer();
@@ -166,100 +167,20 @@ class Computer_Group_Static extends CommonDBRelation
             $row['serial'] = (isset($computer->fields["serial"])? "".$computer->fields["serial"]."" :"-");
             $row['otherserial'] = (isset($computer->fields["otherserial"])? "".$computer->fields["otherserial"]."" :"-");
             $rows[] = $row;
+         }
+
+         TemplateRenderer::getInstance()->display('@deploy/computer_group/computer_group_static_list.html.twig', [
+            'subitem_type'                      => 'ComputerGroupStatic',
+            'itemtype'                  => self::getType(),
+            'plugin_deploy_computers_groups_id' => $ID,
+            'count'                     => count($rows),
+            'entries'                   => $rows,
+            'none_found'                => sprintf(__('No %s found', 'deploy'), self::getTypeName(Session::getPluralNumber())),
+            'headings'                  => self::getheadings(),
+         ]);
+
       }
 
-      TemplateRenderer::getInstance()->display('@deploy/computer_group/computer_group_static_list.html.twig', [
-         'subitem_type'                      => 'ComputerGroupStatic',
-         'itemtype'                  => self::getType(),
-         'plugin_deploy_computers_groups_id' => $ID,
-         'count'                     => count($rows),
-         'entries'                   => $rows,
-         'none_found'                => sprintf(__('No %s found', 'deploy'), self::getTypeName(Session::getPluralNumber())),
-         'headings'                  => self::getheadings(),
-      ]);
-
-      }
-
-
-
-      /*$canread = $computergroup->can($ID, READ);
-      $canedit = $computergroup->can($ID, UPDATE);
-      echo "<div class='spaced'>";
-      if ($canread) {
-         echo "<div class='spaced'>";
-         if ($canedit) {
-            Html::openMassiveActionsForm('mass'.'ComputerStatic'.$rand);
-            $massiveactionparams= ['num_displayed'
-                           => min($_SESSION['glpilist_limit'], $number),
-                       'specific_actions'
-                           => ['purge' => _x('button', 'Remove')],
-                       'container'
-                           => 'mass'.'ComputerStatic'.$rand];
-            Html::showMassiveActions($massiveactionparams);
-         }
-         echo "<table class='tab_cadre_fixehov'>";
-         $header_begin  = "<tr>";
-         $header_top    = '';
-         $header_bottom = '';
-         $header_end    = '';
-
-         if ($canedit) {
-            $header_top    .= "<th width='10'>".Html::getCheckAllAsCheckbox('mass'.'ComputerStatic'.$rand);
-            $header_top    .= "</th>";
-            $header_bottom .= "<th width='10'>".Html::getCheckAllAsCheckbox('mass'.'ComputerStatic'.$rand);
-            $header_bottom .=  "</th>";
-         }
-
-         $header_end .= "<th>".__('Name')."</th>";
-         $header_end .= "<th>".__('Automatic inventory')."</th>";
-         $header_end .= "<th>".Entity::getTypeName(1)."</th>";
-         $header_end .= "<th>".__('Serial number')."</th>";
-         $header_end .= "<th>".__('Inventory number')."</th>";
-         $header_end .= "</tr>";
-         echo $header_begin.$header_top.$header_end;
-
-         foreach ($datas as $data) {
-
-            $computer = new Computer();
-            $computer->getFromDB($data["computers_id"]);
-            $linkname = $computer->fields["name"];
-            $itemtype = Computer::getType();
-            if ($_SESSION["glpiis_ids_visible"] || empty($computer->fields["name"])) {
-               $linkname = sprintf(__('%1$s (%2$s)'), $linkname, $computer->fields["id"]);
-            }
-            $link = $itemtype::getFormURLWithID($computer->fields["id"]);
-            $name = "<a href=\"".$link."\">".$linkname."</a>";
-            echo "<tr class='tab_bg_1'>";
-
-            if ($canedit) {
-               echo "<td width='10'>";
-               Html::showMassiveActionCheckBox(__CLASS__, $data["id"]);
-               echo "</td>";
-            }
-            echo "<td ".
-                  ((isset($computer->fields['is_deleted']) && $computer->fields['is_deleted'])?"class='tab_bg_2_2'":"").
-                 ">".$name."</td>";
-            echo "<td>".Dropdown::getYesNo($computer->fields['is_dynamic'])."</td>";
-            echo "<td>".Dropdown::getDropdownName("glpi_entities",
-                                                               $computer->fields['entities_id']);
-            echo "</td>";
-            echo "<td>".
-                   (isset($computer->fields["serial"])? "".$computer->fields["serial"]."" :"-")."</td>";
-            echo "<td>".
-                   (isset($computer->fields["otherserial"])? "".$computer->fields["otherserial"]."" :"-")."</td>";
-            echo "</tr>";
-         }
-         echo $header_begin.$header_bottom.$header_end;
-
-         echo "</table>";
-         if ($canedit && $number) {
-            $massiveactionparams['ontop'] = false;
-            Html::showMassiveActions($massiveactionparams);
-            Html::closeForm();
-         }
-         echo "</div>";
-      }
-      echo "</div>";*/
       return true;
    }
 
