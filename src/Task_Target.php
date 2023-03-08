@@ -58,8 +58,7 @@ class Task_Target extends CommonDBRelation
     {
         return [
             'Computer',
-            'Group',
-            'SavedSearch',
+            'GlpiPlugin\\Deploy\\Computer_Group'
         ];
     }
 
@@ -112,7 +111,7 @@ class Task_Target extends CommonDBRelation
         TemplateRenderer::getInstance()->display('@deploy/task/target.list.html.twig', [
             'task'        => $task,
             'subitems'    => $targets,
-            'used'        => $used,
+            'used'        => json_encode($used),
             'none_found'  => __("No target found for this task", 'deploy'),
             'task_active' => $task->fields['is_active'],
             'ma_itemtype' => self::class,

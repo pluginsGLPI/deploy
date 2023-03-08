@@ -62,6 +62,15 @@
                                 <th>
                                     {{ __("Name") }}
                                 </th>
+                                <th>
+                                    {{ __("Type") }}
+                                </th>
+                                <th>
+                                    {{ __("Associated dynamic elements") }}
+                                </th>
+                                <th>
+                                    {{ __("Associated static elements") }}
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -88,6 +97,19 @@
                                         {{ subitem.getLink({
                                             'linkoption': subitem_active ? "" : "class='link-warning' title='" ~ __("Item is not active", 'deploy') ~ "' data-bs-toggle='tooltip'",
                                         })|raw }}
+                                    </td>
+                                    <td>
+                                        {{ subitem.getTypeName(0) }}
+                                    </td>
+                                    <td>
+                                        {% if subitem is instanceof("GlpiPlugin\\Deploy\\Computer_Group") %}
+                                            {{ subitem.countDynamicItem() }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if subitem is instanceof("GlpiPlugin\\Deploy\\Computer_Group") %}
+                                            {{ subitem.countStaticItem() }}
+                                        {% endif %}
                                     </td>
                                 </tr>
                             {% endfor %}

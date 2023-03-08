@@ -37,17 +37,6 @@ switch ($_POST["idtable"]) {
             'is_deleted' => 0
         ];
         break;
-    case 'Group':
-        $_POST['condition'] = [
-            'is_itemgroup' => 1
-        ];
-        break;
-    case 'SavedSearch':
-        $_POST['condition'] = [
-            'itemtype'   => 'Computer',
-            'is_private' => 0,
-        ];
-        break;
 }
 
 chdir("../../../ajax");
