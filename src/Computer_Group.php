@@ -156,7 +156,7 @@ class Computer_Group extends CommonDBTM
          }
          $this->initForm($id, $options);
 
-         TemplateRenderer::getInstance()->display('@deploy/computer_group/computer_group.html.twig', [
+         TemplateRenderer::getInstance()->display('generic_show_form.html.twig', [
             'item'         => $this,
             'params'       => $options,
          ]);
