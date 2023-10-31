@@ -61,6 +61,7 @@ class UserInteractionTemplate extends CommonDBTM
     public const ICON_QUESTION = "question";
 
     // Define time constant
+    public const TIME_NEVER = 0;
     public const TIME_30_SEC = 30;
     public const TIME_35_SEC = 35;
     public const TIME_40_SEC = 40;
@@ -129,6 +130,7 @@ class UserInteractionTemplate extends CommonDBTM
 
         $ong = [];
         $this->addDefaultFormTab($ong)
+            ->addStandardTab(UserInteractionTemplate_Behavior::getType(), $ong, $options)
             ->addStandardTab('Log', $ong, $options);
 
         return $ong;
@@ -147,15 +149,6 @@ class UserInteractionTemplate extends CommonDBTM
             'name'               => __('ID'),
             'massiveaction'      => false, // implicit field is id
             'datatype'           => 'number'
-        ];
-
-        $tab[] = [
-            'id'                 => '3',
-            'table'              => $this->getTable(),
-            'field'              => 'name',
-            'name'               => __('Name'),
-            'massiveaction'      => false,
-            'datatype'           => 'itemlink'
         ];
 
         $tab[] = [
@@ -208,7 +201,7 @@ class UserInteractionTemplate extends CommonDBTM
             'itemtype' => self::getType()
         ]);
         if ($nb_display_pref == 0) {
-            $migration->updateDisplayPrefs([self::class => [3, 19, 80]]);
+            $migration->updateDisplayPrefs([self::class => [19, 80]]);
         }
     }
 
@@ -231,14 +224,7 @@ class UserInteractionTemplate extends CommonDBTM
             'retry_after' => self::getAllRetryAfter(),
             'timeout'   => self::getAllTimeout(),
         ];
-        $data = [
-            'platform' => 'P',
-            'buttons'   => 'B',
-            'icon'      => 'I',
-            'retry_after' => 'R',
-            'nb_max_retry' => 10,
-            'timeout'   => 'T',
-        ];
+        $data = json_decode($this->fields['json'], true);
         TemplateRenderer::getInstance()->display(
             '@deploy/userinteractiontemplate/userinteractiontemplate.html.twig',
             [
@@ -355,49 +341,83 @@ class UserInteractionTemplate extends CommonDBTM
             self::ICON_QUESTION => __('Question', 'deploy')
         ];
     }
-
     public static function getAllTimeout(): array
     {
-        $timeouts = [];
-        // Generate seconds
-        for ($i = 30; $i <= 55; $i += 5) {
-            $timeouts['TIME_' . $i . '_SEC'] = __($i . ' seconds', 'deploy');
-        }
-        // Generate minutes
-        for ($i = 1; $i <= 60; $i++) {
-            $timeouts['TIME_' . $i . '_MIN'] = __($i . ' minutes', 'deploy');
-        }
-        // Generate hours
-        for ($i = 1; $i <= 12; $i++) {
-            $timeouts['TIME_' . $i . '_HR'] = __($i . ' hours', 'deploy');
-        }
-        return $timeouts;
+        return [
+            self::TIME_NEVER => __('Never', 'deploy'),
+            self::TIME_30_SEC => __('30 seconds', 'deploy'),
+            self::TIME_35_SEC => __('35 seconds', 'deploy'),
+            self::TIME_40_SEC => __('40 seconds', 'deploy'),
+            self::TIME_45_SEC => __('45 seconds', 'deploy'),
+            self::TIME_50_SEC => __('50 seconds', 'deploy'),
+            self::TIME_55_SEC => __('55 seconds', 'deploy'),
+            self::TIME_60_SEC => __('1 minute', 'deploy'),
+            self::TIME_2_MIN => __('2 minutes', 'deploy'),
+            self::TIME_3_MIN => __('3 minutes', 'deploy'),
+            self::TIME_4_MIN => __('4 minutes', 'deploy'),
+            self::TIME_5_MIN => __('5 minutes', 'deploy'),
+            self::TIME_10_MIN => __('10 minutes', 'deploy'),
+            self::TIME_15_MIN => __('15 minutes', 'deploy'),
+            self::TIME_20_MIN => __('20 minutes', 'deploy'),
+            self::TIME_25_MIN => __('25 minutes', 'deploy'),
+            self::TIME_30_MIN => __('30 minutes', 'deploy'),
+            self::TIME_35_MIN => __('35 minutes', 'deploy'),
+            self::TIME_40_MIN => __('40 minutes', 'deploy'),
+            self::TIME_45_MIN => __('45 minutes', 'deploy'),
+            self::TIME_50_MIN => __('50 minutes', 'deploy'),
+            self::TIME_55_MIN => __('55 minutes', 'deploy'),
+            self::TIME_60_MIN => __('1 hour', 'deploy'),
+            self::TIME_2_HR => __('2 hours', 'deploy'),
+            self::TIME_3_HR => __('3 hours', 'deploy'),
+            self::TIME_4_HR => __('4 hours', 'deploy'),
+            self::TIME_5_HR => __('5 hours', 'deploy'),
+            self::TIME_6_HR => __('6 hours', 'deploy'),
+            self::TIME_7_HR => __('7 hours', 'deploy'),
+            self::TIME_8_HR => __('8 hours', 'deploy'),
+            self::TIME_9_HR => __('9 hours', 'deploy'),
+            self::TIME_10_HR => __('10 hours', 'deploy'),
+            self::TIME_11_HR => __('11 hours', 'deploy'),
+            self::TIME_12_HR => __('12 hours', 'deploy'),
+        ];
     }
 
     public static function getAllRetryAfter(): array
     {
-        $allTimeouts = self::getAllTimeout();
-        $filteredTimeouts = [];
+        $allTimeConstant = self::getAllTimeout() + [
+            self::TIME_13_HR => __('13 hours', 'deploy'),
+            self::TIME_14_HR => __('14 hours', 'deploy'),
+            self::TIME_15_HR => __('15 hours', 'deploy'),
+            self::TIME_16_HR => __('16 hours', 'deploy'),
+            self::TIME_17_HR => __('17 hours', 'deploy'),
+            self::TIME_18_HR => __('18 hours', 'deploy'),
+            self::TIME_19_HR => __('19 hours', 'deploy'),
+            self::TIME_20_HR => __('20 hours', 'deploy'),
+            self::TIME_21_HR => __('21 hours', 'deploy'),
+            self::TIME_22_HR => __('22 hours', 'deploy'),
+            self::TIME_23_HR => __('23 hours', 'deploy'),
+            self::TIME_24_HR => __('Each day', 'deploy'),
+            self::TIME_2_DAY => __('2 days', 'deploy'),
+            self::TIME_3_DAY => __('3 days', 'deploy'),
+            self::TIME_4_DAY => __('4 days', 'deploy'),
+            self::TIME_5_DAY => __('5 days', 'deploy'),
+            self::TIME_6_DAY => __('6 days', 'deploy'),
+            self::TIME_7_DAY => __('Each week', 'deploy'),
+            self::TIME_1_MONTH => __('Each month', 'deploy'),
 
-        foreach ($allTimeouts as $key => $value) {
-            if (strpos($key, 'SEC') !== false && $key !== 'TIME_60_SEC') {
-                continue;
-            }
-            $filteredTimeouts[$key] = $value;
-        }
+        ];
 
-        // Add additional timeouts up to a month
-        for ($i = 13; $i <= 24; $i++) {
-            $filteredTimeouts['TIME_' . $i . '_HR'] = __($i . ' hours', 'deploy');
-        }
+        $removeValues = [
+            self::TIME_30_SEC => __('30 seconds', 'deploy'),
+            self::TIME_35_SEC => __('35 seconds', 'deploy'),
+            self::TIME_40_SEC => __('40 seconds', 'deploy'),
+            self::TIME_45_SEC => __('45 seconds', 'deploy'),
+            self::TIME_50_SEC => __('50 seconds', 'deploy'),
+            self::TIME_55_SEC => __('55 seconds', 'deploy'),
+        ];
 
-        for ($i = 2; $i <= 7; $i++) {
-            $filteredTimeouts['TIME_' . $i . '_DAY'] = __($i . ' days', 'deploy');
-        }
+        $filteredTimeConstant = array_diff($allTimeConstant, $removeValues);
 
-        $filteredTimeouts['TIME_1_MONTH'] = __('1 month', 'deploy');
-
-        return $filteredTimeouts;
+        return $filteredTimeConstant;
     }
 
     public static function getSpecificValueToSelect($field, $name = '', $values = '', array $options = []): string
@@ -409,13 +429,9 @@ class UserInteractionTemplate extends CommonDBTM
 
         switch ($field) {
             case 'buttons':
-                return self::getDataLabelDropdown($field, $values[$field], $options);
             case 'platform':
-                return self::getDataLabelDropdown($field, $values[$field], $options);
             case 'icon':
-                return self::getDataLabelDropdown($field, $values[$field], $options);
             case 'timeout':
-                return self::getDataLabelDropdown($field, $values[$field], $options);
             case 'retry_after':
                 return self::getDataLabelDropdown($field, $values[$field], $options);
         }
@@ -430,16 +446,37 @@ class UserInteractionTemplate extends CommonDBTM
 
         switch ($field) {
             case 'buttons':
-                return self::getDataLabel($field, $values[$field]);
             case 'platform':
-                return self::getDataLabel($field, $values[$field]);
             case 'icon':
-                return self::getDataLabel($field, $values[$field]);
             case 'timeout':
-                return self::getDataLabel($field, $values[$field]);
             case 'retry_after':
                 return self::getDataLabel($field, $values[$field]);
         }
         return parent::getSpecificValueToDisplay($field, $values, $options);
+    }
+    public static function constructJsonData($data): string
+    {
+        $json = [
+            "platform" => $data['platform'],
+            "buttons" => $data['buttons'] ?? self::INTERACTION_OK,
+            "icon" => $data['icon'] ?? self::ICON_NONE,
+            "retry_after" => $data['retry_after'] ?? self::TIME_NEVER,
+            "nb_max_retry" => $data['nb_max_retry'] ?? 1,
+            "timeout" => $data['timeout'] ?? self::TIME_NEVER,
+            "on_timeout" => "continue:continue",
+            "on_nouser" => "continue:continue",
+            "on_multiusers" => "continue:continue",
+            "on_ok" => "continue:continue",
+            "on_no" => "stop:stop",
+            "on_yes" => "continue:continue",
+            "on_cancel" => "stop:stop",
+            "on_abort" => "stop:stop",
+            "on_retry" => "stop:postpone",
+            "on_tryagain" => "stop:postpone",
+            "on_ignore" => "stop:postpone",
+            "on_continue" => "",
+            "on_async" => ""
+        ];
+        return json_encode($json);
     }
 }
