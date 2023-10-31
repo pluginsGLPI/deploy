@@ -5,12 +5,11 @@
     {% set url = get_plugin_web_dir('deploy') %}
     <form action="{{url}}/front/userinteractiontemplate.form.php" method="post">
         <input type="hidden" name="id" value="{{ item.fields['id'] }}" />
-        <input type="hidden" name="behavior" value="true" />
         {{ fields.hiddenField() }}
 
         {{ fields.dropdownArrayField(
             'on_ok',
-            jsondata['on_ok'],
+            item.fields['on_ok'],
             behaviors,
             __('Button ok', 'deploy'),
             )
@@ -18,7 +17,7 @@
 
         {{ fields.dropdownArrayField(
             'on_nouser',
-            jsondata['on_nouser'],
+            item.fields['on_nouser'],
             behaviors,
             __('No active session', 'deploy'),
             )
@@ -26,7 +25,7 @@
 
         {{ fields.dropdownArrayField(
             'on_timeout',
-            jsondata['on_timeout'],
+            item.fields['on_timeout'],
             behaviors,
             __('Alert timeout exceeded', 'deploy'),
             )
@@ -34,7 +33,7 @@
 
         {{ fields.dropdownArrayField(
             'on_multiusers',
-            jsondata['on_multiusers'],
+            item.fields['on_multiusers'],
             behaviors,
             __('Several active sessions', 'deploy'),
             )

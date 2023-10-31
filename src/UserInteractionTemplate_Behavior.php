@@ -46,7 +46,6 @@ class UserInteractionTemplate_Behavior extends CommonDBTM
     {
         TemplateRenderer::getInstance()->display('@deploy/userinteractiontemplate/userinteractiontemplate_behavior.html.twig', [
             'item' => $uit,
-            'jsondata' => json_decode($uit->fields['json'], true),
             'behaviors' => self::getAllBehaviorsLabel(),
             'params' => [
                 'candel' => false

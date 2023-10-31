@@ -117,7 +117,7 @@ class UserInteractionTemplate extends CommonDBTM
 
     public static function getTypeName($nb = 0)
     {
-        return _n('User interaction template', 'User interaction templates', $nb, 'deploy');
+        return _n('Alert template', 'Alert templates', $nb, 'deploy');
     }
 
     public static function getIcon()
@@ -188,6 +188,16 @@ class UserInteractionTemplate extends CommonDBTM
                 `entities_id` int $sign NOT NULL DEFAULT '0',
                 `is_recursive` tinyint NOT NULL DEFAULT '0',
                 `name` varchar(255) DEFAULT NULL,
+                `interaction_type` varchar(50) DEFAULT NULL,
+                `platform` varchar(50) DEFAULT NULL,
+                `icon` varchar(10) DEFAULT NULL,
+                `retry_after` int NOT NULL DEFAULT '0',
+                `nb_max_retry` int NOT NULL DEFAULT '1',
+                `timeout` int NOT NULL DEFAULT '0',
+                `on_ok` varchar(50) DEFAULT NULL,
+                `on_timeout` varchar(50) DEFAULT NULL,
+                `on_nouser` varchar(50) DEFAULT NULL,
+                `on_multiusers` varchar(50) DEFAULT NULL,
                 `date_creation` timestamp NULL DEFAULT NULL,
                 `date_mod` timestamp NULL DEFAULT NULL,
                 `json` text,
@@ -224,13 +234,11 @@ class UserInteractionTemplate extends CommonDBTM
             'retry_after' => self::getAllRetryAfter(),
             'timeout'   => self::getAllTimeout(),
         ];
-        $data = json_decode($this->fields['json'], true);
         TemplateRenderer::getInstance()->display(
             '@deploy/userinteractiontemplate/userinteractiontemplate.html.twig',
             [
                 'item' => $this,
                 'list' => $list,
-                'data' => $data,
                 'params' => $options,
             ]
         );
@@ -453,30 +461,5 @@ class UserInteractionTemplate extends CommonDBTM
                 return self::getDataLabel($field, $values[$field]);
         }
         return parent::getSpecificValueToDisplay($field, $values, $options);
-    }
-    public static function constructJsonData($data): string
-    {
-        $json = [
-            "platform" => $data['platform'],
-            "buttons" => $data['buttons'] ?? self::INTERACTION_OK,
-            "icon" => $data['icon'] ?? self::ICON_NONE,
-            "retry_after" => $data['retry_after'] ?? self::TIME_NEVER,
-            "nb_max_retry" => $data['nb_max_retry'] ?? 1,
-            "timeout" => $data['timeout'] ?? self::TIME_NEVER,
-            "on_timeout" => "continue:continue",
-            "on_nouser" => "continue:continue",
-            "on_multiusers" => "continue:continue",
-            "on_ok" => "continue:continue",
-            "on_no" => "stop:stop",
-            "on_yes" => "continue:continue",
-            "on_cancel" => "stop:stop",
-            "on_abort" => "stop:stop",
-            "on_retry" => "stop:postpone",
-            "on_tryagain" => "stop:postpone",
-            "on_ignore" => "stop:postpone",
-            "on_continue" => "",
-            "on_async" => ""
-        ];
-        return json_encode($json);
     }
 }
