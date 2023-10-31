@@ -94,15 +94,15 @@ class Package_UserInteraction extends CommonDBTM
     public static function getTypes(bool $with_icon = false): array
     {
         return [
-            SELF::BEFORE_DOWLOAD      => ($with_icon ? '<i class="fa-fw me-1 fas fa-cloud-arrow-down"></i>' : "")
+            self::BEFORE_DOWLOAD      => ($with_icon ? '<i class="fa-fw me-1 fas fa-cloud-arrow-down"></i>' : "")
                                    . __('Before download', 'deploy'),
-            SELF::AFTER_DOWLOAD       => ($with_icon ? '<i class="fa-fw me-1 fas fa-desktop-arrow-down' : "")
+            self::AFTER_DOWLOAD       => ($with_icon ? '<i class="fa-fw me-1 fas fa-desktop-arrow-down' : "")
                                    . __('After download', 'deploy'),
-            SELF::AFTER_ACTIONS       => ($with_icon ? '<i class="fa-fw me-1 fas fa-folder-gear"></i>' : "")
+            self::AFTER_ACTIONS       => ($with_icon ? '<i class="fa-fw me-1 fas fa-folder-gear"></i>' : "")
                                    . __('After actions execution', 'deploy'),
-            SELF::AFTER_DOWNLOAD_FAIL => ($with_icon ? '<i class="fa-fw me-1 fas fa-cloud-exclamation"></i>' : "")
+            self::AFTER_DOWNLOAD_FAIL => ($with_icon ? '<i class="fa-fw me-1 fas fa-cloud-exclamation"></i>' : "")
                                    . __('On download failure', 'deploy'),
-            SELF::AFTER_ACTION_FAIL   => ($with_icon ? '<i class="fa-fw me-1 fas fa-folder-xmark"></i>' : "")
+            self::AFTER_ACTION_FAIL   => ($with_icon ? '<i class="fa-fw me-1 fas fa-folder-xmark"></i>' : "")
                                    . __('On actions failure', 'deploy'),
         ];
     }

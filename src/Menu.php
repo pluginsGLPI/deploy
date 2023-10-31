@@ -30,7 +30,7 @@
 
 namespace GlpiPlugin\Deploy;
 
-use \Session;
+use Session;
 
 class Menu
 {
@@ -46,7 +46,7 @@ class Menu
     }
 
 
-    static function getMenuContent()
+    public static function getMenuContent()
     {
         $menu = [];
 
@@ -54,6 +54,7 @@ class Menu
             $links_class = [
                 Task::class,
                 Package::class,
+                UserInteractionTemplate::class,
             ];
 
             if (Computer_Group::canCreate()) {
@@ -112,6 +113,19 @@ class Menu
                 $menu['options']['computer_group']['links']['add']   = Computer_Group::getFormURL(false);
             }
 
+            $menu['options']['userinteractiontemplate'] = [
+                'title' => UserInteractionTemplate::getTypeName(Session::getPluralNumber()),
+                'page'  => UserInteractionTemplate::getSearchURL(false),
+                'icon'  => UserInteractionTemplate::getIcon(),
+                'links' => $links
+            ];
+
+            if (UserInteractionTemplate::canCreate()) {
+                $menu['options']['userinteractiontemplate']['options']['add'] =
+                    UserInteractionTemplate::getFormURL(false);
+                $menu['options']['userinteractiontemplate']['links']['add'] =
+                    UserInteractionTemplate::getFormURL(false);
+            }
         }
 
         if (count($menu)) {

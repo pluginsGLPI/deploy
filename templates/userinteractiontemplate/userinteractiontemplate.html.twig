@@ -1,0 +1,61 @@
+{% extends "generic_show_form.html.twig" %}
+{% import "components/form/fields_macros.html.twig" as fields %}
+
+{% block more_fields %}
+   {% set readonly = item.fields['id'] != 0 %}
+
+   {% set field_options = field_options|merge(params) %}
+
+   {{ fields.dropdownArrayField(
+      'platform',
+      data['platform'],
+      list['platform'],
+      __('Interaction format', 'deploy'),
+      field_options
+      )
+   }}
+
+{{ fields.dropdownArrayField(
+      'buttons',
+      data['buttons'],
+      list['buttons'],
+      __('Interaction type', 'deploy'),
+      field_options
+      )
+   }}
+
+{{ fields.dropdownArrayField(
+      'icon',
+      data['icon'],
+      list['icon'],
+      __('Alert icon', 'deploy'),
+      field_options
+      )
+   }}
+
+{{ fields.dropdownArrayField(
+      'retry_after',
+      data['retry_after'],
+      list['retry_after'],
+      __('Retry job after', 'deploy'),
+      field_options
+      )
+   }}
+
+{{ fields.numberField(
+      'nb_max_retry',
+      data['nb_max_retry'],
+      __('Maximum number of retry allowed', 'deploy'),
+      field_options|merge({ 'max': 20 })
+      )
+   }}
+
+{{ fields.dropdownArrayField(
+      'timeout',
+      data['timeout'],
+      list['timeout'],
+      __('Alert display timeout', 'deploy'),
+      field_options
+      )
+   }}
+{% endblock %}
