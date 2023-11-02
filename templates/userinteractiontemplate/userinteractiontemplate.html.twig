@@ -6,24 +6,24 @@
    {% set field_options = field_options|merge(params) %}
 
    {{ fields.dropdownArrayField(
-      'platform',
-      item.fields['platform'],
-      list['platform'],
-      __('Interaction format', 'deploy'),
+      'alert_type',
+      item.fields['alert_type'],
+      list['alert_type'],
+      __('Alert type', 'deploy'),
       field_options
       )
    }}
 
-{{ fields.dropdownArrayField(
-      'buttons',
-      item.fields['buttons'],
-      list['buttons'],
+   {{ fields.dropdownArrayField(
+      'interaction_type',
+      item.fields['interaction_type'],
+      list['interaction_type'],
       __('Interaction type', 'deploy'),
       field_options
       )
    }}
 
-{{ fields.dropdownArrayField(
+   {{ fields.dropdownArrayField(
       'icon',
       item.fields['icon'],
       list['icon'],
@@ -32,24 +32,7 @@
       )
    }}
 
-{{ fields.dropdownArrayField(
-      'retry_after',
-      item.fields['retry_after'],
-      list['retry_after'],
-      __('Retry job after', 'deploy'),
-      field_options
-      )
-   }}
-
-{{ fields.numberField(
-      'nb_max_retry',
-      item.fields['nb_max_retry'],
-      __('Maximum number of retry allowed', 'deploy'),
-      field_options|merge({ 'max': 20 })
-      )
-   }}
-
-{{ fields.dropdownArrayField(
+   {{ fields.dropdownArrayField(
       'timeout',
       item.fields['timeout'],
       list['timeout'],

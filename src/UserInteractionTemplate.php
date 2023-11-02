@@ -40,9 +40,6 @@ class UserInteractionTemplate extends CommonDBTM
 {
     public static $rightname = 'entity';
 
-    // Define platform constant
-    public const PLATFORM_WINDOWS_SYSTEM_ALERT = "win32";
-
     // Define time constant
     public const TIME_NEVER = 0;
     public const TIME_30_SEC = 30;
@@ -55,11 +52,7 @@ class UserInteractionTemplate extends CommonDBTM
     public const TIME_20_MIN = 1200;
     public const TIME_25_MIN = 1500;
     public const TIME_30_MIN = 1800;
-    public const TIME_35_MIN = 2100;
-    public const TIME_40_MIN = 2400;
     public const TIME_45_MIN = 2700;
-    public const TIME_50_MIN = 3000;
-    public const TIME_55_MIN = 3300;
     public const TIME_60_MIN = 3600;
     public const TIME_2_HR = 7200;
     public const TIME_3_HR = 10800;
@@ -72,15 +65,6 @@ class UserInteractionTemplate extends CommonDBTM
     public const TIME_10_HR = 36000;
     public const TIME_11_HR = 39600;
     public const TIME_12_HR = 43200;
-    public const TIME_18_HR = 64800;
-    public const TIME_24_HR = 86400;
-    public const TIME_2_DAY = 172800;
-    public const TIME_3_DAY = 259200;
-    public const TIME_4_DAY = 345600;
-    public const TIME_5_DAY = 432000;
-    public const TIME_6_DAY = 518400;
-    public const TIME_7_DAY = 604800;
-    public const TIME_1_MONTH = 2592000;
 
     public static function getTypeName($nb = 0)
     {
@@ -155,11 +139,9 @@ class UserInteractionTemplate extends CommonDBTM
                 `entities_id` int $sign NOT NULL DEFAULT '0',
                 `is_recursive` tinyint NOT NULL DEFAULT '0',
                 `name` varchar(255) DEFAULT NULL,
+                `alert_type` varchar(50) DEFAULT NULL,
                 `interaction_type` varchar(50) DEFAULT NULL,
-                `platform` varchar(50) DEFAULT 'win32',
                 `icon` varchar(10) DEFAULT NULL,
-                `retry_after` int NOT NULL DEFAULT '0',
-                `nb_max_retry` int NOT NULL DEFAULT '1',
                 `timeout` int NOT NULL DEFAULT '0',
                 `ok_action` varchar(50) DEFAULT NULL,
                 `timeout_action` varchar(50) DEFAULT NULL,
@@ -167,7 +149,6 @@ class UserInteractionTemplate extends CommonDBTM
                 `multi_users_action` varchar(50) DEFAULT NULL,
                 `date_creation` timestamp NULL DEFAULT NULL,
                 `date_mod` timestamp NULL DEFAULT NULL,
-                `json` text,
                 PRIMARY KEY (`id`)
             ) ENGINE=InnoDB DEFAULT CHARSET={$default_charset} COLLATE={$default_collation} ROW_FORMAT=DYNAMIC;";
             $DB->request($query);
@@ -195,10 +176,9 @@ class UserInteractionTemplate extends CommonDBTM
     {
         $this->initForm($ID, $options);
         $list = [
-            'platform' =>  self::getAllPlatform(),
-            'buttons'   => Package_UserInteraction::getInteractionTypes(),
+            'alert_type' => [null => "--"] + Package_UserInteraction::getTypes(),
+            'interaction_type'   => Package_UserInteraction::getInteractionTypes(),
             'icon'      => Package_UserInteraction::getIcons(),
-            'retry_after' => self::getAllRetryAfter(),
             'timeout'   => self::getAllTimeout(),
         ];
         TemplateRenderer::getInstance()->display(
@@ -220,20 +200,17 @@ class UserInteractionTemplate extends CommonDBTM
         }
 
         switch ($type) {
-            case 'buttons':
-                $all = Package_UserInteraction::getInteractionTypes();
+            case 'alert_type':
+                $values = Package_UserInteraction::getTypes();
                 break;
-            case 'platform':
-                $all = static::getAllPlatform();
+            case 'interaction_type':
+                $all = Package_UserInteraction::getInteractionTypes();
                 break;
             case 'icon':
                 $all = Package_UserInteraction::getIcons()();
                 break;
             case 'timeout':
                 $all = static::getAllTimeout();
-                break;
-            case 'retry_after':
-                $all = static::getAllRetryAfter();
                 break;
         }
 
@@ -257,20 +234,17 @@ class UserInteractionTemplate extends CommonDBTM
     ): string {
         $name = $type;
         switch ($type) {
-            case 'buttons':
-                $values = Package_UserInteraction::getInteractionTypes();
+            case 'alert_type':
+                $values = Package_UserInteraction::getTypes();
                 break;
-            case 'platform':
-                $values = static::getAllPlatform();
+            case 'interaction_type':
+                $values = Package_UserInteraction::getInteractionTypes();
                 break;
             case 'icon':
                 $values = Package_UserInteraction::getIcons()();
                 break;
             case 'timeout':
                 $values = static::getAllTimeout();
-                break;
-            case 'retry_after':
-                $values = static::getAllRetryAfter();
                 break;
         }
 
@@ -282,13 +256,6 @@ class UserInteractionTemplate extends CommonDBTM
                 'display' => false
             ]
         );
-    }
-
-    public static function getAllPlatform(): array
-    {
-        return [
-            self::PLATFORM_WINDOWS_SYSTEM_ALERT => __('Windows system alert', 'deploy')
-        ];
     }
     public static function getAllTimeout(): array
     {
@@ -304,11 +271,7 @@ class UserInteractionTemplate extends CommonDBTM
             self::TIME_20_MIN => __('20 minutes', 'deploy'),
             self::TIME_25_MIN => __('25 minutes', 'deploy'),
             self::TIME_30_MIN => __('30 minutes', 'deploy'),
-            self::TIME_35_MIN => __('35 minutes', 'deploy'),
-            self::TIME_40_MIN => __('40 minutes', 'deploy'),
             self::TIME_45_MIN => __('45 minutes', 'deploy'),
-            self::TIME_50_MIN => __('50 minutes', 'deploy'),
-            self::TIME_55_MIN => __('55 minutes', 'deploy'),
             self::TIME_60_MIN => __('1 hour', 'deploy'),
             self::TIME_2_HR => __('2 hours', 'deploy'),
             self::TIME_3_HR => __('3 hours', 'deploy'),
@@ -324,31 +287,6 @@ class UserInteractionTemplate extends CommonDBTM
         ];
     }
 
-    public static function getAllRetryAfter(): array
-    {
-        $allTimeConstant = self::getAllTimeout() + [
-            self::TIME_18_HR => __('18 hours', 'deploy'),
-            self::TIME_24_HR => __('Each day', 'deploy'),
-            self::TIME_2_DAY => __('2 days', 'deploy'),
-            self::TIME_3_DAY => __('3 days', 'deploy'),
-            self::TIME_4_DAY => __('4 days', 'deploy'),
-            self::TIME_5_DAY => __('5 days', 'deploy'),
-            self::TIME_6_DAY => __('6 days', 'deploy'),
-            self::TIME_7_DAY => __('Each week', 'deploy'),
-            self::TIME_1_MONTH => __('Each month', 'deploy'),
-
-        ];
-
-        $removeValues = [
-            self::TIME_30_SEC => __('30 seconds', 'deploy'),
-            self::TIME_45_SEC => __('45 seconds', 'deploy'),
-        ];
-
-        $filteredTimeConstant = array_diff($allTimeConstant, $removeValues);
-
-        return $filteredTimeConstant;
-    }
-
     public static function getSpecificValueToSelect($field, $name = '', $values = '', array $options = []): string
     {
         if (!is_array($values)) {
@@ -357,11 +295,10 @@ class UserInteractionTemplate extends CommonDBTM
         $options['display'] = false;
 
         switch ($field) {
-            case 'buttons':
-            case 'platform':
+            case 'alert_type':
+            case 'interaction_type':
             case 'icon':
             case 'timeout':
-            case 'retry_after':
                 return self::getDataLabelDropdown($field, $values[$field], $options);
         }
         return parent::getSpecificValueToSelect($field, $name, $values, $options);
@@ -374,11 +311,10 @@ class UserInteractionTemplate extends CommonDBTM
         }
 
         switch ($field) {
-            case 'buttons':
-            case 'platform':
+            case 'alert_type':
+            case 'interaction_type':
             case 'icon':
             case 'timeout':
-            case 'retry_after':
                 return self::getDataLabel($field, $values[$field]);
         }
         return parent::getSpecificValueToDisplay($field, $values, $options);

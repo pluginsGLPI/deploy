@@ -30,7 +30,7 @@
 
 namespace GlpiPlugin\Deploy;
 
-include ("../../../inc/includes.php");
+include("../../../inc/includes.php");
 
 \Session::checkLoginUser();
 
