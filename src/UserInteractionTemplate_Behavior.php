@@ -10,9 +10,9 @@ use Glpi\Application\View\TemplateRenderer;
 class UserInteractionTemplate_Behavior extends CommonDBTM
 {
 
-    public const BEHAVIOR_CONTINUEWITHNOINTERACTION = "continue:continue";
-    public const BEHAVIOR_RETRYJOBLATER = "stop:postpone";
-    public const BEHAVIOR_CANCELJOB = "stop:stop";
+    public const BEHAVIOR_CONTINUEWITHOUTINTERACTION = "continue:continue";
+    public const BEHAVIOR_RETRYLATER = "stop:postpone";
+    public const BEHAVIOR_CANCEL = "stop:stop";
     public static function getTypeName($nb = 0)
     {
         return __('Behaviors', 'deploy');
@@ -93,9 +93,9 @@ class UserInteractionTemplate_Behavior extends CommonDBTM
     public static function getAllBehaviorsLabel(): array
     {
         return [
-            self::BEHAVIOR_CONTINUEWITHNOINTERACTION => __('Continue with no interaction', 'deploy'),
-            self::BEHAVIOR_RETRYJOBLATER => __('Retry job later', 'deploy'),
-            self::BEHAVIOR_CANCELJOB => __('Cancel job', 'deploy'),
+            self::BEHAVIOR_CONTINUEWITHOUTINTERACTION => __('Continue without interaction', 'deploy'),
+            self::BEHAVIOR_RETRYLATER => __('Retry later', 'deploy'),
+            self::BEHAVIOR_CANCEL => __('Cancel', 'deploy'),
         ];
     }
 

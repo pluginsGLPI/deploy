@@ -1,45 +1,56 @@
 {% import "components/form/fields_macros.html.twig" as fields %}
 
-{% block more_fields %}
+{% set url = get_plugin_web_dir('deploy') %}
+<table class="tab_cadre_fixe">
+    <thead>
+        <tr class="tab_bg_2">
+            <th>Behaviors</th>
+        </tr>
+    </thead>
+</table>
+<form action="{{url}}/front/userinteractiontemplate.form.php" method="post">
+    <div class="card-body d-flex flex-wrap">
+        <div class="col-12 col-xxl-{{ item_has_pictures ? '9' : '12' }} flex-column">
+            <div class="d-flex flex-row flex-wrap flex-xl-nowrap">
+                <div class="row flex-row align-items-start flex-grow-1">
+                    <div class="row flex-row">
+                        <input type="hidden" name="id" value="{{ item.fields['id'] }}" />
 
-    {% set url = get_plugin_web_dir('deploy') %}
-    <form action="{{url}}/front/userinteractiontemplate.form.php" method="post">
-        <input type="hidden" name="id" value="{{ item.fields['id'] }}" />
-        {{ fields.hiddenField() }}
+                        {{ fields.dropdownArrayField(
+                            'ok_action',
+                            item.fields['ok_action'],
+                            behaviors,
+                            __('Action after OK', 'deploy'),
+                            )
+                        }}
 
-        {{ fields.dropdownArrayField(
-            'on_ok',
-            item.fields['on_ok'],
-            behaviors,
-            __('Button ok', 'deploy'),
-            )
-        }}
+                        {{ fields.dropdownArrayField(
+                            'timeout_action',
+                            item.fields['timeout_action'],
+                            behaviors,
+                            __('Action after lert timeout exceeded', 'deploy'),
+                            )
+                        }}
 
-        {{ fields.dropdownArrayField(
-            'on_nouser',
-            item.fields['on_nouser'],
-            behaviors,
-            __('No active session', 'deploy'),
-            )
-        }}
+                        {{ fields.dropdownArrayField(
+                            'no_user_action',
+                            item.fields['no_user_action'],
+                            behaviors,
+                            __('Action if no active session', 'deploy'),
+                            )
+                        }}
 
-        {{ fields.dropdownArrayField(
-            'on_timeout',
-            item.fields['on_timeout'],
-            behaviors,
-            __('Alert timeout exceeded', 'deploy'),
-            )
-        }}
-
-        {{ fields.dropdownArrayField(
-            'on_multiusers',
-            item.fields['on_multiusers'],
-            behaviors,
-            __('Several active sessions', 'deploy'),
-            )
-        }}
-
-        {{ include('components/form/buttons.html.twig') }}
-    </form>
-
-{% endblock %}
+                        {{ fields.dropdownArrayField(
+                            'multi_users_action',
+                            item.fields['multi_users_action'],
+                            behaviors,
+                            __('Action if several active sessions', 'deploy'),
+                            )
+                        }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ include('components/form/buttons.html.twig') }}
+</form>

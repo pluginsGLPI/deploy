@@ -40,38 +40,15 @@ class UserInteractionTemplate extends CommonDBTM
 {
     public static $rightname = 'entity';
 
-    // Define button interaction type
-    public const INTERACTION_OK = "ok";
-    public const INTERACTION_OK_ASYNC = "ok_async";
-    public const INTERACTION_OK_CANCEL = "okcancel";
-    public const INTERACTION_YES_NO = "yesno";
-    public const INTERACTION_ABORT_RETRY_IGNORE = "abortretryignore";
-    public const INTERACTION_RETRY_CANCEL = "retrycancel";
-    public const INTERACTION_CANCEL_TRY_CONTINUE = "canceltrycontinue";
-    public const INTERACTION_YES_NO_CANCEL = "yesnocancel";
-
     // Define platform constant
     public const PLATFORM_WINDOWS_SYSTEM_ALERT = "win32";
-
-    // Define icon constant
-    public const ICON_NONE = "none";
-    public const ICON_INFO = "info";
-    public const ICON_WARNING = "warning";
-    public const ICON_ERROR = "error";
-    public const ICON_QUESTION = "question";
 
     // Define time constant
     public const TIME_NEVER = 0;
     public const TIME_30_SEC = 30;
-    public const TIME_35_SEC = 35;
-    public const TIME_40_SEC = 40;
     public const TIME_45_SEC = 45;
-    public const TIME_50_SEC = 50;
-    public const TIME_55_SEC = 55;
-    public const TIME_60_SEC = 60;
+    public const TIME_1_MIN = 60;
     public const TIME_2_MIN = 120;
-    public const TIME_3_MIN = 180;
-    public const TIME_4_MIN = 240;
     public const TIME_5_MIN = 300;
     public const TIME_10_MIN = 600;
     public const TIME_15_MIN = 900;
@@ -95,17 +72,7 @@ class UserInteractionTemplate extends CommonDBTM
     public const TIME_10_HR = 36000;
     public const TIME_11_HR = 39600;
     public const TIME_12_HR = 43200;
-    public const TIME_13_HR = 46800;
-    public const TIME_14_HR = 50400;
-    public const TIME_15_HR = 54000;
-    public const TIME_16_HR = 57600;
-    public const TIME_17_HR = 61200;
     public const TIME_18_HR = 64800;
-    public const TIME_19_HR = 68400;
-    public const TIME_20_HR = 72000;
-    public const TIME_21_HR = 75600;
-    public const TIME_22_HR = 79200;
-    public const TIME_23_HR = 82800;
     public const TIME_24_HR = 86400;
     public const TIME_2_DAY = 172800;
     public const TIME_3_DAY = 259200;
@@ -189,15 +156,15 @@ class UserInteractionTemplate extends CommonDBTM
                 `is_recursive` tinyint NOT NULL DEFAULT '0',
                 `name` varchar(255) DEFAULT NULL,
                 `interaction_type` varchar(50) DEFAULT NULL,
-                `platform` varchar(50) DEFAULT NULL,
+                `platform` varchar(50) DEFAULT 'win32',
                 `icon` varchar(10) DEFAULT NULL,
                 `retry_after` int NOT NULL DEFAULT '0',
                 `nb_max_retry` int NOT NULL DEFAULT '1',
                 `timeout` int NOT NULL DEFAULT '0',
-                `on_ok` varchar(50) DEFAULT NULL,
-                `on_timeout` varchar(50) DEFAULT NULL,
-                `on_nouser` varchar(50) DEFAULT NULL,
-                `on_multiusers` varchar(50) DEFAULT NULL,
+                `ok_action` varchar(50) DEFAULT NULL,
+                `timeout_action` varchar(50) DEFAULT NULL,
+                `no_user_action` varchar(50) DEFAULT NULL,
+                `multi_users_action` varchar(50) DEFAULT NULL,
                 `date_creation` timestamp NULL DEFAULT NULL,
                 `date_mod` timestamp NULL DEFAULT NULL,
                 `json` text,
@@ -228,9 +195,9 @@ class UserInteractionTemplate extends CommonDBTM
     {
         $this->initForm($ID, $options);
         $list = [
-            'platform' => self::getAllPlatform(),
-            'buttons'   => self::getAllInteractionType(),
-            'icon'      => self::getAllIcon(),
+            'platform' =>  self::getAllPlatform(),
+            'buttons'   => Package_UserInteraction::getInteractionTypes(),
+            'icon'      => Package_UserInteraction::getIcons(),
             'retry_after' => self::getAllRetryAfter(),
             'timeout'   => self::getAllTimeout(),
         ];
@@ -254,13 +221,13 @@ class UserInteractionTemplate extends CommonDBTM
 
         switch ($type) {
             case 'buttons':
-                $all = static::getAllInteractionType();
+                $all = Package_UserInteraction::getInteractionTypes();
                 break;
             case 'platform':
                 $all = static::getAllPlatform();
                 break;
             case 'icon':
-                $all = static::getAllIcon();
+                $all = Package_UserInteraction::getIcons()();
                 break;
             case 'timeout':
                 $all = static::getAllTimeout();
@@ -277,7 +244,7 @@ class UserInteractionTemplate extends CommonDBTM
                     $value
                 ),
                 E_USER_WARNING
-            );
+            );http://127.0.0.1/10.0bugfixes/front/knowbaseitem.php
             return NOT_AVAILABLE;
         }
         return $all[$value];
@@ -291,13 +258,13 @@ class UserInteractionTemplate extends CommonDBTM
         $name = $type;
         switch ($type) {
             case 'buttons':
-                $values = static::getAllInteractionType();
+                $values = Package_UserInteraction::getInteractionTypes();
                 break;
             case 'platform':
                 $values = static::getAllPlatform();
                 break;
             case 'icon':
-                $values = static::getAllIcon();
+                $values = Package_UserInteraction::getIcons()();
                 break;
             case 'timeout':
                 $values = static::getAllTimeout();
@@ -317,36 +284,10 @@ class UserInteractionTemplate extends CommonDBTM
         );
     }
 
-
-    public static function getAllInteractionType(): array
-    {
-        return [
-            self::INTERACTION_OK => __('OK', 'deploy'),
-            self::INTERACTION_OK_ASYNC => __('OK (async)', 'deploy'),
-            self::INTERACTION_OK_CANCEL => __('OK / Cancel', 'deploy'),
-            self::INTERACTION_YES_NO => __('Yes / No', 'deploy'),
-            self::INTERACTION_YES_NO_CANCEL => __('Yes / No / Cancel', 'deploy'),
-            self::INTERACTION_ABORT_RETRY_IGNORE => __('Abort / Retry / Ignore', 'deploy'),
-            self::INTERACTION_RETRY_CANCEL => __('Retry / Cancel', 'deploy'),
-            self::INTERACTION_CANCEL_TRY_CONTINUE => __('Cancel / Try / Continue', 'deploy')
-        ];
-    }
-
     public static function getAllPlatform(): array
     {
         return [
             self::PLATFORM_WINDOWS_SYSTEM_ALERT => __('Windows system alert', 'deploy')
-        ];
-    }
-
-    public static function getAllIcon(): array
-    {
-        return [
-            self::ICON_NONE => __('None', 'deploy'),
-            self::ICON_INFO => __('Info', 'deploy'),
-            self::ICON_WARNING => __('Warning', 'deploy'),
-            self::ICON_ERROR => __('Error', 'deploy'),
-            self::ICON_QUESTION => __('Question', 'deploy')
         ];
     }
     public static function getAllTimeout(): array
@@ -354,15 +295,9 @@ class UserInteractionTemplate extends CommonDBTM
         return [
             self::TIME_NEVER => __('Never', 'deploy'),
             self::TIME_30_SEC => __('30 seconds', 'deploy'),
-            self::TIME_35_SEC => __('35 seconds', 'deploy'),
-            self::TIME_40_SEC => __('40 seconds', 'deploy'),
             self::TIME_45_SEC => __('45 seconds', 'deploy'),
-            self::TIME_50_SEC => __('50 seconds', 'deploy'),
-            self::TIME_55_SEC => __('55 seconds', 'deploy'),
-            self::TIME_60_SEC => __('1 minute', 'deploy'),
+            self::TIME_1_MIN => __('1 minute', 'deploy'),
             self::TIME_2_MIN => __('2 minutes', 'deploy'),
-            self::TIME_3_MIN => __('3 minutes', 'deploy'),
-            self::TIME_4_MIN => __('4 minutes', 'deploy'),
             self::TIME_5_MIN => __('5 minutes', 'deploy'),
             self::TIME_10_MIN => __('10 minutes', 'deploy'),
             self::TIME_15_MIN => __('15 minutes', 'deploy'),
@@ -392,17 +327,7 @@ class UserInteractionTemplate extends CommonDBTM
     public static function getAllRetryAfter(): array
     {
         $allTimeConstant = self::getAllTimeout() + [
-            self::TIME_13_HR => __('13 hours', 'deploy'),
-            self::TIME_14_HR => __('14 hours', 'deploy'),
-            self::TIME_15_HR => __('15 hours', 'deploy'),
-            self::TIME_16_HR => __('16 hours', 'deploy'),
-            self::TIME_17_HR => __('17 hours', 'deploy'),
             self::TIME_18_HR => __('18 hours', 'deploy'),
-            self::TIME_19_HR => __('19 hours', 'deploy'),
-            self::TIME_20_HR => __('20 hours', 'deploy'),
-            self::TIME_21_HR => __('21 hours', 'deploy'),
-            self::TIME_22_HR => __('22 hours', 'deploy'),
-            self::TIME_23_HR => __('23 hours', 'deploy'),
             self::TIME_24_HR => __('Each day', 'deploy'),
             self::TIME_2_DAY => __('2 days', 'deploy'),
             self::TIME_3_DAY => __('3 days', 'deploy'),
@@ -416,11 +341,7 @@ class UserInteractionTemplate extends CommonDBTM
 
         $removeValues = [
             self::TIME_30_SEC => __('30 seconds', 'deploy'),
-            self::TIME_35_SEC => __('35 seconds', 'deploy'),
-            self::TIME_40_SEC => __('40 seconds', 'deploy'),
             self::TIME_45_SEC => __('45 seconds', 'deploy'),
-            self::TIME_50_SEC => __('50 seconds', 'deploy'),
-            self::TIME_55_SEC => __('55 seconds', 'deploy'),
         ];
 
         $filteredTimeConstant = array_diff($allTimeConstant, $removeValues);
