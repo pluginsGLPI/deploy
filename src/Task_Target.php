@@ -54,12 +54,13 @@ class Task_Target extends CommonDBRelation
     }
 
 
-    static function getItemtypes(): array
+    public static function getItemtypes(): array
     {
         return [
             'Computer',
             'Group',
             'SavedSearch',
+            Computer_Group::class,
         ];
     }
 
@@ -113,6 +114,7 @@ class Task_Target extends CommonDBRelation
             'task'        => $task,
             'subitems'    => $targets,
             'used'        => $used,
+            'type' => __('targets', 'deploy'),
             'none_found'  => __("No target found for this task", 'deploy'),
             'task_active' => $task->fields['is_active'],
             'ma_itemtype' => self::class,

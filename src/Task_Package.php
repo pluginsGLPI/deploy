@@ -106,6 +106,7 @@ class Task_Package extends CommonDBRelation
             'task'        => $task,
             'subitems'    => $packages,
             'used'        => $used,
+            'type' => __('packages', 'deploy'),
             'none_found'  => sprintf(__('No %s found', 'deploy'), Package::getTypeName(Session::getPluralNumber())),
             'task_active' => $task->fields['is_active'],
             'ma_itemtype' => self::class,

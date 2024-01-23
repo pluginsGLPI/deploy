@@ -29,6 +29,9 @@
  * --------------------------------------------------------------------------
  */
 
+use Glpi\Plugin\Hooks;
+use GlpiPlugin\Deploy\Task;
+
 define('PLUGIN_DEPLOY_VERSION', '0.0.5');
 define('PLUGIN_DEPLOY_REPOSITORY_PATH', GLPI_PLUGIN_DOC_DIR . "/deploy/repository");
 define('PLUGIN_DEPLOY_MANIFESTS_PATH',  PLUGIN_DEPLOY_REPOSITORY_PATH . "/manifests");
@@ -59,7 +62,8 @@ function plugin_init_deploy()
     $PLUGIN_HOOKS['menu_toadd']['deploy'] = [
         'tools' => 'GlpiPlugin\Deploy\Menu',
     ];
-    $PLUGIN_HOOKS['config_page']['deploy'] = 'front/task.php';
+    $PLUGIN_HOOKS['config_page']['deploy'] = 'front/deploytask.php';
+    $PLUGIN_HOOKS[Hooks::HANDLE_DEPLOY_TASK]['deploy'] = [Task::class, 'handleDeployTask'];
 
     if (strpos($_SERVER['REQUEST_URI'] ?? '', Plugin::getPhpDir('deploy', false)) !== false) {
         $PLUGIN_HOOKS['add_css']['deploy'] = 'css/userinteraction.css';
