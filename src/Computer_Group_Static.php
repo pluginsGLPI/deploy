@@ -23,11 +23,8 @@
  * along with Deploy. If not, see <http://www.gnu.org/licenses/>.
  * -------------------------------------------------------------------------
  * @copyright Copyright (C) 2022-2023 by Deploy plugin team.
- * @copyright Copyright (C) 2022 by the deploy plugin team.
  * @license   GPLv3 https://www.gnu.org/licenses/gpl-3.0.html
- * @license   MIT https://opensource.org/licenses/mit-license.php
  * @link      https://github.com/pluginsGLPI/Deploy
- * @link      https://github.com/pluginsGLPI/deploy
  * -------------------------------------------------------------------------
  */
 
