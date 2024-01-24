@@ -1,0 +1,89 @@
+{% import 'components/form/fields_macros.html.twig' as fields %}
+
+<div class="container-fluid">
+    <div class="card card-sm search-card">
+        <div class="table-responsive">
+            {% set table_id = 'package_subitem_' ~ rand %}
+            <table class="search-results table table-hover table-card" id="{{ table_id }}">
+                <thead>
+                <tr>
+                    {% for label in headers %}
+                        <th>
+                            {{ label }}
+                        </th>
+                    {% endfor %}
+                    <th>
+                        <span class="float-end log-toolbar mb-0">
+                            <button class="btn btn-sm show_filters {{ filters|length > 0 ? 'btn-secondary active' : 'btn-outline-secondary' }}">
+                                <i class="fas fa-filter"></i>
+                                <span class="d-none d-xl-block">{{ __('Filter') }}</span>
+                            </button>
+                        </span>
+                    </th>
+                </tr>
+                {% if filters|length > 0  %}
+                    <tr class="filter_row">
+                        <input type="hidden" name="filters[active]" value="1" />
+                        <td>
+                            <select name="filters[agents_id][]" class="form-select agents-filter-select-multiple" multiple>
+                                {% for value, label in agent_filters %}
+                                    <option value="{{ value }}" {{ filters['agents_id'] is defined and value in filters['agents_id'] ? 'selected' : '' }}>
+                                        {{ label}}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <select name="filters[status][]" class="form-select status-filter-select-multiple" multiple>
+                                {% for value, label in status_list %}
+                                    <option value="{{ value }}" {{ filters['status'] is defined and value in filters['status'] ? 'selected' : '' }}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                {% endif %}
+                </thead>
+                {% if filtered_number < 1 %}
+                    <tr><td colspan="6">{{ __('No historical matching your filters') }}</td></tr>
+                {% else %}
+                    <tbody class="sortable-subitems">
+                    {% for job in jobs_list %}
+                        <tr>
+                            {% if job.agents_id == 0 %}
+                                <td>{{ __('No agent') }}</td>
+                            {% else %}
+                                {% set agent_link = get_item_link('Agent', job.agents_id) %}
+                                {% if agent_link is not empty %}
+                                    <td>{{ agent_link|raw }}</td>
+                                {% else %}
+                                    <td>{{ __('Agent') ~ ' ' ~ job.agents_id ~ ' ' ~ __('not found') }}</td>
+                                {% endif %}
+                            {% endif %}
+                            <td><span class="badge bg-{{ call("GlpiPlugin\\Deploy\\Package_Job::getColorStatus", [job.status])|raw }} text-light">{{ call("GlpiPlugin\\Deploy\\Package_Job::getStatusLabel", [job.status])|raw }}</span></td>
+                            <td>{{ job.log }}</td>
+                            <td>{{ job.date_creation }}</td>
+                            <td>{{ job.date_mod }}</td>
+                            <td>{{ job.date_done }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                {% endif %}
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function() {
+        $('.status-filter-select-multiple').select2();
+    });
+    $(function() {
+        $('.agents-filter-select-multiple').select2();
+    });
+</script>
