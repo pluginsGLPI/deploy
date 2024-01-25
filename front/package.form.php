@@ -111,19 +111,6 @@ if (isset($_POST["add"])) {
     $action = new Package_Action();
     $action->delete($_POST);
     Html::back();
-} else if (isset($_POST["add_userinteraction"])) {
-    unset($_POST['id']);
-    $userinteraction = new Package_UserInteraction();
-    $userinteraction->add($_POST);
-    Html::back();
-} else if (isset($_POST["edit_userinteraction"])) {
-    $userinteraction = new Package_UserInteraction();
-    $userinteraction->update($_POST);
-    Html::back();
-} else if (isset($_POST["delete_userinteraction"])) {
-    $userinteraction = new Package_UserInteraction();
-    $userinteraction->delete($_POST);
-    Html::back();
 } else {
     Html::requireJs('sortable');
     Html::header(
