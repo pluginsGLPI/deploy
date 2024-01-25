@@ -151,7 +151,7 @@ class UserInteractionTemplate extends CommonDBTM
                 `date_mod` timestamp NULL DEFAULT NULL,
                 PRIMARY KEY (`id`)
             ) ENGINE=InnoDB DEFAULT CHARSET={$default_charset} COLLATE={$default_collation} ROW_FORMAT=DYNAMIC;";
-            $DB->request($query);
+            $DB->doQuery($query) or die($DB->error());
         }
 
         // add display preferences
