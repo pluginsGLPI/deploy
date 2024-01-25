@@ -213,7 +213,7 @@ class Computer_Group extends CommonDBTM
       if (!$DB->tableExists($table)) {
          $migration->displayMessage("Installing $table");
          $query = "CREATE TABLE IF NOT EXISTS `$table` (
-                      `id` int(11) NOT NULL AUTO_INCREMENT,
+                      `id` int unsigned NOT NULL AUTO_INCREMENT,
                       `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
                       `comment` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
                       `date_creation` timestamp NULL DEFAULT NULL,
@@ -224,13 +224,13 @@ class Computer_Group extends CommonDBTM
                       KEY `date_creation` (`date_creation`),
                       KEY `date_mod` (`date_mod`)
                       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
-         $DB->query($query) or die($DB->error());
+         $DB->doQuery($query) or die($DB->error());
 
          // install default display preferences
          $dpreferences = new DisplayPreference;
          $found_dpref = $dpreferences->find(['itemtype' => 'GlpiPlugin\\Deploy\\Computer_Group']);
          if (count($found_dpref) == 0) {
-            $DB->query("INSERT INTO `glpi_displaypreferences`
+            $DB->doQuery("INSERT INTO `glpi_displaypreferences`
                            (`itemtype`, `num`, `rank`, `users_id`)
                         VALUES
                            ('GlpiPlugin\\Deploy\\Computer_Group', 3, 1, 0),
@@ -245,8 +245,11 @@ class Computer_Group extends CommonDBTM
       global $DB;
       $table = self::getTable();
       if ($DB->tableExists($table)) {
-         $DB->query("DROP TABLE IF EXISTS `".self::getTable()."`") or die ($DB->error());
+         $DB->doQuery("DROP TABLE IF EXISTS `".self::getTable()."`") or die ($DB->error());
       }
+
+      $DB->doQuery("DELETE FROM `glpi_displaypreferences`
+                           WHERE `itemtype` = 'GlpiPlugin\\Deploy\\Computer_Group'") or die ($DB->error());
    }
 
 

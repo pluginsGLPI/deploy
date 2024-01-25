@@ -193,14 +193,14 @@ class Computer_Group_Static extends CommonDBRelation
       if (!$DB->tableExists($table)) {
          $migration->displayMessage("Installing $table");
          $query = "CREATE TABLE IF NOT EXISTS `$table` (
-                      `id` int(11) NOT NULL AUTO_INCREMENT,
-                      `plugin_deploy_computers_groups_id` int(11) NOT NULL DEFAULT '0',
-                      `computers_id` int(11) NOT NULL DEFAULT '0',
+                      `id` int unsigned NOT NULL AUTO_INCREMENT,
+                      `plugin_deploy_computers_groups_id` int unsigned NOT NULL DEFAULT '0',
+                      `computers_id` int unsigned NOT NULL DEFAULT '0',
                       PRIMARY KEY (`id`),
                       KEY `computers_id` (`computers_id`),
                       KEY `computergroups_id` (`plugin_deploy_computers_groups_id`)
                       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
-         $DB->query($query) or die($DB->error());
+         $DB->doQuery($query) or die($DB->error());
       }
    }
 
@@ -209,7 +209,7 @@ class Computer_Group_Static extends CommonDBRelation
       global $DB;
       $table = self::getTable();
       if ($DB->tableExists($table)) {
-         $DB->query("DROP TABLE IF EXISTS `".self::getTable()."`") or die ($DB->error());
+         $DB->doQuery("DROP TABLE IF EXISTS `".self::getTable()."`") or die ($DB->error());
       }
    }
 
