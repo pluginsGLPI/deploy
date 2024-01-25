@@ -111,6 +111,17 @@ if (isset($_POST["add"])) {
     $action = new Package_Action();
     $action->delete($_POST);
     Html::back();
+} else if (isset($_POST["add_target"])) {
+    if ($_POST['items_id'] > 0) {
+        $package->check($_POST['plugin_deploy_packages_id'], UPDATE);
+        $package_target = new Package_Target();
+        $result = $package_target->add([
+            'plugin_deploy_packages_id' => (int) $_POST['plugin_deploy_packages_id'],
+            'itemtype' => $_POST['itemtype'],
+            'items_id' => (int) $_POST['items_id'],
+        ]);
+    }
+    Html::back();
 } else {
     Html::requireJs('sortable');
     Html::header(

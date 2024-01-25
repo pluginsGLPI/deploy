@@ -30,6 +30,7 @@
 
 namespace GlpiPlugin\Deploy;
 
+use Agent;
 use CommonDBTM;
 use Migration;
 use DBConnection;
@@ -62,7 +63,7 @@ class Package extends CommonDBTM
             ->addStandardTab(Package_Check::getType(), $ong, $options)
             ->addStandardTab(Package_File::getType(), $ong, $options)
             ->addStandardTab(Package_Action::getType(), $ong, $options)
-            ->addStandardTab(Task_Package::getType(), $ong, $options)
+            ->addStandardTab(Package_Target::getType(), $ong, $options)
             ->addStandardTab(__CLASS__, $ong, $options);
 
         return $ong;
@@ -243,7 +244,7 @@ class Package extends CommonDBTM
     {
         $this->deleteChildrenAndRelationsFromDb(
             [
-                Task_Package::class,
+                Package_Target::class,
             ]
         );
     }
@@ -302,7 +303,6 @@ class Package extends CommonDBTM
         }
     }
 
-
     public static function uninstall(Migration $migration)
     {
         global $DB;
@@ -312,5 +312,47 @@ class Package extends CommonDBTM
         $migration->dropTable($table);
 
         $DB->doQuery("DELETE FROM `glpi_displaypreferences` WHERE `itemtype` = '" . self::getType() . "'");
+    }
+
+    public static function handleDeployPackage(array $params)
+    {
+        $deploy = plugin_version_deploy();
+        $deploy_name = strtolower($deploy['name']);
+        $params['options']['response'][$deploy_name] = [
+            'version' => PLUGIN_DEPLOY_VERSION,
+            'server' => $deploy_name,
+            'deploy_config_page' => 'plugins/deploy/front/index.php',
+        ];
+
+        return $params;
+    }
+
+    /**
+    * Manage communication between agent and server
+    *
+    * @param array $params
+    * @return array|false array return jobs ready for the agent
+    */
+    public static function collectPackage($params = [])
+    {
+        $logContent = print_r($params, true);
+        $response = [];
+        if (isset($params['action']) && isset($params['machineid'])) {
+            $agent = new Agent();
+            if ($agent->getFromDBByCrit(['deviceid' => $params['machineid']])) {
+                if ($params['action'] == 'getConfig') {
+                    $response = self::getConfigAction($params);
+                }
+            }
+        }
+        if (!empty($response)) {
+            $response = json_encode($response);
+        }
+        return $response;
+    }
+
+    public static function getConfigAction($agent, $params = [])
+    {
+        return ['configValidityPeriod' => 600, 'schedule' => []];
     }
 }

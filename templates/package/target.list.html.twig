@@ -27,37 +27,28 @@
  #}
 
 {% import 'components/form/fields_macros.html.twig' as fields %}
-{% extends "@deploy/task/subitem.list.html.twig" %}
+{% extends "@deploy/package/subitemtarget.list.html.twig" %}
 
 {% block subitem_form %}
-    {% set add_pkg_btn %}
-        <button class="btn btn-primary"
-                type="submit"
-                name="add_package">
-            <i class="{{ pkg_icon }}"></i>
-            <span>{{ __("Add package", 'deploy') }}</span>
-        </button>
-    {% endset %}
+    {{ call(
+        "Dropdown::showSelectItemFromItemtypes",
+        [
+            {
+                'display': false,
+                'itemtypes': call("GlpiPlugin\\Deploy\\Package_Target::getItemtypes"),
+                'entity_restrict': package.fields['entities_id'],
+                'ajax_page': '../ajax/dropdownTargets.php',
+                'used': used,
+                'disabled': true
+            }
+        ]
+    )|raw }}
 
-    {{ fields.dropdownField(
-        'GlpiPlugin\\Deploy\\Package',
-        'plugin_deploy_packages_id',
-        0,
-        '',
-        {
-            'full_width': true,
-            'full_width_adapt_column': false,
-            'is_horizontal': true,
-            'label_class': '',
-            'field_class': 'col-12',
-            'mb': '',
-            'add_field_html': add_pkg_btn,
-            'condition': {
-                'is_active': 1,
-                'is_deleted': 0,
-            },
-            'width': '150px',
-            'used': used,
-        }
-    ) }}
+    <button class="btn btn-primary"
+            type="submit"
+            name="add_target"
+            {{ package_active == 1 ? "disabled" : "" }}>
+        <i class="{{ call("GlpiPlugin\\Deploy\\Package_Target::getIcon") }}"></i>
+        <span>{{ __("Add a new target", 'deploy') }}</span>
+    </button>
 {% endblock %}

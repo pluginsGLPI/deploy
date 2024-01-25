@@ -50,9 +50,8 @@ class Menu
     {
         $menu = [];
 
-        if (Task::canUpdate()) {
+        if (Package::canUpdate()) {
             $links_class = [
-                Task::class,
                 Package::class,
             ];
 
@@ -68,7 +67,7 @@ class Menu
 
             $menu = [
                 'title'   => self::getMenuName(),
-                'page'    => Task::getSearchURL(false),
+                'page'    => Package::getSearchURL(false),
                 'icon'    => self::getIcon(),
                 'options' => [],
                 'links'   => $links,
@@ -85,18 +84,6 @@ class Menu
                 $add_link = Package::getFormURL(false);
                 $menu['links']['add'] = $add_link;
                 $menu['options']['package']['links']['add'] = $add_link;
-            }
-
-            $menu['options']['task'] = [
-                'title' => Task::getTypeName(Session::getPluralNumber()),
-                'page'  => Task::getSearchURL(false),
-                'icon'  => Task::getIcon(),
-                'links' => $links
-            ];
-
-            if (Task::canCreate()) {
-                $menu['options']['task']['options']['add'] = Task::getFormURL(false);
-                $menu['options']['task']['links']['add']   = Task::getFormURL(false);
             }
 
             if (Computer_Group::canCreate()) {
