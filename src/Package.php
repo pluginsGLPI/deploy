@@ -62,7 +62,6 @@ class Package extends CommonDBTM
             ->addStandardTab(Package_Check::getType(), $ong, $options)
             ->addStandardTab(Package_File::getType(), $ong, $options)
             ->addStandardTab(Package_Action::getType(), $ong, $options)
-            ->addStandardTab(Package_UserInteraction::getType(), $ong, $options)
             ->addStandardTab(Task_Package::getType(), $ong, $options)
             ->addStandardTab(__CLASS__, $ong, $options);
 
@@ -82,14 +81,12 @@ class Package extends CommonDBTM
         $checks           = Package_Check::getFormattedArrayForPackage($package);
         $files            = Package_File::getFormattedArrayForPackage($package);
         $actions          = Package_Action::getFormattedArrayForPackage($package);
-        $userinteractions = Package_UserInteraction::getFormattedArrayForPackage($package);
 
         $json_array = [
             'jobs' => [
                 'checks'           => $checks,
                 'associatedFiles'  => array_keys($files),
                 'actions'          => $actions,
-                'userinteractions' => $userinteractions
             ],
             'associatedFiles' => $files,
         ];
