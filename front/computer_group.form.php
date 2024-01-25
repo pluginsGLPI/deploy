@@ -28,10 +28,11 @@
  * -------------------------------------------------------------------------
  */
 
+ namespace GlpiPlugin\Deploy;
+
 use Glpi\Event;
-use GlpiPlugin\Deploy\Computer_Group;
-use GlpiPlugin\Deploy\Computer_Group_Dynamic;
-use GlpiPlugin\Deploy\Computer_Group_Static;
+use Html;
+use Session;
 
 include ('../../../inc/includes.php');
 

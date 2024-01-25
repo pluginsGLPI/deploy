@@ -28,7 +28,12 @@
  * -------------------------------------------------------------------------
  */
 
-use GlpiPlugin\Deploy\Computer_Group;
+
+namespace GlpiPlugin\Deploy;
+
+use Html;
+use Search;
+use Session;
 
 include ('../../../inc/includes.php');
 
