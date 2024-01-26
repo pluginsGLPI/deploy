@@ -1,0 +1,67 @@
+<link rel="stylesheet" type="text/css" href="../../../public/lib/fullcalendar.css" />
+<div id='calendar'></div>
+
+<script>
+    $(document).ready(function() {
+        var calendarEl = document.getElementById('calendar');
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            plugins: ['interaction', 'timeGrid'],
+            initialView: 'resourceTimeGridDay',
+            selectable: true,
+            select: function(info) {
+                var startDate = new Date(info.startStr);
+                var startDate = startDate.toLocaleTimeString();
+
+                var newDate = new Date(info.startStr);
+                var dayName = newDate.toLocaleDateString('en-GB', { weekday: 'long' });
+
+                var endDate = new Date(info.endStr);
+                var endDate = endDate.toLocaleTimeString();
+
+                var form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '../front/package_timeslot.form.php';
+
+                var startField = document.createElement('input');
+                startField.type = 'hidden';
+                startField.name = 'time_start';
+                startField.value = startDate;
+
+                var dayField = document.createElement('input');
+                dayField.type = 'hidden';
+                dayField.name = 'weekday';
+                dayField.value = dayName;
+
+                var endField = document.createElement('input');
+                endField.type = 'hidden';
+                endField.name = 'time_end';
+                endField.value = endDate;
+
+                var packageIdField = document.createElement('input');
+                packageIdField.type = 'hidden';
+                packageIdField.name = 'plugin_deploy_packages_id';
+                packageIdField.value = '{{ package_id }}';
+
+                var csrfTokenField = document.createElement('input');
+                csrfTokenField.type = 'hidden';
+                csrfTokenField.name = '_glpi_csrf_token';
+                csrfTokenField.value = '{{ csrf_token() }}';
+
+                form.appendChild(csrfTokenField);
+                form.appendChild(startField);
+                form.appendChild(dayField);
+                form.appendChild(endField);
+                form.appendChild(packageIdField);
+                document.body.appendChild(form);
+                form.submit();
+            },
+            columnHeaderFormat: {
+                weekday: 'long'
+            },
+            headerToolbar: false
+        });
+
+        calendar.render();
+    });
+</script>
