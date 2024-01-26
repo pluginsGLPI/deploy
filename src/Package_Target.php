@@ -114,8 +114,6 @@ class Package_Target extends CommonDBRelation
             'subitems'    => $targets,
             'used'        => $used,
             'none_found'  => __("No target found for this package", 'deploy'),
-            'active_message'  => __("To add a target, disable this package", 'deploy'),
-            'package_active' => $package->fields['is_active'],
             'ma_itemtype' => self::class,
         ]);
     }
