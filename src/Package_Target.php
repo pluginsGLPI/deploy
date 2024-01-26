@@ -106,7 +106,7 @@ class Package_Target extends CommonDBRelation
             $item = new $target['itemtype']();
             $item->getFromDB($target['items_id']);
             $targets[$target['id']] = $item;
-            $used[$target['itemtype']][$target['items_id']] = $target['items_id'];
+            $used[$target['items_id']] = $target['items_id'];
         }
 
         TemplateRenderer::getInstance()->display('@deploy/package/target.list.html.twig', [

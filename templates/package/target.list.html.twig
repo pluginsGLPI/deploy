@@ -29,26 +29,33 @@
 {% import 'components/form/fields_macros.html.twig' as fields %}
 {% extends "@deploy/package/subitemtarget.list.html.twig" %}
 
-{% block subitem_form %}
-    {{ call(
-        "Dropdown::showSelectItemFromItemtypes",
-        [
-            {
-                'display': false,
-                'itemtypes': call("GlpiPlugin\\Deploy\\Package_Target::getItemtypes"),
-                'entity_restrict': package.fields['entities_id'],
-                'ajax_page': '../ajax/dropdownTargets.php',
-                'used': used,
-                'disabled': true
-            }
-        ]
-    )|raw }}
 
-    <button class="btn btn-primary"
-            type="submit"
-            name="add_target"
-            {{ package_active == 1 ? "disabled" : "" }}>
-        <i class="{{ call("GlpiPlugin\\Deploy\\Package_Target::getIcon") }}"></i>
-        <span>{{ __("Add a new target", 'deploy') }}</span>
-    </button>
+{% block subitem_form %}
+    {{ fields.dropdownField(
+        "GlpiPlugin\\Deploy\\Computer_Group",
+        'items_id',
+        0,
+        call('GlpiPlugin\\Deploy\\Computer_Group::getTypeName', [0]),
+        {
+            'used': used,
+        }
+    ) }}
+
+    {% set btn_add %}
+        <button class="btn btn-primary mb-2"
+                type="submit"
+                name="add_target"
+                {{ package_active == 1 ? "disabled" : "" }}>
+            <i class="{{ call("GlpiPlugin\\Deploy\\Package_Target::getIcon") }}"></i>
+            <span>{{ __("Add a new target", 'deploy') }}</span>
+        </button>
+    {% endset %}
+
+    {{ fields.htmlField(
+        '',
+        btn_add,
+        ''
+    ) }}
+    {{ fields.hiddenField('itemtype', 'GlpiPlugin\\Deploy\\Computer_Group') }}
+
 {% endblock %}
