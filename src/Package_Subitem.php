@@ -87,13 +87,11 @@ trait Package_Subitem
             'subitem_type'              => self::SUBITEM_TYPE,
             'subitem_itemtype'          => self::getType(),
             'plugin_deploy_packages_id' => $package->fields['id'],
-            'package_active'            => $package->fields['is_active'],
             'count'                     => count($entries),
             'entries'                   => $entries,
             'none_found'                => sprintf(__('No %s found', 'deploy'), self::getTypeName(Session::getPluralNumber())),
             'add_title'                 => sprintf(__('Add a %s', 'deploy'), self::getTypeName(1)),
             'edit_title'                => sprintf(__('Edit a %s', 'deploy'), self::getTypeName(1)),
-            'active_message'            => sprintf(__('To add a %s, disable this package', 'deploy'), self::getTypeName(1)),
             'subitem_line'              => '@deploy/package/' . self::SUBITEM_TYPE . '.line.html.twig',
             'headings'                  => self::getheadings(),
         ]);
