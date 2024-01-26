@@ -152,7 +152,6 @@ class PackageTarget extends CommonDBRelation
         }
     }
 
-
     public static function uninstall(Migration $migration)
     {
         $table = self::getTable();

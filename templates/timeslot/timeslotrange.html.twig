@@ -1,0 +1,158 @@
+<style>
+    .noUi-handle {
+        cursor: pointer;
+    }
+</style>
+{% set header %}
+    <thead>
+        <tr>
+            <th class="">
+                {{ __('Day')}}
+            </th>
+            <th class="">
+                {{ __('Timeslot', 'deploy')}}
+            </th>
+            <th class="">
+                {{ __('All Day', 'deploy')}}
+            </th>
+            {% for i in 0..24 %}
+                <th class="text-center">
+                    {{ '%02d'|format(i) }}
+                </th>
+            {% endfor %}
+        </tr>
+    </thead>
+{% endset %}
+<div class="container-fluid">
+    <div class="card card-sm search-card">
+        <div class="table-responsive">
+            <table class="search-results table table-hover table-card" id="{{ table_id }}">
+                {{ header }}
+                <tbody class="sortable-subitems">
+                    {% for key, label in days_list %}
+                        <tr>
+                            <td> {{ label }} </td>
+                            <th class="col-auto">
+                                <input class="form-check-input" type="checkbox" value="" id="notimeslot{{ key }}" {{ timeslots_data[key]['checked'] }}>
+                            </th>
+                            <th class="col-auto">
+                                <button type="" id="allday{{ key }}" class="btn btn-primary btn-sm"><i class="ti ti-clock-24"></i></button>
+                            </th>
+                            <td colspan="25">
+                                <div class="mx-2" id="slider{{ key }}"></div>
+                                <input type="hidden" id="starttime_{{ key }}" name="starttime_{{ key }}" value="{{ timeslots_data[key]['starttime'] }}">
+                                <input type="hidden" id="endtime_{{ key }}" name="endtime_{{ key }}"  value="{{ timeslots_data[key]['endtime'] }}">
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                {{ header }}
+            </table>
+        </div>
+    </div>
+</div>
+<div class="card-body">
+    <form action="{{get_plugin_web_dir('deploy') }}/front/timeslotrange.form.php" method="post">
+        <input type="hidden" id="timeslot" name="timeslot">
+        <input type="hidden" name="plugin_deploy_timeslots_id" value="{{ timeslot_id }}">
+        <input type="hidden" name="action" value="save_timeslot">
+        <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}">
+        <div class="text-end">
+            <button type="button" id="everyday" class="btn btn-outline-secondary"><i class="ti ti-24-hours"></i> &nbsp{{ __('Everyday') }}</button>
+            <button type="submit" class="btn btn-primary"><i class="ti ti-device-floppy"></i> &nbsp{{ __('Save') }}</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Initialize variables
+    let timeslot = {};
+    let timeslotsData = {{ timeslots_data|json_encode|raw }};
+    let everydayButton = document.getElementById('everyday');
+
+    // Create sliders and set up event listeners
+    for (let i = 1; i <= {{ days_list|length }}; i++) {
+        // Get elements
+        let slider = document.getElementById('slider' + i);
+        let checkbox = document.getElementById('notimeslot' + i);
+        let starttime = document.getElementById('starttime_' + i);
+        let endtime = document.getElementById('endtime_' + i);
+        let alldayButton = document.getElementById('allday' + i);
+
+        // Determine start and end values
+        let startValue = (starttime.value !== undefined && starttime.value !== null) ? parseInt(starttime.value) : 0;
+        let endValue = (endtime.value !== undefined && endtime.value !== null) ? parseInt(endtime.value) : 0;
+
+        // Create slider
+        noUiSlider.create(slider, {
+            start: [startValue, endValue],
+            connect: true,
+            step: 1,
+            range: {
+                'min': 0,
+                'max': 24
+            },
+        });
+
+        // Initialize timeslot data
+        timeslot[i] = {
+            is_enable: checkbox.checked,
+            starttime: starttime.value,
+            endtime: endtime.value
+        };
+
+        // Update timeslot data on slider update
+        slider.noUiSlider.on('update', function(values, handle) {
+            if (handle === 0) {
+                starttime.value = values[handle];
+            } else {
+                endtime.value = values[handle];
+            }
+
+            timeslot[i] = {
+                is_enable: checkbox.checked,
+                starttime: starttime.value,
+                endtime: endtime.value
+            };
+
+            document.getElementById('timeslot').value = JSON.stringify(timeslot);
+        });
+
+        // Disable slider if checkbox is not checked
+        if (!checkbox.checked) {
+            slider.setAttribute('disabled', true);
+            slider.noUiSlider.set([0, 0]);
+        }
+
+        // Enable or disable slider on checkbox change
+        checkbox.addEventListener('change', function() {
+            if (!this.checked) {
+                slider.setAttribute('disabled', true);
+                slider.noUiSlider.set([0, 0]);
+            } else {
+                slider.removeAttribute('disabled');
+                let starttime = timeslotsData[i] ? timeslotsData[i]['starttime'] : 4;
+                let endtime = timeslotsData[i] && timeslotsData[i]['endtime'] !== 0 ? timeslotsData[i]['endtime'] : 12;
+                slider.noUiSlider.set([starttime, endtime]);
+            }
+        });
+
+        // Set all sliders to [0, 24] on "everyday" button click
+        alldayButton.addEventListener('click', function(event) {
+            checkbox.checked = true;
+            slider.removeAttribute('disabled');
+            slider.noUiSlider.set([0, 24]);
+        });
+    }
+
+    // Set all sliders to [0, 24] on "everyday" button click
+    everydayButton.addEventListener('click', function(event) {
+        for (let i = 1; i <= {{ days_list|length }}; i++) {
+            let slider = document.getElementById('slider' + i);
+            let checkbox = document.getElementById('notimeslot' + i);
+            checkbox.checked = true;
+            slider.removeAttribute('disabled');
+            slider.noUiSlider.set([0, 24]);
+        }
+    });
+</script>
