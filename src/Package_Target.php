@@ -59,7 +59,6 @@ class Package_Target extends CommonDBRelation
     public static function getItemtypes(): array
     {
         return [
-            'Computer',
             Computer_Group::class,
         ];
     }
