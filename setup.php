@@ -62,7 +62,6 @@ function plugin_init_deploy()
         'tools' => 'GlpiPlugin\Deploy\Menu',
     ];
     $PLUGIN_HOOKS['config_page']['deploy'] = 'front/package.php';
-    $PLUGIN_HOOKS[Glpi\Plugin\Hooks::HANDLE_DEPLOY_TASK]['deploy'] = [GlpiPlugin\Deploy\Package::class, 'handleDeployPackage'];
 
     Plugin::registerClass('GlpiPlugin\Deploy\Profile', ['addtabon' => ['Profile']]);
 }

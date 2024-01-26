@@ -313,46 +313,4 @@ class Package extends CommonDBTM
 
         $DB->doQuery("DELETE FROM `glpi_displaypreferences` WHERE `itemtype` = '" . self::getType() . "'");
     }
-
-    public static function handleDeployPackage(array $params)
-    {
-        $deploy = plugin_version_deploy();
-        $deploy_name = strtolower($deploy['name']);
-        $params['options']['response'][$deploy_name] = [
-            'version' => PLUGIN_DEPLOY_VERSION,
-            'server' => $deploy_name,
-            'deploy_config_page' => 'plugins/deploy/front/index.php',
-        ];
-
-        return $params;
-    }
-
-    /**
-    * Manage communication between agent and server
-    *
-    * @param array $params
-    * @return array|false array return jobs ready for the agent
-    */
-    public static function collectPackage($params = [])
-    {
-        $logContent = print_r($params, true);
-        $response = [];
-        if (isset($params['action']) && isset($params['machineid'])) {
-            $agent = new Agent();
-            if ($agent->getFromDBByCrit(['deviceid' => $params['machineid']])) {
-                if ($params['action'] == 'getConfig') {
-                    $response = self::getConfigAction($params);
-                }
-            }
-        }
-        if (!empty($response)) {
-            $response = json_encode($response);
-        }
-        return $response;
-    }
-
-    public static function getConfigAction($agent, $params = [])
-    {
-        return ['configValidityPeriod' => 600, 'schedule' => []];
-    }
 }
