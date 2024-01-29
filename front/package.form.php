@@ -119,7 +119,6 @@ if (isset($_POST["add"])) {
     Html::back();
 } else {
     Html::requireJs('sortable');
-    Html::requireJs('fullcalendar');
     Html::header(
         Package::getTypeName(Session::getPluralNumber()),
         '',

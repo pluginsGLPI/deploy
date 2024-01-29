@@ -108,12 +108,8 @@ class Package_Timeslot extends CommonDBTM
 
     public static function uninstall(Migration $migration)
     {
-        global $DB;
-
         $table = self::getTable();
-        if ($DB->tableExists($table)) {
-            $migration->displayMessage("Uninstalling $table");
-            $DB->request("DROP TABLE {$table}");
-        }
+        $migration->displayMessage("Uninstalling $table");
+        $migration->dropTable($table);
     }
 }
