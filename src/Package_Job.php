@@ -165,26 +165,101 @@ class Package_Job extends CommonDBTM
 
     public static function showForPackage(Package $package)
     {
-        $packagejobs = new self();
-        $filters = $_GET['filters'] ?? [];
+        /** @var \DBmysql $DB */
+        global $DB;
 
+        $packagejobs = new self();
+        $start       = intval($_GET["start"] ?? 0);
+        $sort        = $_GET["sort"] ?? "";
+        $order       = strtoupper($_GET["order"] ?? "");
+        $filters     = $_GET['filters'] ?? [];
+        $is_filtered = count($filters) > 0;
+
+        if (strlen($sort) == 0) {
+            $sort = "id";
+        }
+        if (strlen($order) == 0) {
+            $order = "DESC";
+        }
         $sql_filters = self::convertFilterForSql($filters);
-        // search package jobs with filters
+        // search all package jobs
         $jobs_list = $packagejobs->find(
             [
                 "plugin_deploy_packages_id" => $package->getID(),
-            ] + $sql_filters
+            ]
         );
-        TemplateRenderer::getInstance()->display('@deploy/package/job.html.twig', [
-            'icon'              => self::getIcon(),
-            'package'           => $package,
-            'jobs_list'         => $jobs_list,
-            'status_list'       => self::getAllStatus(),
-            'agent_filters'     => self::getPackageAgents($package),
-            'none_found'        => __('No jobs found'),
-            'headers'           => self::getHeadings(),
-            'filters'           => $filters,
-            'filtered_number'   => count($jobs_list)
+
+        // search package jobs with filters
+        $filtered_jobs_list = $DB->request([
+            'FROM' => self::getTable(),
+            'WHERE' => [
+                'plugin_deploy_packages_id' => $package->getID(),
+            ] + $sql_filters,
+            'LIMIT' => $_SESSION['glpilist_limit'],
+            'START' => $start,
+            'ORDER' => "$sort $order",
+        ]);
+
+        // format data for datatable
+        $entries = [];
+        foreach ($filtered_jobs_list as $job) {
+            $agent = Agent::getById($job['agents_id']);
+            $job['agents_id'] = $agent->getLink(['display' => false]);
+            $job['status'] = '<span class="badge bg-' . self::getColorStatus($job['status']) . ' text-light">' . self::getStatusLabel($job['status']) . '</span>';
+            $entries[$job['id']] = $job;
+        }
+
+        // search all status
+        $status = array_unique(array_column($jobs_list, 'status'));
+        $status = array_combine($status, $status);
+        foreach ($status as $value) {
+            $status[$value] = self::getStatusLabel($value);
+        }
+
+        // search all agents
+        $agents = array_unique(array_column($jobs_list, 'agents_id'));
+        $agents = array_combine($agents, $agents);
+        foreach ($agents as $value) {
+            $agents[$value] = $value;
+        }
+
+        // count total and filtered number
+        $total_number = count($jobs_list);
+        $filtered_number = count($filtered_jobs_list);
+        
+        // display datatable
+        TemplateRenderer::getInstance()->display('components/datatable.html.twig', [
+            'start' => $start,
+            'sort' => $sort,
+            'order' => $order,
+            'href' => $package::getFormURLWithID($package->getID()),
+            'additional_params' => $is_filtered ? http_build_query([
+                'filters' => $filters
+            ]) : "",
+            'is_tab' => true,
+            'items_id' => $package->fields['id'],
+            'filters' => $filters,
+            'columns' => [
+                'agents_id'      => __("Agent"),
+                'status'        => __("Status"),
+                'log'           => _n("Log", 'Logs"', 2),
+                'date_creation' => __("Creation date"),
+                'date_mod'      => __("Modification date"),
+            ],
+            'columns_values' => [
+                'agents_id'      => $agents,
+                'status'        => $status,
+            ],
+            'formatters' => [
+                'agents_id'          => 'array',
+                'status'             => 'array',
+                'log'                => 'text',
+                'date_creation'      => 'datetime',
+                'date_mod'           => 'datetime',
+            ],
+            'entries' => $entries,
+            'total_number' => $total_number,
+            'filtered_number' => $filtered_number,
         ]);
     }
 
