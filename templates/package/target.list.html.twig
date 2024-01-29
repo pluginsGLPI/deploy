@@ -34,10 +34,10 @@
     {{ fields.dropdownField(
         "GlpiPlugin\\Deploy\\Computer_Group",
         'items_id',
-        0,
+        '0',
         call('GlpiPlugin\\Deploy\\Computer_Group::getTypeName', [0]),
         {
-            'used': used,
+            'used': used_item,
         }
     ) }}
 

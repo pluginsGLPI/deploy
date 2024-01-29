@@ -100,8 +100,7 @@ class Package_Target extends CommonDBRelation
         ]);
 
         $targets = [];
-        $itemtypes = self::getItemtypes();
-        $used = array_combine($itemtypes, array_fill(0, count($itemtypes), []));
+        $used = [];
         foreach ($iterator as $target) {
             $item = new $target['itemtype']();
             $item->getFromDB($target['items_id']);
@@ -110,9 +109,9 @@ class Package_Target extends CommonDBRelation
         }
 
         TemplateRenderer::getInstance()->display('@deploy/package/target.list.html.twig', [
-            'package'        => $package,
+            'package'     => $package,
             'subitems'    => $targets,
-            'used'        => $used,
+            'used_item'   => $used,
             'none_found'  => __("No target found for this package", 'deploy'),
             'ma_itemtype' => self::class,
         ]);
