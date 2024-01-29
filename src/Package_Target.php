@@ -35,14 +35,21 @@ use CommonGLPI;
 use DBConnection;
 use Glpi\Application\View\TemplateRenderer;
 use Migration;
+use Session;
 
 class Package_Target extends CommonDBRelation
 {
     public static $itemtype_1 = Package::class;
     public static $items_id_1 = "plugin_deploy_packages_id";
 
-    public static $itemtype_2 = "itemtype";
-    public static $items_id_2 = "items_id";
+    public static $itemtype_2 = Computer_Group::class;
+    public static $items_id_2 = "plugin_deploy_computers_groups_id";
+
+    static public $checkItem_2_Rights  = self::DONT_CHECK_ITEM_RIGHTS;
+    static public $logs_for_item_2     = false;
+    public $auto_message_on_action     = false;
+
+    static    $rightname  = 'computer_group';
 
     public static function getTypeName($nb = 0)
     {
@@ -66,7 +73,7 @@ class Package_Target extends CommonDBRelation
 
     public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
     {
-        $number = self::countForMainItem($item);
+        $number = count(getAllDataFromTable(self::getTable(), ['plugin_deploy_computers_groups_id' => $item->getID()]));
 
         switch ($item->getType()) {
             case Package::class:
@@ -102,10 +109,10 @@ class Package_Target extends CommonDBRelation
         $targets = [];
         $used = [];
         foreach ($iterator as $target) {
-            $item = new $target['itemtype']();
-            $item->getFromDB($target['items_id']);
+            $item = new Computer_Group();
+            $item->getFromDB($target['plugin_deploy_computers_groups_id']);
             $targets[$target['id']] = $item;
-            $used[$target['items_id']] = $target['items_id'];
+            $used[$target['plugin_deploy_computers_groups_id']] = $target['plugin_deploy_computers_groups_id'];
         }
 
         TemplateRenderer::getInstance()->display('@deploy/package/target.list.html.twig', [
@@ -131,17 +138,18 @@ class Package_Target extends CommonDBRelation
             $sign              = DBConnection::getDefaultPrimaryKeySignOption();
 
             $package_fk = getForeignKeyFieldForItemType(Package::class);
+            $computer_group_fk = getForeignKeyFieldForItemType(Computer_Group::class);
 
             $query = "CREATE TABLE IF NOT EXISTS `$table` (
                 `id` int $sign NOT NULL AUTO_INCREMENT,
                 `$package_fk` int $sign NOT NULL DEFAULT '0',
-                `itemtype` varchar(100) DEFAULT NULL,
-                `items_id` int $sign NOT NULL DEFAULT '0',
+                `$computer_group_fk` int $sign NOT NULL DEFAULT '0',
                 `date_creation` timestamp NULL DEFAULT NULL,
                 `date_mod` timestamp NULL DEFAULT NULL,
                 PRIMARY KEY (`id`),
                 KEY `$package_fk` (`$package_fk`),
-                UNIQUE KEY `item` (`itemtype`,`items_id`),
+                KEY `$computer_group_fk` (`$computer_group_fk`),
+                UNIQUE KEY `item` (`$package_fk`,`$computer_group_fk`),
                 KEY `date_creation` (`date_creation`),
                 KEY `date_mod` (`date_mod`)
             ) ENGINE=InnoDB DEFAULT CHARSET={$default_charset} COLLATE={$default_collation} ROW_FORMAT=DYNAMIC;";

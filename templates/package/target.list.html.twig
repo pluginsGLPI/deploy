@@ -33,7 +33,7 @@
 {% block subitem_form %}
     {{ fields.dropdownField(
         "GlpiPlugin\\Deploy\\Computer_Group",
-        'items_id',
+        'plugin_deploy_computers_groups_id',
         '0',
         call('GlpiPlugin\\Deploy\\Computer_Group::getTypeName', [0]),
         {
@@ -53,6 +53,4 @@
         btn_add,
         ''
     ) }}
-    {{ fields.hiddenField('itemtype', 'GlpiPlugin\\Deploy\\Computer_Group') }}
-
 {% endblock %}
