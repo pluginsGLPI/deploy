@@ -1,5 +1,16 @@
 <?php
 
+use GlpiPlugin\Deploy\Computer\Group;
+use GlpiPlugin\Deploy\Computer\Group_Dynamic;
+use GlpiPlugin\Deploy\Computer\Group_Static;
+use GlpiPlugin\Deploy\Package;
+use GlpiPlugin\Deploy\Package_Action;
+use GlpiPlugin\Deploy\Package_Check;
+use GlpiPlugin\Deploy\Package_File;
+use GlpiPlugin\Deploy\Package_Target;
+use GlpiPlugin\Deploy\Profile;
+use GlpiPlugin\Deploy\Repository;
+
 /**
  * -------------------------------------------------------------------------
  * Deploy plugin for GLPI
@@ -33,19 +44,16 @@ function plugin_deploy_install()
     $version   = plugin_version_deploy();
     $migration = new Migration($version['version']);
 
-    // Parse src directory
-    foreach (glob(dirname(__FILE__) . '/src/*') as $filepath) {
-        // Load *.class.php files and get the class name
-        if (preg_match("/src\/(.+).php$/", $filepath, $matches)) {
-            $classname = 'GlpiPlugin\\Deploy\\' . ucfirst($matches[1]);
-            $refl = new ReflectionClass($classname);
-            // If the install method exists, load it
-            if (method_exists($classname, 'install') && !$refl->isTrait()) {
-                $classname::install($migration);
-            }
-        }
-    }
-    $migration->executeMigration();
+    Package_Action::install($migration);
+    Package_Check::install($migration);
+    Package_File::install($migration);
+    Package::install($migration);
+    Package_Target::install($migration);
+    Profile::install($migration);
+    Repository::install($migration);
+    Group::install($migration);
+    Group_Dynamic::install($migration);
+    Group_Static::install($migration);
 
     return true;
 }
@@ -59,18 +67,14 @@ function plugin_deploy_uninstall()
 {
     $migration = new Migration(PLUGIN_DEPLOY_VERSION);
 
-    // Parse src directory
-    foreach (glob(dirname(__FILE__) . '/src/*') as $filepath) {
-        // Load *.class.php files and get the class name
-        if (preg_match("/src\/(.+).php/", $filepath, $matches)) {
-            $classname = 'GlpiPlugin\\Deploy\\' . ucfirst($matches[1]);
-            $refl = new ReflectionClass($classname);
-            // If the install method exists, load it
-            if (method_exists($classname, 'uninstall') && !$refl->isTrait()) {
-                $classname::uninstall($migration);
-            }
-        }
-    }
+    Package_Target::uninstall($migration);
+    Package::uninstall($migration);
+    Profile::uninstall($migration);
+    Repository::uninstall($migration);
+    Group::uninstall($migration);
+    Group_Dynamic::uninstall($migration);
+    Group_Static::uninstall($migration);
+
     return true;
 }
 

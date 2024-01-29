@@ -32,6 +32,7 @@ namespace GlpiPlugin\Deploy;
 
 use CommonGLPI;
 use DbUtils;
+use GlpiPlugin\Deploy\Computer\Group;
 use Html;
 use Migration;
 use Profile as GlobalProfile;
@@ -48,8 +49,8 @@ class Profile extends GlobalProfile {
 
    static function getAllRights($all = false) {
       $rights = [
-         ['itemtype' => Computer_Group::getType(),
-               'label'    => Computer_Group::getTypeName(),
+         ['itemtype' => Group::getType(),
+               'label'    => Group::getTypeName(),
                'field'    => 'computer_group'
          ]
       ];

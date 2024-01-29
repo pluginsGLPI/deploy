@@ -28,13 +28,13 @@
  * -------------------------------------------------------------------------
  */
 
- namespace GlpiPlugin\Deploy;
+ namespace GlpiPlugin\Deploy\Computer;
 
 use Glpi\Event;
 use Html;
 use Session;
 
-include ('../../../inc/includes.php');
+include ('../../../../inc/includes.php');
 
 Session::checkRight("computer_group", READ);
 
@@ -46,15 +46,15 @@ if (!isset($_GET["withtemplate"])) {
    $_GET["withtemplate"] = "";
 }
 
-$computergroup = new Computer_Group();
-$computergroupstatic = new Computer_Group_Static();
-$computergroup_dynamic = new Computer_Group_Dynamic();
+$computergroup = new Group();
+$computergroupstatic = new Group_Static();
+$computergroup_dynamic = new Group_Dynamic();
 
 //Add a new computergroup
 if (isset($_POST["add"])) {
    $computergroup->check(-1, CREATE, $_POST);
    if ($newID = $computergroup->add($_POST)) {
-      Event::log($newID, "Computer_Group", 4, "inventory",
+      Event::log($newID, "Group", 4, "inventory",
                  sprintf(__('%1$s adds the item %2$s'), $_SESSION["glpiname"], $_POST["name"]));
 
       if ($_SESSION['glpibackcreated']) {
@@ -125,7 +125,7 @@ if (isset($_POST["add"])) {
 
 
    Html::header(
-      Computer_Group::getTypeName(Session::getPluralNumber()),
+      Group::getTypeName(Session::getPluralNumber()),
       '',
       'tools',
       'glpiplugin\deploy\menu',

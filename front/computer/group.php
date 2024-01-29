@@ -29,24 +29,24 @@
  */
 
 
-namespace GlpiPlugin\Deploy;
+namespace GlpiPlugin\Deploy\Computer;
 
 use Html;
 use Search;
 use Session;
 
-include ('../../../inc/includes.php');
+include ('../../../../inc/includes.php');
 
 Session::checkRight("computer_group", UPDATE);
 
 Html::header(
-    Computer_Group::getTypeName(Session::getPluralNumber()),
+    Group::getTypeName(Session::getPluralNumber()),
     '',
     'tools',
     'glpiplugin\deploy\menu',
     'computer_group'
 );
 
-Search::show('GlpiPlugin\Deploy\Computer_Group');
+Search::show('GlpiPlugin\Deploy\Computer\Group');
 
 Html::footer();
