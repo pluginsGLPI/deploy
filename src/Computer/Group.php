@@ -28,18 +28,17 @@
  * -------------------------------------------------------------------------
  */
 
-namespace GlpiPlugin\Deploy;
+ namespace GlpiPlugin\Deploy\Computer;
 
 use CommonDBTM;
 use Computer;
 use DisplayPreference;
 use Glpi\Application\View\TemplateRenderer;
-use Html;
 use Migration;
 use Search;
 use Session;
 
-class Computer_Group extends CommonDBTM
+class Group extends CommonDBTM
 {
 
    public    $dohistory  = true;
@@ -61,8 +60,8 @@ class Computer_Group extends CommonDBTM
    function defineTabs($options = []) {
       $ong = [];
       $this->addDefaultFormTab($ong)
-         ->addStandardTab('GlpiPlugin\Deploy\Computer_Group_Dynamic', $ong, $options)
-         ->addStandardTab('GlpiPlugin\Deploy\Computer_Group_Static', $ong, $options)
+         ->addStandardTab('GlpiPlugin\Deploy\Computer\Group_Dynamic', $ong, $options)
+         ->addStandardTab('GlpiPlugin\Deploy\Computer\Group_Static', $ong, $options)
          ->addStandardTab('Log', $ong, $options);
       return $ong;
    }
@@ -89,7 +88,7 @@ class Computer_Group extends CommonDBTM
 
       $tab[] = [
          'id'               => '5',
-         'table'            => Computer_Group_Dynamic::getTable(),
+         'table'            => Group_Dynamic::getTable(),
          'field'            => 'search',
          'name'             => __('Number of dynamics items', 'deploy'),
          'nosearch'         => true,
@@ -102,7 +101,7 @@ class Computer_Group extends CommonDBTM
 
       $tab[] = [
          'id'                 => '6',
-         'table'              => Computer_Group_Static::getTable(),
+         'table'              => Group_Static::getTable(),
          'field'              => 'id',
          'name'               => __('Number of statics items', 'deploy'),
          'forcegroupby'       => true,
@@ -115,7 +114,7 @@ class Computer_Group extends CommonDBTM
 
       $tab[] = [
          'id'               => '7',
-         'table'            => Computer_Group_Dynamic::getTable(),
+         'table'            => Group_Dynamic::getTable(),
          'field'            => '_virtual_dynamic_list',
          'name'             => __('List of dynamics items', 'deploy'),
          'massiveaction'    => false,
@@ -137,7 +136,7 @@ class Computer_Group extends CommonDBTM
          'massiveaction'      => false,
          'joinparams'         => [
             'beforejoin'         => [
-               'table'              => Computer_Group_Static::getTable(),
+               'table'              => Group_Static::getTable(),
                'joinparams'         => [
                   'jointype'           => 'child',
                ]
@@ -171,7 +170,7 @@ class Computer_Group extends CommonDBTM
 
       $params = [
          'SELECT' => '*',
-         'FROM'   => Computer_Group_Dynamic::getTable(),
+         'FROM'   => Group_Dynamic::getTable(),
          'WHERE'  => ['plugin_deploy_computers_groups_id' => $this->fields['id']],
       ];
 
@@ -196,7 +195,7 @@ class Computer_Group extends CommonDBTM
 
       $params = [
          'SELECT' => '*',
-         'FROM'   => Computer_Group_Static::getTable(),
+         'FROM'   => Group_Static::getTable(),
          'WHERE'  => ['plugin_deploy_computers_groups_id' => $this->fields['id']],
       ];
 
@@ -256,7 +255,7 @@ class Computer_Group extends CommonDBTM
       $migration->displayMessage("Uninstalling $table");
       $migration->dropTable($table);
 
-      $DB->doQuery("DELETE FROM `glpi_displaypreferences` WHERE `itemtype` = 'GlpiPlugin\\\Deploy\\\Computer_Group'");
+      $DB->doQuery("DELETE FROM `glpi_displaypreferences` WHERE `itemtype` = 'GlpiPlugin\\\Deploy\\\Computer\\\Group'");
    }
 
 

@@ -30,6 +30,7 @@
 
 namespace GlpiPlugin\Deploy;
 
+use GlpiPlugin\Deploy\Computer\Group;
 use \Session;
 
 class Menu
@@ -55,8 +56,8 @@ class Menu
                 Package::class,
             ];
 
-            if (Computer_Group::canCreate()) {
-                $links_class[] = Computer_Group::class;
+            if (Group::canCreate()) {
+                $links_class[] = Group::class;
             }
 
             $links = [];
@@ -86,17 +87,17 @@ class Menu
                 $menu['options']['package']['links']['add'] = $add_link;
             }
 
-            if (Computer_Group::canCreate()) {
+            if (Group::canCreate()) {
                 $menu['options']['computer_group'] = [
-                    'title' => Computer_Group::getTypeName(Session::getPluralNumber()),
-                    'page'  => Computer_Group::getSearchURL(false),
-                    'icon'  => Computer_Group::getIcon(),
+                    'title' => Group::getTypeName(Session::getPluralNumber()),
+                    'page'  => Group::getSearchURL(false),
+                    'icon'  => Group::getIcon(),
                     'links' => $links,
                 ];
 
-                $add_link = Computer_Group::getFormURL(false);
-                $menu['options']['computer_group']['options']['add'] = Computer_Group::getFormURL(false);
-                $menu['options']['computer_group']['links']['add']   = Computer_Group::getFormURL(false);
+                $add_link = Group::getFormURL(false);
+                $menu['options']['computer_group']['options']['add'] = Group::getFormURL(false);
+                $menu['options']['computer_group']['links']['add']   = Group::getFormURL(false);
             }
 
         }

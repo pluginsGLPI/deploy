@@ -28,7 +28,7 @@
 
 {% import 'components/form/fields_macros.html.twig' as fields %}
 
-<form method='POST' enctype='multipart/form-data' action='{{  call('Toolbox::getItemTypeFormURL("GlpiPlugin\Deploy\Computer_Group")')   }}'>
+<form method='POST' enctype='multipart/form-data' action='{{  call('Toolbox::getItemTypeFormURL("GlpiPlugin\Deploy\Computer\Group")')   }}'>
    <div class="d-flex">
       {{ fields.dropdownField(
          'Computer',

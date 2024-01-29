@@ -28,7 +28,7 @@
  * -------------------------------------------------------------------------
  */
 
-namespace GlpiPlugin\Deploy;
+namespace GlpiPlugin\Deploy\Computer;
 
 use CommonDBTM;
 use CommonGLPI;
@@ -40,7 +40,7 @@ use Search;
 use Session;
 use Toolbox;
 
-class Computer_Group_Dynamic extends CommonDBTM
+class Group_Dynamic extends CommonDBTM
 {
    static    $rightname  = 'computer_group';
 
@@ -61,7 +61,7 @@ class Computer_Group_Dynamic extends CommonDBTM
 
    function getTabNameForItem(CommonGLPI $item, $withtemplate = 0) {
 
-      if (get_class($item) == Computer_Group::getType()) {
+      if (get_class($item) == Group::getType()) {
          $count = 0;
          $computergroup_dynamic = new self();
          if ($computergroup_dynamic->getFromDBByCrit([
@@ -81,14 +81,16 @@ class Computer_Group_Dynamic extends CommonDBTM
       if (!is_array($values)) {
          $values = [$field => $values];
       }
+      Toolbox::logDebug($field);
       switch ($field) {
          case 'search' :
             $count = 0;
             if (strpos($values['id'], Search::NULLVALUE) === false ) {
-               $computergroup_dynamic = new Computer_Group_Dynamic();
+               $computergroup_dynamic = new Group_Dynamic();
                $computergroup_dynamic->getFromDB($values['id']);
                $count = $computergroup_dynamic->countDynamicItems();
             }
+            Toolbox::logDebug($count);
             return  ($count) ? $count : ' 0 ';
 
          case '_virtual_dynamic_list' :
@@ -191,7 +193,7 @@ class Computer_Group_Dynamic extends CommonDBTM
    }
 
 
-   static function showForItem(Computer_Group $computergroup) {
+   static function showForItem(Group $computergroup) {
 
       $ID = $computergroup->getField('id');
       if (!$computergroup->can($ID, UPDATE)) {
@@ -221,7 +223,7 @@ class Computer_Group_Dynamic extends CommonDBTM
          }
 
          //redirect to computergroup dynamic tab after saved search
-         $target = Computer_Group::getFormURLWithID($ID);
+         $target = Group::getFormURLWithID($ID);
          $target .= "&_glpi_tab=Computer_Group_Dynamic$1";
          $p['target'] = $target;
          $p['addhidden'] = [

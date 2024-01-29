@@ -28,7 +28,7 @@
  * -------------------------------------------------------------------------
  */
 
-namespace GlpiPlugin\Deploy;
+ namespace GlpiPlugin\Deploy\Computer;
 
 use CommonDBRelation;
 use CommonGLPI;
@@ -42,11 +42,11 @@ use Search;
 use Session;
 use Toolbox;
 
-class Computer_Group_Static extends CommonDBRelation
+class Group_Static extends CommonDBRelation
 {
 
    // From CommonDBRelation
-   static public $itemtype_1 = 'GlpiPlugin\Deploy\Computer_Group';
+   static public $itemtype_1 = 'GlpiPlugin\Deploy\Computer\Group';
    static public $items_id_1 = 'plugin_deploy_computers_groups_id';
    static public $itemtype_2 = 'Computer';
    static public $items_id_2 = 'computers_id';
@@ -80,7 +80,7 @@ class Computer_Group_Static extends CommonDBRelation
 
 
    function getTabNameForItem(CommonGLPI $item, $withtemplate = 0) {
-      if (get_class($item) == Computer_Group::getType()) {
+      if (get_class($item) == Group::getType()) {
          $count = 0;
          $count = countElementsInTable(self::getTable(), ['plugin_deploy_computers_groups_id' => $item->getID()]);
          $ong = [];
@@ -113,7 +113,7 @@ class Computer_Group_Static extends CommonDBRelation
    }
 
 
-   static function showForItem(Computer_Group $computergroup)
+   static function showForItem(Group $computergroup)
    {
       global $DB;
 
@@ -138,7 +138,7 @@ class Computer_Group_Static extends CommonDBRelation
 
       if ($computergroup->canAddItem('itemtype')) {
          TemplateRenderer::getInstance()->display('@deploy/computer_group/computer_group_static.html.twig', [
-            'form_action'  => Toolbox::getItemTypeFormURL("GlpiPlugin\Deploy\Computer_Group"),
+            'form_action'  => Toolbox::getItemTypeFormURL("GlpiPlugin\Deploy\Computer\Group"),
             'computers_groups_id' => $ID,
             'computer_used' => $used,
             'params'       => [],

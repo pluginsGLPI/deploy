@@ -34,6 +34,7 @@ use CommonDBRelation;
 use CommonGLPI;
 use DBConnection;
 use Glpi\Application\View\TemplateRenderer;
+use GlpiPlugin\Deploy\Computer\Group;
 use Migration;
 use Session;
 
@@ -42,7 +43,7 @@ class Package_Target extends CommonDBRelation
     public static $itemtype_1 = Package::class;
     public static $items_id_1 = "plugin_deploy_packages_id";
 
-    public static $itemtype_2 = Computer_Group::class;
+    public static $itemtype_2 = Group::class;
     public static $items_id_2 = "plugin_deploy_computers_groups_id";
 
     static public $checkItem_2_Rights  = self::DONT_CHECK_ITEM_RIGHTS;
@@ -60,14 +61,6 @@ class Package_Target extends CommonDBRelation
     public static function getIcon()
     {
         return "ti ti-devices-pc";
-    }
-
-
-    public static function getItemtypes(): array
-    {
-        return [
-            Computer_Group::class,
-        ];
     }
 
 
@@ -109,7 +102,7 @@ class Package_Target extends CommonDBRelation
         $targets = [];
         $used = [];
         foreach ($iterator as $target) {
-            $item = new Computer_Group();
+            $item = new Group();
             $item->getFromDB($target['plugin_deploy_computers_groups_id']);
             $targets[$target['id']] = $item;
             $used[$target['plugin_deploy_computers_groups_id']] = $target['plugin_deploy_computers_groups_id'];
@@ -138,7 +131,7 @@ class Package_Target extends CommonDBRelation
             $sign              = DBConnection::getDefaultPrimaryKeySignOption();
 
             $package_fk = getForeignKeyFieldForItemType(Package::class);
-            $computer_group_fk = getForeignKeyFieldForItemType(Computer_Group::class);
+            $computer_group_fk = getForeignKeyFieldForItemType(Group::class);
 
             $query = "CREATE TABLE IF NOT EXISTS `$table` (
                 `id` int $sign NOT NULL AUTO_INCREMENT,

@@ -32,10 +32,10 @@
 
 {% block subitem_form %}
     {{ fields.dropdownField(
-        "GlpiPlugin\\Deploy\\Computer_Group",
+        "GlpiPlugin\\Deploy\\Computer\\Group",
         'plugin_deploy_computers_groups_id',
         '0',
-        call('GlpiPlugin\\Deploy\\Computer_Group::getTypeName', [0]),
+        call('GlpiPlugin\\Deploy\\Computer\\Group::getTypeName', [0]),
         {
             'used': used_item,
         }
