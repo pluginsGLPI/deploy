@@ -81,6 +81,12 @@
                                 <th>
                                     {{ __("Name") }}
                                 </th>
+                                <th>
+                                    {{ __('Number of dynamics items', 'deploy') }}
+                                </th>
+                                <th>
+                                    {{ __('Number of statics items', 'deploy') }}
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -105,6 +111,12 @@
                                         {{ subitem.getLink({
                                             'linkoption': subitem_active ? "" : "class='link-warning' title='" ~ __("Item is not active", 'deploy') ~ "' data-bs-toggle='tooltip'",
                                         })|raw }}
+                                    </td>
+                                    <td>
+                                        {{ subitem.countDynamicItem() }}
+                                    </td>
+                                    <td>
+                                        {{ subitem.countStaticItem() }}
                                     </td>
                                 </tr>
                             {% endfor %}
