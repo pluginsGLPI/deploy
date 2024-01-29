@@ -113,12 +113,8 @@ if (isset($_POST["add"])) {
     Html::back();
 } else if (isset($_POST["add_target"])) {
     if ($_POST['plugin_deploy_computers_groups_id'] > 0) {
-        $package->check($_POST['plugin_deploy_packages_id'], UPDATE);
         $package_target = new Package_Target();
-        $result = $package_target->add([
-            'plugin_deploy_packages_id' => (int) $_POST['plugin_deploy_packages_id'],
-            'plugin_deploy_computers_groups_id' => (int) $_POST['plugin_deploy_computers_groups_id'],
-        ]);
+        $package_target->add($_POST);
     }
     Html::back();
 } else {
