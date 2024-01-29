@@ -8,7 +8,6 @@ use DBConnection;
 use DBmysqlIterator;
 use Glpi\Application\View\TemplateRenderer;
 use Migration;
-use Search;
 
 class Package_Job extends CommonDBTM
 {
@@ -140,39 +139,28 @@ class Package_Job extends CommonDBTM
         return $agent_list;
     }
 
-    public static function convertFilterForSql(array $filter)
+    public static function convertFilterForSql(array $filters)
     {
-        $sql_filter = [];
-        if (isset($filter) && count($filter) > 1) {
-            $sql_filter = [
-                'OR' => []
-            ];
-            if (count($filter) > 2) {
-                if (isset($filter['status'])) {
-                    $sql_filter['OR'][] = [
-                        'status' => $filter['status']
-                    ];
-                }
-                if (isset($filter['agents_id'])) {
-                    $sql_filter['AND'][] = [
-                        'agents_id' => $filter['agents_id']
-                    ];
-                }
-            } else {
-                if (isset($filter['status'])) {
-                    $sql_filter['OR'][] = [
-                        'status' => $filter['status']
-                    ];
-                }
-                if (isset($filter['agents_id'])) {
-                    $sql_filter['OR'][] = [
-                        'agents_id' => $filter['agents_id']
-                    ];
-                }
+
+        $sql_filters = [];
+        $like_filters = [
+            'log',
+        ];
+        foreach ($like_filters as $filter_key) {
+            if (strlen(($filters[$filter_key] ?? ""))) {
+                $sql_filters[$filter_key] = ['LIKE', '%' . $filters[$filter_key] . '%'];
             }
         }
 
-        return $sql_filter;
+        if (isset($filters['agents_id']) && !empty($filters['agents_id'])) {
+            $sql_filters['agents_id'] = $filters['agents_id'];
+        }
+
+        if (isset($filters['status']) && !empty($filters['status'])) {
+            $sql_filters['status'] = $filters['status'];
+        }
+
+        return $sql_filters;
     }
 
     public static function showForPackage(Package $package)
