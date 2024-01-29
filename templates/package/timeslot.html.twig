@@ -1,67 +1,60 @@
-<link rel="stylesheet" type="text/css" href="../../../public/lib/fullcalendar.css" />
-<div id='calendar'></div>
+<table>
+	<thead>
+		<tr>
+			<th></th>
+			<th>00:00</th>
+			<th>01:00</th>
+			<th>02:00</th>
+			<th>21:00</th>
+			<th>22:00</th>
+			<th>23:00</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr class="checkbox-group">
+			<td>Lundi</td>
+				<td><input class="form-check-input" type="checkbox" id="checkboxNoLabel" value="" aria-label="..."></td>
+				<td><input class="form-check-input" type="checkbox" id="checkboxNoLabel" value="" aria-label="..."></td>
+				<td><input class="form-check-input" type="checkbox" id="checkboxNoLabel" value="" aria-label="..."></td>
+				<td><input class="form-check-input" type="checkbox" id="checkboxNoLabel" value="" aria-label="..."></td>
+				<td><input class="form-check-input" type="checkbox" id="checkboxNoLabel" value="" aria-label="..."></td>
+				<td><input class="form-check-input" type="checkbox" id="checkboxNoLabel" value="" aria-label="..."></td>
+		</tr>
+		<tr class="checkbox-group">
+			<td>Mardi</td>
+				<td><input class="form-check-input" type="checkbox" id="checkboxNoLabel" value="" aria-label="..."></td>
+				<td><input class="form-check-input" type="checkbox" id="checkboxNoLabel" value="" aria-label="..."></td>
+				<td><input class="form-check-input" type="checkbox" id="checkboxNoLabel" value="" aria-label="..."></td>
+				<td><input class="form-check-input" type="checkbox" id="checkboxNoLabel" value="" aria-label="..."></td>
+				<td><input class="form-check-input" type="checkbox" id="checkboxNoLabel" value="" aria-label="..."></td>
+				<td><input class="form-check-input" type="checkbox" id="checkboxNoLabel" value="" aria-label="..."></td>
+		</tr>
+	</tbody>
+</table>
 
 <script>
-    $(document).ready(function() {
-        var calendarEl = document.getElementById('calendar');
+	$(document).ready(function () {
+        $('.checkbox-group').each(function() {
+            var checkboxes = $(this).find('.form-check-input');
+            var firstChecked = null;
 
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            plugins: ['interaction', 'timeGrid'],
-            initialView: 'resourceTimeGridDay',
-            selectable: true,
-            select: function(info) {
-                var startDate = new Date(info.startStr);
-                var startDate = startDate.toLocaleTimeString();
+            checkboxes.on('change', function() {
+                if (!this.checked) {
+                    firstChecked = null;
+                    return;
+                }
 
-                var newDate = new Date(info.startStr);
-                var dayName = newDate.toLocaleDateString('en-GB', { weekday: 'long' });
-
-                var endDate = new Date(info.endStr);
-                var endDate = endDate.toLocaleTimeString();
-
-                var form = document.createElement('form');
-                form.method = 'POST';
-                form.action = '../front/package_timeslot.form.php';
-
-                var startField = document.createElement('input');
-                startField.type = 'hidden';
-                startField.name = 'time_start';
-                startField.value = startDate;
-
-                var dayField = document.createElement('input');
-                dayField.type = 'hidden';
-                dayField.name = 'weekday';
-                dayField.value = dayName;
-
-                var endField = document.createElement('input');
-                endField.type = 'hidden';
-                endField.name = 'time_end';
-                endField.value = endDate;
-
-                var packageIdField = document.createElement('input');
-                packageIdField.type = 'hidden';
-                packageIdField.name = 'plugin_deploy_packages_id';
-                packageIdField.value = '{{ package_id }}';
-
-                var csrfTokenField = document.createElement('input');
-                csrfTokenField.type = 'hidden';
-                csrfTokenField.name = '_glpi_csrf_token';
-                csrfTokenField.value = '{{ csrf_token() }}';
-
-                form.appendChild(csrfTokenField);
-                form.appendChild(startField);
-                form.appendChild(dayField);
-                form.appendChild(endField);
-                form.appendChild(packageIdField);
-                document.body.appendChild(form);
-                form.submit();
-            },
-            columnHeaderFormat: {
-                weekday: 'long'
-            },
-            headerToolbar: false
+                if (firstChecked == null) {
+                    firstChecked = checkboxes.index(this);
+                } else {
+                    if (checkboxes.index(this) > firstChecked) {
+                        checkboxes.slice(firstChecked, checkboxes.index(this)).prop('checked', true);
+                    } else {
+                        checkboxes.slice(checkboxes.index(this) + 1, firstChecked + 1).prop('checked', false);
+                    }
+                    firstChecked = null;
+                }
+            });
         });
-
-        calendar.render();
     });
 </script>

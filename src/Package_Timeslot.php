@@ -58,6 +58,23 @@ class Package_Timeslot extends CommonDBTM
         return $days[strtolower($day)];
     }
 
+    public static function chooseUpdateOrAdd(array $input)
+    {
+        $timeslot = new self();
+        $timeslot->getFromDBByCrit(
+            [
+                'plugin_deploy_packages_id' => $input['plugin_deploy_packages_id'],
+                'weekday'                   => $input['weekday'],
+            ]
+        );
+        if (isset($timeslot->fields['id'])) {
+            $input['id'] = $timeslot->fields['id'];
+            $timeslot->update($input);
+        } else {
+            $timeslot->add($input);
+        }
+    }
+
     public static function install(Migration $migration)
     {
         global $DB;
