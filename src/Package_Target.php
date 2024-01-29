@@ -37,35 +37,47 @@ use Glpi\Application\View\TemplateRenderer;
 use Migration;
 use Session;
 
-class Task_Package extends CommonDBRelation
+class Package_Target extends CommonDBRelation
 {
-    public static $itemtype_1 = Task::class;
-    public static $items_id_1 = "plugin_deploy_tasks_id";
+    public static $itemtype_1 = Package::class;
+    public static $items_id_1 = "plugin_deploy_packages_id";
 
-    public static $itemtype_2 = Package::class;
-    public static $items_id_2 = "plugin_deploy_packages_id";
+    public static $itemtype_2 = Computer_Group::class;
+    public static $items_id_2 = "plugin_deploy_computers_groups_id";
+
+    static public $checkItem_2_Rights  = self::DONT_CHECK_ITEM_RIGHTS;
+    static public $logs_for_item_2     = false;
+    public $auto_message_on_action     = false;
+
+    static    $rightname  = 'computer_group';
 
     public static function getTypeName($nb = 0)
     {
-        return Package::getTypeName($nb);
+        return _n("Target", "Targets", $nb, "deploy");
     }
 
 
     public static function getIcon()
     {
-        return Package::getIcon();
+        return "ti ti-devices-pc";
+    }
+
+
+    public static function getItemtypes(): array
+    {
+        return [
+            Computer_Group::class,
+        ];
     }
 
 
     public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
     {
-        $number = self::countForItem($item);
+        $number = count(getAllDataFromTable(self::getTable(), ['plugin_deploy_computers_groups_id' => $item->getID()]));
 
         switch ($item->getType()) {
-            case Task::class:
-                return self::createTabEntry(Package::getTypeName($number), $number);
             case Package::class:
-                return self::createTabEntry(Task::getTypeName($number), $number);
+                return self::createTabEntry(self::getTypeName($number), $number, self::class, self::getIcon());
         }
 
         return parent::getTabNameForItem($item, $withtemplate);
@@ -75,8 +87,6 @@ class Task_Package extends CommonDBRelation
     public static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
     {
         switch ($item->getType()) {
-            case Task::class:
-                return self::showForTask($item);
             case Package::class:
                 return self::showForPackage($item);
         }
@@ -85,56 +95,32 @@ class Task_Package extends CommonDBRelation
     }
 
 
-    public static function showForTask(Task $task)
-    {
-        global $DB;
-
-        $existings = $DB->request([
-            'FROM'  => self::getTable(),
-            'WHERE' => [
-                'plugin_deploy_tasks_id' => $task->fields['id']
-            ],
-        ]);
-        $packages = [];
-        $used = [];
-        $package = new Package();
-        foreach ($existings as $existing) {
-            $package->getFromDB($existing['plugin_deploy_packages_id']);
-            $packages[$existing['id']] = $package;
-            $used[] = $package->fields['id'];
-        }
-
-        TemplateRenderer::getInstance()->display('@deploy/task/package.list.html.twig', [
-            'task'        => $task,
-            'subitems'    => $packages,
-            'used'        => $used,
-            'none_found'  => sprintf(__('No %s found', 'deploy'), Package::getTypeName(Session::getPluralNumber())),
-            'task_active' => $task->fields['is_active'],
-            'ma_itemtype' => self::class,
-        ]);
-
-    }
-
-
     public static function showForPackage(Package $package)
     {
         global $DB;
 
-        $existings = $DB->request([
+        $iterator = $DB->request([
             'FROM'  => self::getTable(),
             'WHERE' => [
                 'plugin_deploy_packages_id' => $package->fields['id']
             ],
         ]);
-        $tasks = [];
-        $task = new Task();
-        foreach ($existings as $existing) {
-            $task->getFromDB($existing['plugin_deploy_tasks_id']);
-            $tasks[] = $task;
+
+        $targets = [];
+        $used = [];
+        foreach ($iterator as $target) {
+            $item = new Computer_Group();
+            $item->getFromDB($target['plugin_deploy_computers_groups_id']);
+            $targets[$target['id']] = $item;
+            $used[$target['plugin_deploy_computers_groups_id']] = $target['plugin_deploy_computers_groups_id'];
         }
 
-        TemplateRenderer::getInstance()->display('@deploy/package/task.list.html.twig', [
-            'tasks' => $tasks,
+        TemplateRenderer::getInstance()->display('@deploy/package/target.list.html.twig', [
+            'package'     => $package,
+            'subitems'    => $targets,
+            'used_item'   => $used,
+            'none_found'  => __("No target found", 'deploy'),
+            'ma_itemtype' => self::class,
         ]);
     }
 
@@ -151,18 +137,19 @@ class Task_Package extends CommonDBRelation
             $default_collation = DBConnection::getDefaultCollation();
             $sign              = DBConnection::getDefaultPrimaryKeySignOption();
 
-            $task_fk = getForeignKeyFieldForItemType(Task::class);
             $package_fk = getForeignKeyFieldForItemType(Package::class);
+            $computer_group_fk = getForeignKeyFieldForItemType(Computer_Group::class);
 
             $query = "CREATE TABLE IF NOT EXISTS `$table` (
                 `id` int $sign NOT NULL AUTO_INCREMENT,
-                `$task_fk` int $sign NOT NULL DEFAULT '0',
                 `$package_fk` int $sign NOT NULL DEFAULT '0',
+                `$computer_group_fk` int $sign NOT NULL DEFAULT '0',
                 `date_creation` timestamp NULL DEFAULT NULL,
                 `date_mod` timestamp NULL DEFAULT NULL,
                 PRIMARY KEY (`id`),
-                KEY `$task_fk` (`$task_fk`),
                 KEY `$package_fk` (`$package_fk`),
+                KEY `$computer_group_fk` (`$computer_group_fk`),
+                UNIQUE KEY `item` (`$package_fk`,`$computer_group_fk`),
                 KEY `date_creation` (`date_creation`),
                 KEY `date_mod` (`date_mod`)
             ) ENGINE=InnoDB DEFAULT CHARSET={$default_charset} COLLATE={$default_collation} ROW_FORMAT=DYNAMIC;";

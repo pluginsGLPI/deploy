@@ -27,37 +27,30 @@
  #}
 
 {% import 'components/form/fields_macros.html.twig' as fields %}
-{% extends "@deploy/task/subitem.list.html.twig" %}
+{% extends "@deploy/package/subitemtarget.list.html.twig" %}
+
 
 {% block subitem_form %}
-    {% set add_pkg_btn %}
-        <button class="btn btn-primary"
-                type="submit"
-                name="add_package">
-            <i class="{{ pkg_icon }}"></i>
-            <span>{{ __("Add package", 'deploy') }}</span>
+    {{ fields.dropdownField(
+        "GlpiPlugin\\Deploy\\Computer_Group",
+        'plugin_deploy_computers_groups_id',
+        '0',
+        call('GlpiPlugin\\Deploy\\Computer_Group::getTypeName', [0]),
+        {
+            'used': used_item,
+        }
+    ) }}
+
+    {% set btn_add %}
+        <button class="btn btn-primary mb-2" type="submit" name="add_target">
+            <i class="{{ call("GlpiPlugin\\Deploy\\Package_Target::getIcon") }}"></i>
+            <span>{{ __("Add a new target", 'deploy') }}</span>
         </button>
     {% endset %}
 
-    {{ fields.dropdownField(
-        'GlpiPlugin\\Deploy\\Package',
-        'plugin_deploy_packages_id',
-        0,
+    {{ fields.htmlField(
         '',
-        {
-            'full_width': true,
-            'full_width_adapt_column': false,
-            'is_horizontal': true,
-            'label_class': '',
-            'field_class': 'col-12',
-            'mb': '',
-            'add_field_html': add_pkg_btn,
-            'condition': {
-                'is_active': 1,
-                'is_deleted': 0,
-            },
-            'width': '150px',
-            'used': used,
-        }
+        btn_add,
+        ''
     ) }}
 {% endblock %}

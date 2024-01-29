@@ -111,6 +111,12 @@ if (isset($_POST["add"])) {
     $action = new Package_Action();
     $action->delete($_POST);
     Html::back();
+} else if (isset($_POST["add_target"])) {
+    if ($_POST['plugin_deploy_computers_groups_id'] > 0) {
+        $package_target = new Package_Target();
+        $package_target->add($_POST);
+    }
+    Html::back();
 } else {
     Html::requireJs('sortable');
     Html::header(

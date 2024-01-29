@@ -30,6 +30,7 @@
 
 namespace GlpiPlugin\Deploy;
 
+use Agent;
 use CommonDBTM;
 use Migration;
 use DBConnection;
@@ -62,7 +63,7 @@ class Package extends CommonDBTM
             ->addStandardTab(Package_Check::getType(), $ong, $options)
             ->addStandardTab(Package_File::getType(), $ong, $options)
             ->addStandardTab(Package_Action::getType(), $ong, $options)
-            ->addStandardTab(Task_Package::getType(), $ong, $options)
+            ->addStandardTab(Package_Target::getType(), $ong, $options)
             ->addStandardTab(__CLASS__, $ong, $options);
 
         return $ong;
@@ -243,7 +244,7 @@ class Package extends CommonDBTM
     {
         $this->deleteChildrenAndRelationsFromDb(
             [
-                Task_Package::class,
+                Package_Target::class,
             ]
         );
     }
@@ -301,7 +302,6 @@ class Package extends CommonDBTM
             }
         }
     }
-
 
     public static function uninstall(Migration $migration)
     {
