@@ -38,6 +38,7 @@ use Html;
 use Migration;
 use Search;
 use Session;
+use Toolbox;
 
 class Computer_Group extends CommonDBTM
 {
@@ -227,15 +228,23 @@ class Computer_Group extends CommonDBTM
          $DB->doQuery($query) or die($DB->error());
 
          // install default display preferences
-         $dpreferences = new DisplayPreference;
-         $found_dpref = $dpreferences->find(['itemtype' => 'GlpiPlugin\\Deploy\\Computer_Group']);
-         if (count($found_dpref) == 0) {
-            $DB->doQuery("INSERT INTO `glpi_displaypreferences`
-                           (`itemtype`, `num`, `rank`, `users_id`)
-                        VALUES
-                           ('GlpiPlugin\\Deploy\\Computer_Group', 3, 1, 0),
-                           ('GlpiPlugin\\Deploy\\Computer_Group', 5, 2, 0),
-                           ('GlpiPlugin\\Deploy\\Computer_Group', 6, 3, 0)");
+
+                 // add display preferences
+         $nb_display_pref = countElementsInTable(DisplayPreference::getTable(), [
+               'itemtype' => self::getType()
+         ]);
+         if ($nb_display_pref == 0) {
+               $dp = new DisplayPreference;
+               $i  = 1;
+               foreach ([3, 5, 6] as $id_so) {
+                  $dp->add([
+                     'itemtype' => self::getType(),
+                     'num'      => $id_so,
+                     'rank'     => $i,
+                     'users_id' => 0,
+                  ]);
+                  $i++;
+               }
          }
       }
    }
@@ -243,13 +252,12 @@ class Computer_Group extends CommonDBTM
 
    public static function uninstall(Migration $migration) {
       global $DB;
-      $table = self::getTable();
-      if ($DB->tableExists($table)) {
-         $DB->doQuery("DROP TABLE IF EXISTS `".self::getTable()."`") or die ($DB->error());
-      }
 
-      $DB->doQuery("DELETE FROM `glpi_displaypreferences`
-                           WHERE `itemtype` = 'GlpiPlugin\\Deploy\\Computer_Group'") or die ($DB->error());
+      $table = self::getTable();
+      $migration->displayMessage("Uninstalling $table");
+      $migration->dropTable($table);
+
+      $DB->doQuery("DELETE FROM `glpi_displaypreferences` WHERE `itemtype` = 'GlpiPlugin\\\Deploy\\\Computer_Group'");
    }
 
 
