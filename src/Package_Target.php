@@ -112,7 +112,7 @@ class Package_Target extends CommonDBRelation
             'package'     => $package,
             'subitems'    => $targets,
             'used_item'   => $used,
-            'none_found'  => __("No target found for this package", 'deploy'),
+            'none_found'  => __("No target found", 'deploy'),
             'ma_itemtype' => self::class,
         ]);
     }
