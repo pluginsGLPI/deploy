@@ -38,7 +38,6 @@ use Html;
 use Migration;
 use Search;
 use Session;
-use Toolbox;
 
 class Computer_Group extends CommonDBTM
 {
