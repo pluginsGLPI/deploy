@@ -67,7 +67,7 @@
                                     <td>{{ __('Agent') ~ ' ' ~ job.agents_id ~ ' ' ~ __('not found') }}</td>
                                 {% endif %}
                             {% endif %}
-                            <td><span class="badge bg-{{ call("GlpiPlugin\\Deploy\\Package_Job::getColorStatus", [job.status])|raw }} text-light">{{ call("GlpiPlugin\\Deploy\\Package_Job::getStatusLabel", [job.status])|raw }}</span></td>
+                            <td><span class="badge bg-{{ call("GlpiPlugin\\Deploy\\PackageJob::getColorStatus", [job.status])|raw }} text-light">{{ call("GlpiPlugin\\Deploy\\PackageJob::getStatusLabel", [job.status])|raw }}</span></td>
                             <td>{{ job.log }}</td>
                             <td>{{ job.date_creation }}</td>
                             <td>{{ job.date_mod }}</td>

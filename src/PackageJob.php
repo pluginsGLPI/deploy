@@ -9,9 +9,9 @@ use DBmysqlIterator;
 use Glpi\Application\View\TemplateRenderer;
 use Migration;
 
-class Package_Job extends CommonDBTM
+class PackageJob extends CommonDBTM
 {
-    use Package_Subitem;
+    use PackageSubitem;
 
     public static $rightname = 'entity';
 

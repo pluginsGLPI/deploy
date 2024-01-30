@@ -32,7 +32,7 @@ use GlpiPlugin\Deploy\Computer\Group;
 use GlpiPlugin\Deploy\Computer\GroupDynamic;
 use GlpiPlugin\Deploy\Computer\GroupStatic;
 use GlpiPlugin\Deploy\Package;
-use GlpiPlugin\Deploy\Package_Job;
+use GlpiPlugin\Deploy\PackageJob;
 use GlpiPlugin\Deploy\PackageAction;
 use GlpiPlugin\Deploy\PackageCheck;
 use GlpiPlugin\Deploy\PackageFile;
@@ -77,6 +77,7 @@ function plugin_deploy_install()
     PackageCheck::install($migration);
     PackageFile::install($migration);
     Package::install($migration);
+    PackageJob::install($migration);
     PackageTarget::install($migration);
     Profile::install($migration);
     Repository::install($migration);
@@ -98,7 +99,7 @@ function plugin_deploy_uninstall()
 
     PackageTarget::uninstall($migration);
     Package::uninstall($migration);
-    Package_Job::install($migration);
+    PackageJob::uninstall($migration);
     PackageTarget::uninstall($migration);
     Profile::uninstall($migration);
     Repository::uninstall($migration);
