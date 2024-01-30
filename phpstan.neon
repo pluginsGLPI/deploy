@@ -7,7 +7,7 @@ parameters:
     paths:
         - ajax
         - front
-        - inc
+        - src
         - hook.php
         - setup.php
     scanDirectories:

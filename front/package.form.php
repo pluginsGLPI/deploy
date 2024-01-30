@@ -69,51 +69,51 @@ if (isset($_POST["add"])) {
     Html::back();
 } else if (isset($_POST["add_file"])) {
     unset($_POST['id']);
-    $file = new Package_File();
+    $file = new PackageFile();
     $file->add($_POST);
     Html::back();
 } else if (isset($_POST["edit_file"])) {
-    $file = new Package_File();
+    $file = new PackageFile();
     $file->update($_POST);
     Html::back();
 } else if (isset($_POST["delete_file"])) {
-    $file = new Package_File();
+    $file = new PackageFile();
     $file->delete($_POST);
     Html::back();
 } else if (isset($_GET["download_file"])) {
     $file_id = (int)($_GET["file_id"] ?? 0);
-    $file = new Package_File();
+    $file = new PackageFile();
     $file->downloadFile($file_id);
     Html::back();
 } else if (isset($_POST["add_check"])) {
     unset($_POST['id']);
-    $check = new Package_Check();
+    $check = new PackageCheck();
     $check->add($_POST);
     Html::back();
 } else if (isset($_POST["edit_check"])) {
-    $check = new Package_Check();
+    $check = new PackageCheck();
     $check->update($_POST);
     Html::back();
 } else if (isset($_POST["delete_check"])) {
-    $check = new Package_Check();
+    $check = new PackageCheck();
     $check->delete($_POST);
     Html::back();
 } else if (isset($_POST["add_action"])) {
     unset($_POST['id']);
-    $action = new Package_Action();
+    $action = new PackageAction();
     $action->add($_POST);
     Html::back();
 } else if (isset($_POST["edit_action"])) {
-    $action = new Package_Action();
+    $action = new PackageAction();
     $action->update($_POST);
     Html::back();
 } else if (isset($_POST["delete_action"])) {
-    $action = new Package_Action();
+    $action = new PackageAction();
     $action->delete($_POST);
     Html::back();
 } else if (isset($_POST["add_target"])) {
     if ($_POST['plugin_deploy_computers_groups_id'] > 0) {
-        $package_target = new Package_Target();
+        $package_target = new PackageTarget();
         $package_target->add($_POST);
     }
     Html::back();

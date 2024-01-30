@@ -30,7 +30,7 @@
 
 namespace GlpiPlugin\Deploy;
 
-class Repository_File
+class RepositoryFile
 {
     private $max_part_size = 1024 * 1024;
 
@@ -58,13 +58,14 @@ class Repository_File
             $this->short_sha512 = substr($this->sha512, 0, 8);
         } else {
             trigger_error(
-                'Repository_File __construct expects to get \'path\' or \'sha512\' arguments, both are missing !!',
+                'RepositoryFile __construct expects to get \'path\' or \'sha512\' arguments, both are missing !!',
                 E_USER_WARNING
             );
         }
     }
 
-    public function addToRepository(): bool {
+    public function addToRepository(): bool
+    {
         if (!$this->isFileExists()) {
             if (!$this->saveParts() || !$this->savemanifest()) {
                 return false;
@@ -75,7 +76,8 @@ class Repository_File
     }
 
 
-    public function getDefinition(): array {
+    public function getDefinition(): array
+    {
         return [
             'filename'    => $this->name,
             'filesize'    => $this->size,
@@ -85,7 +87,8 @@ class Repository_File
         ];
     }
 
-    public function isFileExists(): bool {
+    public function isFileExists(): bool
+    {
         // check a filename with sha512 exist in manifest path
         if (!file_exists(PLUGIN_DEPLOY_MANIFESTS_PATH . "/{$this->sha512}")) {
             return false;
@@ -113,7 +116,8 @@ class Repository_File
     }
 
 
-    private function saveParts(): bool {
+    private function saveParts(): bool
+    {
         if (!($file_handle = fopen($this->path, 'rb'))) {
             return false;
         }

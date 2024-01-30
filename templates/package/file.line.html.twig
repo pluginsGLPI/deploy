@@ -28,7 +28,7 @@
 
 <td>
     <a href="#" class="edit_{{ subitem_type }}" data-id="{{ entry['id'] }}">
-        <i class="fa-fw fa-lg {{ call('GlpiPlugin\\Deploy\\Package_File::getMimetypeFaIcon', [entry['mimetype']]) }}"
+        <i class="fa-fw fa-lg {{ call('GlpiPlugin\\Deploy\\PackageFile::getMimetypeFaIcon', [entry['mimetype']]) }}"
            title="{{ entry['mimetype'] }}"
            data-bs-toggle="tooltip"></i>
         <span>{{ entry['filename'] }}</span>

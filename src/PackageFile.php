@@ -39,9 +39,9 @@ use Migration;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
-class Package_File extends CommonDBTM
+class PackageFile extends CommonDBTM
 {
-    use Package_Subitem;
+    use PackageSubitem;
 
     public static $rightname = 'entity';
 
@@ -75,9 +75,8 @@ class Package_File extends CommonDBTM
 
     public function prepareInputForAdd($input)
     {
-        $repository = new Repository;
-        switch ($input['upload_mode'])
-        {
+        $repository = new Repository();
+        switch ($input['upload_mode']) {
             case "from_computer":
                 $r_file = $repository->AddFileFromComputer();
                 $input  = array_merge($input, $r_file->getDefinition());
@@ -107,7 +106,7 @@ class Package_File extends CommonDBTM
 
         // do not delete file in repository if it's also used in other packages
         if (count($found_files) === 1) {
-            $repository = new Repository;
+            $repository = new Repository();
             $repository->deleteFile($this->fields['sha512']);
         }
 
@@ -133,13 +132,12 @@ class Package_File extends CommonDBTM
                 //the depth hasnt changed so just add another li
                 $li = $dom->createElement('li', $object->getFilename());
                 $li->setAttribute('id', $id);
-                $li->setAttribute('data-json', '{"path": "'.$rel_path.'"}');
+                $li->setAttribute('data-json', '{"path": "' . $rel_path . '"}');
                 if ($object->isDir()) {
                     $li->setAttribute('class', 'folder');
                 }
                 $node->appendChild($li);
-            }
-            elseif ($dir_iterator->getDepth() > $depth) {
+            } elseif ($dir_iterator->getDepth() > $depth) {
                 //the depth increased, the last li is a non-empty folder
                 $li = $node->lastChild;
                 $ul = $dom->createElement('ul');
@@ -147,18 +145,17 @@ class Package_File extends CommonDBTM
                 $li->setAttribute('id', $id);
                 $li->setAttribute('class', 'folder unselectable');
                 $new_li = $dom->createElement('li', $object->getFilename());
-                $new_li->setAttribute('data-json', '{"path": "'.$rel_path.'"}');
+                $new_li->setAttribute('data-json', '{"path": "' . $rel_path . '"}');
                 $ul->appendChild($new_li);
                 $node = $ul;
-            }
-            else{
+            } else {
                 //the depth decreased, going up $difference directories
                 $difference = $depth - $dir_iterator->getDepth();
                 for ($i = 0; $i < $difference; $difference--) {
                     $node = $node->parentNode->parentNode;
                 }
                 $li = $dom->createElement('li', $object->getFilename());
-                $li->setAttribute('data-json', '{"path": "'.$rel_path.'"}');
+                $li->setAttribute('data-json', '{"path": "' . $rel_path . '"}');
                 $li->setAttribute('id', $id);
                 if ($object->isDir()) {
                     $li->setAttribute('class', 'folder');
@@ -233,18 +230,18 @@ class Package_File extends CommonDBTM
         return $files;
     }
 
-    public function downloadFile($file_id) {
+    public function downloadFile($file_id)
+    {
         session_write_close(); // unlock session to ensure GLPI is still usable while huge file downloads is done in background
 
-        $package_file = new Package_File();
+        $package_file = new PackageFile();
         if ($file_id > 0 && $package_file->getFromDB($file_id)) {
-
             $mimetype = $package_file->fields['mimetype'];
             $filesize = $package_file->fields['filesize'];
             $filename = $package_file->fields['filename'];
             $sha512 = $package_file->fields['sha512'];
 
-            $repository = new Repository_File(
+            $repository = new RepositoryFile(
                 $filename,
                 "",
                 $filesize,
@@ -291,12 +288,12 @@ class Package_File extends CommonDBTM
         } else {
             Html::displayErrorAndDie(__('File not found', 'deploy'), true); // Not found
         }
-
     }
 
 
     public static function install(Migration $migration)
     {
+        /** @var object $DB */
         global $DB;
 
         $table = self::getTable();

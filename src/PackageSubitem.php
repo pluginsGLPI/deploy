@@ -37,7 +37,7 @@ use Glpi\Application\View\TemplateRenderer;
 use Migration;
 use Session;
 
-trait Package_Subitem
+trait PackageSubitem
 {
     public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
     {
@@ -55,6 +55,7 @@ trait Package_Subitem
         if ($item->getType() == Package::class) {
             self::showForPackage($item);
         }
+        return true;
     }
 
 
@@ -100,7 +101,7 @@ trait Package_Subitem
 
     public static function showAdd(int $plugin_deploy_packages_id = 0)
     {
-        $subitem_instance = new self;
+        $subitem_instance = new self();
         $subitem_instance->getEmpty();
         $subitem_instance->fields['plugin_deploy_packages_id'] = $plugin_deploy_packages_id;
         TemplateRenderer::getInstance()->display('@deploy/package/subitem.form.html.twig', [
@@ -125,6 +126,7 @@ trait Package_Subitem
 
     public function getNextOrder(int $packages_id)
     {
+        /** @var object $DB */
         global $DB;
 
         $iterator = $DB->request([

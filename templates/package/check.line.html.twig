@@ -32,8 +32,8 @@
     </a>
 </td>
 <td>
-    <i class="fa-fw {{ call("GlpiPlugin\\Deploy\\Package_Check::getIconForParentType", [entry['parent_type']]) }}"></i>
-    {{ call("GlpiPlugin\\Deploy\\Package_Check::getLabelForType", [entry['type']]) }}
+    <i class="fa-fw {{ call("GlpiPlugin\\Deploy\\PackageCheck::getIconForParentType", [entry['parent_type']]) }}"></i>
+    {{ call("GlpiPlugin\\Deploy\\PackageCheck::getLabelForType", [entry['type']]) }}
 </td>
 <td><code>{{ entry['path'] }}</code></td>
 <td>
@@ -44,4 +44,4 @@
         {{ entry['value']|length ? ('<code>' ~ entry['value'] ~ '</code>')|raw : '' }}
     </span>
 </td>
-<td>{{ call("GlpiPlugin\\Deploy\\Package_Check::getLabelForReturnValue", [entry['return'], true])|raw }}</td>
+<td>{{ call("GlpiPlugin\\Deploy\\PackageCheck::getLabelForReturnValue", [entry['return'], true])|raw }}</td>

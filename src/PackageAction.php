@@ -34,9 +34,9 @@ use CommonDBTM;
 use DBConnection;
 use Migration;
 
-class Package_Action extends CommonDBTM
+class PackageAction extends CommonDBTM
 {
-    use Package_Subitem;
+    use PackageSubitem;
 
     public static $rightname = 'entity';
 
@@ -74,15 +74,15 @@ class Package_Action extends CommonDBTM
     {
         $base_icon = '<i class="fa-fw me-1 %s"></i>';
         return [
-            SELF::ACTION_CMD    => ($with_icon ? sprintf($base_icon, self::getTypeIconClass(SELF::ACTION_CMD)) : "")
+            self::ACTION_CMD    => ($with_icon ? sprintf($base_icon, self::getTypeIconClass(self::ACTION_CMD)) : "")
                                    . __('Run command', 'deploy'),
-            SELF::ACTION_MOVE   => ($with_icon ? sprintf($base_icon, self::getTypeIconClass(SELF::ACTION_MOVE)) : "")
+            self::ACTION_MOVE   => ($with_icon ? sprintf($base_icon, self::getTypeIconClass(self::ACTION_MOVE)) : "")
             . __('Move file', 'deploy'),
-            SELF::ACTION_COPY   => ($with_icon ? sprintf($base_icon, self::getTypeIconClass(SELF::ACTION_COPY)) : "")
+            self::ACTION_COPY   => ($with_icon ? sprintf($base_icon, self::getTypeIconClass(self::ACTION_COPY)) : "")
             . __('Copy file', 'deploy'),
-            SELF::ACTION_DELETE => ($with_icon ? sprintf($base_icon, self::getTypeIconClass(SELF::ACTION_DELETE)) : "")
+            self::ACTION_DELETE => ($with_icon ? sprintf($base_icon, self::getTypeIconClass(self::ACTION_DELETE)) : "")
             . __('Delete file', 'deploy'),
-            SELF::ACTION_MKDIR => ($with_icon ? sprintf($base_icon, self::getTypeIconClass(SELF::ACTION_MKDIR)) : "")
+            self::ACTION_MKDIR => ($with_icon ? sprintf($base_icon, self::getTypeIconClass(self::ACTION_MKDIR)) : "")
                                    . __('Create directory', 'deploy'),
         ];
     }
@@ -91,15 +91,15 @@ class Package_Action extends CommonDBTM
     public static function getTypeIconClass($type = ""): string
     {
         switch ($type) {
-            case SELF::ACTION_CMD:
+            case self::ACTION_CMD:
                 return 'ti ti-terminal';
-            case SELF::ACTION_MOVE:
+            case self::ACTION_MOVE:
                 return 'ti ti-drag-drop-2';
-            case SELF::ACTION_COPY:
+            case self::ACTION_COPY:
                 return 'ti ti-copy';
-            case SELF::ACTION_DELETE:
+            case self::ACTION_DELETE:
                 return 'ti ti-file-minus';
-            case SELF::ACTION_MKDIR:
+            case self::ACTION_MKDIR:
                 return 'ti ti-folder-plus';
         }
 
@@ -121,21 +121,21 @@ class Package_Action extends CommonDBTM
 
         switch ($type) {
             case self::ACTION_CMD:
-                $data_str = '<pre>' . $json_fields['exec']. '</pre>';
+                $data_str = '<pre>' . $json_fields['exec'] . '</pre>';
                 break;
             case self::ACTION_MOVE:
             case self::ACTION_COPY:
                 $data_str = sprintf(
                     __("From %s to %s", 'deploy'),
-                    '<code>' .$json_fields['from']. '</code>',
-                    '<code>' .$json_fields['to']. '</code>'
+                    '<code>' . $json_fields['from'] . '</code>',
+                    '<code>' . $json_fields['to'] . '</code>'
                 );
                 break;
             case self::ACTION_DELETE:
-                $data_str = '<del><code>' . implode('</code></del><br><del><code>', $json_fields['list']). '</code></del>';
+                $data_str = '<del><code>' . implode('</code></del><br><del><code>', $json_fields['list']) . '</code></del>';
                 break;
             case self::ACTION_MKDIR:
-                $data_str = '<code>' . implode('</code><br><code>', $json_fields['list']). '</code>';
+                $data_str = '<code>' . implode('</code><br><code>', $json_fields['list']) . '</code>';
                 break;
         }
 
@@ -221,6 +221,7 @@ class Package_Action extends CommonDBTM
 
     public static function install(Migration $migration)
     {
+        /** @var object $DB */
         global $DB;
 
         $table = self::getTable();

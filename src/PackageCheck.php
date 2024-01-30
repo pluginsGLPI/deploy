@@ -34,9 +34,9 @@ use CommonDBTM;
 use DBConnection;
 use Migration;
 
-class Package_Check extends CommonDBTM
+class PackageCheck extends CommonDBTM
 {
-    use Package_Subitem;
+    use PackageSubitem;
 
     public static $rightname = 'entity';
 
@@ -162,7 +162,7 @@ class Package_Check extends CommonDBTM
         return [
             self::WINKEYEQUALS       => __("Value", 'deploy') . '<i class="ms-2 ti ti-equal"></i>',
             self::WINKEYNOTEQUALS    => __("Value", 'deploy') . '<i class="ms-2 ti ti-equal-not"></i>',
-            self::WINVALUETYPE       => __("Type of value", 'deploy'). '<i class="ms-2 ti ti-forms"></i>',
+            self::WINVALUETYPE       => __("Type of value", 'deploy') . '<i class="ms-2 ti ti-forms"></i>',
 
             self::FILESIZEGREATER    => __("Size", 'deploy') . '<i class="ms-2 fas fa-greater-than"></i>',
             self::FILESIZEEQUALS     => __("Size", 'deploy') . '<i class="ms-2 ti ti-equal"></i>',
@@ -269,6 +269,7 @@ class Package_Check extends CommonDBTM
 
     public static function install(Migration $migration)
     {
+        /** @var object $DB */
         global $DB;
 
         $table = self::getTable();

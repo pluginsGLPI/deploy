@@ -41,7 +41,7 @@
     {% set type_select_field %}
         <select class="form-select" id="actiontype" name="type">
             <option value="">--</option>
-            {% for type_key, type in call("GlpiPlugin\\Deploy\\Package_Action::getTypes") %}
+            {% for type_key, type in call("GlpiPlugin\\Deploy\\PackageAction::getTypes") %}
                 <option value="{{ type_key }}" {{ subitem_instance.fields['type'] == type_key ? "selected" : "" }}>
                     {{ type }}
                 </option>
@@ -51,11 +51,11 @@
     {{ fields.field(
         'type',
         type_select_field,
-        __("Action", 'deploy') ~ '<i class="ms-2 ' ~ call("GlpiPlugin\\Deploy\\Package_Action::getIcon") ~ '"></i>',
+        __("Action", 'deploy') ~ '<i class="ms-2 ' ~ call("GlpiPlugin\\Deploy\\PackageAction::getIcon") ~ '"></i>',
         field_options
     ) }}
 
-    {% set show_exec = is_edit and subitem_instance.fields['type'] == constant("GlpiPlugin\\Deploy\\Package_Action::ACTION_CMD") %}
+    {% set show_exec = is_edit and subitem_instance.fields['type'] == constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_CMD") %}
     <div id="execfields" class="specificfields {{ show_exec ? "" : "d-none" }}">
         {{ fields.textareaField(
             'exec',
@@ -66,8 +66,8 @@
     </div>
 
     {% set show_double = is_edit and (
-            subitem_instance.fields['type'] == constant("GlpiPlugin\\Deploy\\Package_Action::ACTION_MOVE")
-         or subitem_instance.fields['type'] == constant("GlpiPlugin\\Deploy\\Package_Action::ACTION_COPY")
+            subitem_instance.fields['type'] == constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_MOVE")
+         or subitem_instance.fields['type'] == constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_COPY")
     ) %}
     <div id="doublepathfields" class="specificfields {{ show_double ? "" : "d-none" }}">
         {% set subfields_options = {
@@ -90,7 +90,7 @@
             ) }}
         {% endset %}
 
-        {% set icon_cls = call("GlpiPlugin\\Deploy\\Package_Action::getTypeIconClass", [subitem_instance.fields['type']]) %}
+        {% set icon_cls = call("GlpiPlugin\\Deploy\\PackageAction::getTypeIconClass", [subitem_instance.fields['type']]) %}
         {{ fields.field(
             '',
             from_to_fields,
@@ -102,8 +102,8 @@
     </div>
 
     {% set show_single = is_edit and (
-            subitem_instance.fields['type'] == constant("GlpiPlugin\\Deploy\\Package_Action::ACTION_DELETE")
-         or subitem_instance.fields['type'] == constant("GlpiPlugin\\Deploy\\Package_Action::ACTION_MKDIR")
+            subitem_instance.fields['type'] == constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_DELETE")
+         or subitem_instance.fields['type'] == constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_MKDIR")
     ) %}
     <div id="singlepathfields" class="specificfields {{ show_single ? "" : "d-none" }}">
         {% set extra_help %}
@@ -111,7 +111,7 @@
                 {{ __("You can write a different path per line", 'deploy') }}
             </small>
         {% endset %}
-        {% set icon_cls = call("GlpiPlugin\\Deploy\\Package_Action::getTypeIconClass", [subitem_instance.fields['type']]) %}
+        {% set icon_cls = call("GlpiPlugin\\Deploy\\PackageAction::getTypeIconClass", [subitem_instance.fields['type']]) %}
         {{ fields.textareaField(
             'list',
             subitem_instance.fields['list']|join("\n"),
@@ -138,25 +138,25 @@ $(document).ready(function() {
             .addClass('ms-2 action-icon-type');
 
         switch (actiontype) {
-            case '{{ constant("GlpiPlugin\\Deploy\\Package_Action::ACTION_CMD") }}':
+            case '{{ constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_CMD") }}':
                 $('#execfields').removeClass('d-none');
-                $('.action-icon-type').addClass('{{ call("GlpiPlugin\\Deploy\\Package_Action::getTypeIconClass", [constant("GlpiPlugin\\Deploy\\Package_Action::ACTION_CMD")]) }}');
+                $('.action-icon-type').addClass('{{ call("GlpiPlugin\\Deploy\\PackageAction::getTypeIconClass", [constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_CMD")]) }}');
                 break;
-            case '{{ constant("GlpiPlugin\\Deploy\\Package_Action::ACTION_MOVE") }}':
+            case '{{ constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_MOVE") }}':
                 $('#doublepathfields').removeClass('d-none');
-                $('.action-icon-type').addClass('{{ call("GlpiPlugin\\Deploy\\Package_Action::getTypeIconClass", [constant("GlpiPlugin\\Deploy\\Package_Action::ACTION_MOVE")]) }}');
+                $('.action-icon-type').addClass('{{ call("GlpiPlugin\\Deploy\\PackageAction::getTypeIconClass", [constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_MOVE")]) }}');
                 break;
-            case '{{ constant("GlpiPlugin\\Deploy\\Package_Action::ACTION_COPY") }}':
+            case '{{ constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_COPY") }}':
                 $('#doublepathfields').removeClass('d-none');
-                $('.action-icon-type').addClass('{{ call("GlpiPlugin\\Deploy\\Package_Action::getTypeIconClass", [constant("GlpiPlugin\\Deploy\\Package_Action::ACTION_COPY")]) }}');
+                $('.action-icon-type').addClass('{{ call("GlpiPlugin\\Deploy\\PackageAction::getTypeIconClass", [constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_COPY")]) }}');
                 break;
-            case '{{ constant("GlpiPlugin\\Deploy\\Package_Action::ACTION_DELETE") }}':
+            case '{{ constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_DELETE") }}':
                 $('#singlepathfields').removeClass('d-none');
-                $('.action-icon-type').addClass('{{ call("GlpiPlugin\\Deploy\\Package_Action::getTypeIconClass", [constant("GlpiPlugin\\Deploy\\Package_Action::ACTION_DELETE")]) }}');
+                $('.action-icon-type').addClass('{{ call("GlpiPlugin\\Deploy\\PackageAction::getTypeIconClass", [constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_DELETE")]) }}');
                 break;
-            case '{{ constant("GlpiPlugin\\Deploy\\Package_Action::ACTION_MKDIR") }}':
+            case '{{ constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_MKDIR") }}':
                 $('#singlepathfields').removeClass('d-none');
-                $('.action-icon-type').addClass('{{ call("GlpiPlugin\\Deploy\\Package_Action::getTypeIconClass", [constant("GlpiPlugin\\Deploy\\Package_Action::ACTION_MKDIR")]) }}');
+                $('.action-icon-type').addClass('{{ call("GlpiPlugin\\Deploy\\PackageAction::getTypeIconClass", [constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_MKDIR")]) }}');
                 break;
         }
     });

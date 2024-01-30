@@ -38,7 +38,7 @@ use GlpiPlugin\Deploy\Computer\Group;
 use Migration;
 use Session;
 
-class Package_Target extends CommonDBRelation
+class PackageTarget extends CommonDBRelation
 {
     public static $itemtype_1 = Package::class;
     public static $items_id_1 = "plugin_deploy_packages_id";
@@ -46,11 +46,11 @@ class Package_Target extends CommonDBRelation
     public static $itemtype_2 = Group::class;
     public static $items_id_2 = "plugin_deploy_computers_groups_id";
 
-    static public $checkItem_2_Rights  = self::DONT_CHECK_ITEM_RIGHTS;
-    static public $logs_for_item_2     = false;
+    public static $checkItem_2_Rights  = self::DONT_CHECK_ITEM_RIGHTS;
+    public static $logs_for_item_2     = false;
     public $auto_message_on_action     = false;
 
-    static    $rightname  = 'computer_group';
+    public static $rightname  = 'computer_group';
 
     public static function getTypeName($nb = 0)
     {
@@ -70,7 +70,7 @@ class Package_Target extends CommonDBRelation
 
         switch ($item->getType()) {
             case Package::class:
-                return self::createTabEntry(self::getTypeName($number), $number, self::class, self::getIcon());
+                return self::createTabEntry(self::getTypeName($number), $number);
         }
 
         return parent::getTabNameForItem($item, $withtemplate);
@@ -90,6 +90,7 @@ class Package_Target extends CommonDBRelation
 
     public static function showForPackage(Package $package)
     {
+        /** @var object $DB */
         global $DB;
 
         $iterator = $DB->request([
@@ -120,6 +121,7 @@ class Package_Target extends CommonDBRelation
 
     public static function install(Migration $migration)
     {
+        /** @var object $DB */
         global $DB;
 
         $table = self::getTable();

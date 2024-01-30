@@ -28,11 +28,10 @@
  * -------------------------------------------------------------------------
  */
 
-
 define('PLUGIN_DEPLOY_VERSION', '0.0.5');
 define('PLUGIN_DEPLOY_REPOSITORY_PATH', GLPI_PLUGIN_DOC_DIR . "/deploy/repository");
-define('PLUGIN_DEPLOY_MANIFESTS_PATH',  PLUGIN_DEPLOY_REPOSITORY_PATH . "/manifests");
-define('PLUGIN_DEPLOY_PARTS_PATH',      PLUGIN_DEPLOY_REPOSITORY_PATH . "/parts");
+define('PLUGIN_DEPLOY_MANIFESTS_PATH', PLUGIN_DEPLOY_REPOSITORY_PATH . "/manifests");
+define('PLUGIN_DEPLOY_PARTS_PATH', PLUGIN_DEPLOY_REPOSITORY_PATH . "/parts");
 define("PLUGIN_DEPLOY_MIN_GLPI", "10.1.0");
 define("PLUGIN_DEPLOY_MAX_GLPI", "10.1.99");
 
@@ -44,6 +43,7 @@ define("PLUGIN_DEPLOY_MAX_GLPI", "10.1.99");
  */
 function plugin_init_deploy()
 {
+    /** @var array $PLUGIN_HOOKS */
     global $PLUGIN_HOOKS;
 
     $PLUGIN_HOOKS['csrf_compliant']['deploy'] = true;
