@@ -70,7 +70,7 @@ class PackageTarget extends CommonDBRelation
 
         switch ($item->getType()) {
             case Package::class:
-                return self::createTabEntry(self::getTypeName($number), $number, self::class, self::getIcon());
+                return self::createTabEntry(self::getTypeName($number), $number);
         }
 
         return parent::getTabNameForItem($item, $withtemplate);
