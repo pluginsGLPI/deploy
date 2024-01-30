@@ -165,7 +165,7 @@ class PackageJob extends CommonDBTM
 
     public static function showForPackage(Package $package)
     {
-        /** @var \DBmysql $DB */
+        /** @var object $DB */
         global $DB;
 
         $packagejobs = new self();
@@ -265,6 +265,7 @@ class PackageJob extends CommonDBTM
 
     public static function install(Migration $migration)
     {
+        /** @var object $DB */
         global $DB;
 
         $table = self::getTable();
@@ -297,6 +298,7 @@ class PackageJob extends CommonDBTM
 
     public static function uninstall(Migration $migration)
     {
+        /** @var object $DB */
         global $DB;
 
         $table = self::getTable();
