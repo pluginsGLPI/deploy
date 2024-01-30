@@ -43,6 +43,7 @@ define("PLUGIN_DEPLOY_MAX_GLPI", "10.1.99");
  */
 function plugin_init_deploy()
 {
+    /** @var array $PLUGIN_HOOKS */
     global $PLUGIN_HOOKS;
 
     $PLUGIN_HOOKS['csrf_compliant']['deploy'] = true;

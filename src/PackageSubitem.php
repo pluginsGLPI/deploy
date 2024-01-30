@@ -55,6 +55,7 @@ trait PackageSubitem
         if ($item->getType() == Package::class) {
             self::showForPackage($item);
         }
+        return true;
     }
 
 
@@ -125,7 +126,8 @@ trait PackageSubitem
 
     public function getNextOrder(int $packages_id)
     {
-        global $DB;
+        /** @var object $DB */
+    global $DB;
 
         $iterator = $DB->request([
             'SELECT' => ['MAX' => 'order as order'],

@@ -102,7 +102,8 @@ class GroupDynamic extends CommonDBTM
                 return  ($count) ? $count : ' 0 ';
 
             case '_virtual_dynamic_list':
-                global $CFG_GLPI;
+                /** @var array $CFG_GLPI */
+    global $CFG_GLPI;
                 $value = " ";
                 $out = " ";
                 if (strpos($values['id'], Search::NULLVALUE) === false) {
@@ -279,7 +280,8 @@ class GroupDynamic extends CommonDBTM
 
     public static function install(Migration $migration)
     {
-        global $DB;
+        /** @var object $DB */
+    global $DB;
         $table = self::getTable();
         if (!$DB->tableExists($table)) {
             $migration->displayMessage("Installing $table");
@@ -297,7 +299,8 @@ class GroupDynamic extends CommonDBTM
 
     public static function uninstall(Migration $migration)
     {
-        global $DB;
+        /** @var object $DB */
+    global $DB;
         $table = self::getTable();
         if ($DB->tableExists($table)) {
             $DB->doQuery("DROP TABLE IF EXISTS `" . self::getTable() . "`") or die($DB->error());

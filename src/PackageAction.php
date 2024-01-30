@@ -221,6 +221,7 @@ class PackageAction extends CommonDBTM
 
     public static function install(Migration $migration)
     {
+        /** @var object $DB */
         global $DB;
 
         $table = self::getTable();
