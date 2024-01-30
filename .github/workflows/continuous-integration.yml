@@ -18,7 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - {glpi-version: "10.1.x", php-version: "8.1", db-image: "mariadb:10.2"}
+          - {glpi-version: "10.1.x", php-version: "8.1", db-image: "mariadb:10.5"}
           - {glpi-version: "10.1.x", php-version: "8.2", db-image: "mariadb:11.0"}
           - {glpi-version: "10.1.x", php-version: "8.3-rc", db-image: "mysql:8.0"}
     uses: "glpi-project/plugin-ci-workflows/.github/workflows/continuous-integration.yml@v1"
