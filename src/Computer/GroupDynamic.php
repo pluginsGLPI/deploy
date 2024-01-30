@@ -277,7 +277,7 @@ class GroupDynamic extends CommonDBTM
     }
 
 
-    public public static function install(Migration $migration)
+    public static function install(Migration $migration)
     {
         global $DB;
         $table = self::getTable();
