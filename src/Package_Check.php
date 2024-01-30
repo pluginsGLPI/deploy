@@ -162,7 +162,7 @@ class Package_Check extends CommonDBTM
         return [
             self::WINKEYEQUALS       => __("Value", 'deploy') . '<i class="ms-2 ti ti-equal"></i>',
             self::WINKEYNOTEQUALS    => __("Value", 'deploy') . '<i class="ms-2 ti ti-equal-not"></i>',
-            self::WINVALUETYPE       => __("Type of value", 'deploy'). '<i class="ms-2 ti ti-forms"></i>',
+            self::WINVALUETYPE       => __("Type of value", 'deploy') . '<i class="ms-2 ti ti-forms"></i>',
 
             self::FILESIZEGREATER    => __("Size", 'deploy') . '<i class="ms-2 fas fa-greater-than"></i>',
             self::FILESIZEEQUALS     => __("Size", 'deploy') . '<i class="ms-2 ti ti-equal"></i>',

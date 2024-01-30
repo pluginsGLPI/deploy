@@ -31,7 +31,7 @@
 namespace GlpiPlugin\Deploy;
 
 use GlpiPlugin\Deploy\Computer\Group;
-use \Session;
+use Session;
 
 class Menu
 {
@@ -99,7 +99,6 @@ class Menu
                 $menu['options']['computer_group']['options']['add'] = Group::getFormURL(false);
                 $menu['options']['computer_group']['links']['add']   = Group::getFormURL(false);
             }
-
         }
 
         if (count($menu)) {

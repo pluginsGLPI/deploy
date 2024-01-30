@@ -35,7 +35,6 @@ use Session;
 
 class Repository
 {
-
     public function AddFileFromComputer(): Repository_File
     {
         $filename = $_FILES['file']['name']     ?? "";
@@ -75,12 +74,14 @@ class Repository
             return false;
         }
 
-        if (false !== ($file = new Repository_File(
-            $filename,
-            $tmp_name,
-            (int) $filesize,
-            $mimetype,
-        ))) {
+        if (
+            false !== ($file = new Repository_File(
+                $filename,
+                $tmp_name,
+                (int) $filesize,
+                $mimetype,
+            ))
+        ) {
             $file->addToRepository();
         }
         return $file;
@@ -88,13 +89,15 @@ class Repository
 
     public function addFileFromServer(string $path = ""): Repository_File
     {
-        $tmp_name = GLPI_UPLOAD_DIR.$path;
-        if (false !== ($file = new Repository_File(
-            basename($tmp_name),
-            $tmp_name,
-            filesize($tmp_name),
-            mime_content_type($tmp_name),
-        ))) {
+        $tmp_name = GLPI_UPLOAD_DIR . $path;
+        if (
+            false !== ($file = new Repository_File(
+                basename($tmp_name),
+                $tmp_name,
+                filesize($tmp_name),
+                mime_content_type($tmp_name),
+            ))
+        ) {
             $file->addToRepository();
         }
         return $file;
@@ -135,7 +138,6 @@ class Repository
                     rmdir($part_parent_dir);
                 }
             }
-
         }
 
         // remove manifest

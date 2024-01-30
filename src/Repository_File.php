@@ -64,7 +64,8 @@ class Repository_File
         }
     }
 
-    public function addToRepository(): bool {
+    public function addToRepository(): bool
+    {
         if (!$this->isFileExists()) {
             if (!$this->saveParts() || !$this->savemanifest()) {
                 return false;
@@ -75,7 +76,8 @@ class Repository_File
     }
 
 
-    public function getDefinition(): array {
+    public function getDefinition(): array
+    {
         return [
             'filename'    => $this->name,
             'filesize'    => $this->size,
@@ -85,7 +87,8 @@ class Repository_File
         ];
     }
 
-    public function isFileExists(): bool {
+    public function isFileExists(): bool
+    {
         // check a filename with sha512 exist in manifest path
         if (!file_exists(PLUGIN_DEPLOY_MANIFESTS_PATH . "/{$this->sha512}")) {
             return false;
@@ -113,7 +116,8 @@ class Repository_File
     }
 
 
-    private function saveParts(): bool {
+    private function saveParts(): bool
+    {
         if (!($file_handle = fopen($this->path, 'rb'))) {
             return false;
         }

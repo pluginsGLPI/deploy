@@ -77,4 +77,3 @@ function plugin_deploy_uninstall()
 
     return true;
 }
-

@@ -101,8 +101,7 @@ class Package extends CommonDBTM
         int $ID,
         int $ref_ID,
         string $type = self::MOVE_AFTER
-    ): bool
-    {
+    ): bool {
         global $DB;
 
         $used_traits = class_uses($subitem_itemtype);
@@ -289,7 +288,7 @@ class Package extends CommonDBTM
             'itemtype' => self::getType()
         ]);
         if ($nb_display_pref == 0) {
-            $dp = new DisplayPreference;
+            $dp = new DisplayPreference();
             $i  = 1;
             foreach ([1, 80, 121, 19] as $id_so) {
                 $dp->add([

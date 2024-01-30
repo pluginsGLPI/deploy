@@ -100,7 +100,7 @@ trait Package_Subitem
 
     public static function showAdd(int $plugin_deploy_packages_id = 0)
     {
-        $subitem_instance = new self;
+        $subitem_instance = new self();
         $subitem_instance->getEmpty();
         $subitem_instance->fields['plugin_deploy_packages_id'] = $plugin_deploy_packages_id;
         TemplateRenderer::getInstance()->display('@deploy/package/subitem.form.html.twig', [

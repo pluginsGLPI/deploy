@@ -46,11 +46,11 @@ class Package_Target extends CommonDBRelation
     public static $itemtype_2 = Group::class;
     public static $items_id_2 = "plugin_deploy_computers_groups_id";
 
-    static public $checkItem_2_Rights  = self::DONT_CHECK_ITEM_RIGHTS;
-    static public $logs_for_item_2     = false;
+    public static $checkItem_2_Rights  = self::DONT_CHECK_ITEM_RIGHTS;
+    public static $logs_for_item_2     = false;
     public $auto_message_on_action     = false;
 
-    static    $rightname  = 'computer_group';
+    static $rightname  = 'computer_group';
 
     public static function getTypeName($nb = 0)
     {

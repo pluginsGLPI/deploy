@@ -28,14 +28,13 @@
  * -------------------------------------------------------------------------
  */
 
-
 namespace GlpiPlugin\Deploy\Computer;
 
 use Html;
 use Search;
 use Session;
 
-include ('../../../../inc/includes.php');
+include('../../../../inc/includes.php');
 
 Session::checkRight("computer_group", UPDATE);
 
