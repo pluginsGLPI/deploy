@@ -91,7 +91,7 @@ class PackageTarget extends CommonDBRelation
     public static function showForPackage(Package $package)
     {
         /** @var object $DB */
-    global $DB;
+        global $DB;
 
         $iterator = $DB->request([
             'FROM'  => self::getTable(),
@@ -122,7 +122,7 @@ class PackageTarget extends CommonDBRelation
     public static function install(Migration $migration)
     {
         /** @var object $DB */
-    global $DB;
+        global $DB;
 
         $table = self::getTable();
         if (!$DB->tableExists($table)) {

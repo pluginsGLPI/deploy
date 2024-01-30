@@ -103,7 +103,7 @@ class Package extends CommonDBTM
         string $type = self::MOVE_AFTER
     ): bool {
         /** @var object $DB */
-    global $DB;
+        global $DB;
 
         $used_traits = class_uses($subitem_itemtype);
         if (!in_array("PackageSubitem", $used_traits)) {
@@ -253,7 +253,7 @@ class Package extends CommonDBTM
     public static function install(Migration $migration)
     {
         /** @var object $DB */
-    global $DB;
+        global $DB;
 
         $table = self::getTable();
         if (!$DB->tableExists($table)) {
@@ -307,7 +307,7 @@ class Package extends CommonDBTM
     public static function uninstall(Migration $migration)
     {
         /** @var object $DB */
-    global $DB;
+        global $DB;
 
         $table = self::getTable();
         $migration->displayMessage("Uninstalling $table");

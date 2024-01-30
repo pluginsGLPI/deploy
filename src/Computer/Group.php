@@ -171,7 +171,7 @@ class Group extends CommonDBTM
     public function countDynamicItem()
     {
         /** @var object $DB */
-    global $DB;
+        global $DB;
         $count = 0;
 
         $params = [
@@ -198,7 +198,7 @@ class Group extends CommonDBTM
     public function countStaticItem()
     {
         /** @var object $DB */
-    global $DB;
+        global $DB;
         $count = 0;
 
         $params = [
@@ -217,7 +217,7 @@ class Group extends CommonDBTM
     public static function install(Migration $migration)
     {
         /** @var object $DB */
-    global $DB;
+        global $DB;
         $table = self::getTable();
         if (!$DB->tableExists($table)) {
             $migration->displayMessage("Installing $table");
@@ -261,7 +261,7 @@ class Group extends CommonDBTM
     public static function uninstall(Migration $migration)
     {
         /** @var object $DB */
-    global $DB;
+        global $DB;
 
         $table = self::getTable();
         $migration->displayMessage("Uninstalling $table");

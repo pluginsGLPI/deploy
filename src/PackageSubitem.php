@@ -127,7 +127,7 @@ trait PackageSubitem
     public function getNextOrder(int $packages_id)
     {
         /** @var object $DB */
-    global $DB;
+        global $DB;
 
         $iterator = $DB->request([
             'SELECT' => ['MAX' => 'order as order'],

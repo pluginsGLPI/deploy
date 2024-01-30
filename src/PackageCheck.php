@@ -270,7 +270,7 @@ class PackageCheck extends CommonDBTM
     public static function install(Migration $migration)
     {
         /** @var object $DB */
-    global $DB;
+        global $DB;
 
         $table = self::getTable();
         if (!$DB->tableExists($table)) {

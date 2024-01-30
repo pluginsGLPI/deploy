@@ -121,7 +121,7 @@ class GroupStatic extends CommonDBRelation
     public static function showForItem(Group $computergroup)
     {
         /** @var object $DB */
-    global $DB;
+        global $DB;
 
         $ID = $computergroup->getField('id');
         if (!$computergroup->can($ID, UPDATE)) {
@@ -195,7 +195,7 @@ class GroupStatic extends CommonDBRelation
     public static function install(Migration $migration)
     {
         /** @var object $DB */
-    global $DB;
+        global $DB;
         $table = self::getTable();
         if (!$DB->tableExists($table)) {
             $migration->displayMessage("Installing $table");
@@ -215,7 +215,7 @@ class GroupStatic extends CommonDBRelation
     public static function uninstall(Migration $migration)
     {
         /** @var object $DB */
-    global $DB;
+        global $DB;
         $table = self::getTable();
         if ($DB->tableExists($table)) {
             $DB->doQuery("DROP TABLE IF EXISTS `" . self::getTable() . "`") or die($DB->error());
