@@ -220,13 +220,13 @@ class Package_Job extends CommonDBTM
         $agents = array_unique(array_column($jobs_list, 'agents_id'));
         $agents = array_combine($agents, $agents);
         foreach ($agents as $value) {
-            $agents[$value] = $value;
+            $agent = Agent::getById($value);
+            $agents[$value] = $agent->getName();
         }
 
         // count total and filtered number
         $total_number = count($jobs_list);
         $filtered_number = count($filtered_jobs_list);
-        
         // display datatable
         TemplateRenderer::getInstance()->display('components/datatable.html.twig', [
             'start' => $start,
