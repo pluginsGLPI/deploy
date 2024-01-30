@@ -25,7 +25,7 @@ jobs:
           - {glpi-version: "10.0.x", php-version: "8.3-rc", db-image: "mysql:8.0"}
     uses: "glpi-project/plugin-ci-workflows/.github/workflows/continuous-integration.yml@v1"
     with:
-      plugin-key: "tag"
+      plugin-key: "deploy"
       glpi-version: "${{ matrix.glpi-version }}"
       php-version: "${{ matrix.php-version }}"
       db-image: "${{ matrix.db-image }}"
