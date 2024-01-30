@@ -63,7 +63,7 @@
                 {% set fancytree_html %}
                     <input type="text" id="server_file_input" class="form-control" name="server_file">
                     <div id="server_files_tree">
-                        {{ call('GlpiPlugin\\Deploy\\Package_File::getFilesTreeFromServer')|raw }}
+                        {{ call('GlpiPlugin\\Deploy\\PackageFile::getFilesTreeFromServer')|raw }}
                     </div>
                 {% endset %}
                 {{ fields.field(

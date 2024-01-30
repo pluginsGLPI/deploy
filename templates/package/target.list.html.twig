@@ -43,7 +43,7 @@
 
     {% set btn_add %}
         <button class="btn btn-primary mb-2" type="submit" name="add_target">
-            <i class="{{ call("GlpiPlugin\\Deploy\\Package_Target::getIcon") }}"></i>
+            <i class="{{ call("GlpiPlugin\\Deploy\\PackageTarget::getIcon") }}"></i>
             <span>{{ __("Add a new target", 'deploy') }}</span>
         </button>
     {% endset %}

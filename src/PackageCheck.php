@@ -34,9 +34,9 @@ use CommonDBTM;
 use DBConnection;
 use Migration;
 
-class Package_Check extends CommonDBTM
+class PackageCheck extends CommonDBTM
 {
-    use Package_Subitem;
+    use PackageSubitem;
 
     public static $rightname = 'entity';
 

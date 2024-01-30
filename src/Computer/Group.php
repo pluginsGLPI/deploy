@@ -44,32 +44,32 @@ class Group extends CommonDBTM
     public static $rightname = 'computer_group';
 
 
-    static function getTypeName($nb = 0)
+    public static function getTypeName($nb = 0)
     {
         return _n('Computer Group', 'Computers Group', $nb, 'deploy');
     }
 
-    static function canCreate()
+    public static function canCreate()
     {
         return Session::haveRight(static::$rightname, UPDATE);
     }
 
-    static function canPurge()
+    public static function canPurge()
     {
         return Session::haveRight(static::$rightname, UPDATE);
     }
 
-    function defineTabs($options = [])
+    public function defineTabs($options = [])
     {
         $ong = [];
         $this->addDefaultFormTab($ong)
-         ->addStandardTab('GlpiPlugin\Deploy\Computer\Group_Dynamic', $ong, $options)
-         ->addStandardTab('GlpiPlugin\Deploy\Computer\Group_Static', $ong, $options)
+         ->addStandardTab('GlpiPlugin\Deploy\Computer\GroupDynamic', $ong, $options)
+         ->addStandardTab('GlpiPlugin\Deploy\Computer\GroupStatic', $ong, $options)
          ->addStandardTab('Log', $ong, $options);
         return $ong;
     }
 
-    function rawSearchOptions()
+    public function rawSearchOptions()
     {
         $tab = parent::rawSearchOptions();
 
@@ -92,7 +92,7 @@ class Group extends CommonDBTM
 
         $tab[] = [
             'id'               => '5',
-            'table'            => Group_Dynamic::getTable(),
+            'table'            => GroupDynamic::getTable(),
             'field'            => 'search',
             'name'             => __('Number of dynamics items', 'deploy'),
             'nosearch'         => true,
@@ -105,7 +105,7 @@ class Group extends CommonDBTM
 
         $tab[] = [
             'id'                 => '6',
-            'table'              => Group_Static::getTable(),
+            'table'              => GroupStatic::getTable(),
             'field'              => 'id',
             'name'               => __('Number of statics items', 'deploy'),
             'forcegroupby'       => true,
@@ -118,7 +118,7 @@ class Group extends CommonDBTM
 
         $tab[] = [
             'id'               => '7',
-            'table'            => Group_Dynamic::getTable(),
+            'table'            => GroupDynamic::getTable(),
             'field'            => '_virtual_dynamic_list',
             'name'             => __('List of dynamics items', 'deploy'),
             'massiveaction'    => false,
@@ -140,7 +140,7 @@ class Group extends CommonDBTM
             'massiveaction'      => false,
             'joinparams'         => [
                 'beforejoin'         => [
-                    'table'              => Group_Static::getTable(),
+                    'table'              => GroupStatic::getTable(),
                     'joinparams'         => [
                         'jointype'           => 'child',
                     ]
@@ -168,14 +168,14 @@ class Group extends CommonDBTM
          return true;
     }
 
-    function countDynamicItem()
+    public function countDynamicItem()
     {
         global $DB;
         $count = 0;
 
         $params = [
             'SELECT' => '*',
-            'FROM'   => Group_Dynamic::getTable(),
+            'FROM'   => GroupDynamic::getTable(),
             'WHERE'  => ['plugin_deploy_computers_groups_id' => $this->fields['id']],
         ];
 
@@ -194,14 +194,14 @@ class Group extends CommonDBTM
     }
 
 
-    function countStaticItem()
+    public function countStaticItem()
     {
         global $DB;
         $count = 0;
 
         $params = [
             'SELECT' => '*',
-            'FROM'   => Group_Static::getTable(),
+            'FROM'   => GroupStatic::getTable(),
             'WHERE'  => ['plugin_deploy_computers_groups_id' => $this->fields['id']],
         ];
 
@@ -267,13 +267,13 @@ class Group extends CommonDBTM
     }
 
 
-    static function getIcon()
+    public static function getIcon()
     {
         return "fa-fw ti ti-device-laptop";
     }
 
 
-    function post_purgeItem()
+    public function post_purgeItem()
     {
     }
 }

@@ -40,29 +40,29 @@ use Search;
 use Session;
 use Toolbox;
 
-class Group_Dynamic extends CommonDBTM
+class GroupDynamic extends CommonDBTM
 {
-    static $rightname  = 'computer_group';
+    public static $rightname  = 'computer_group';
 
-    static function getTypeName($nb = 0)
+    public static function getTypeName($nb = 0)
     {
         return _n('Dynamic groups', 'Dynamic group', $nb, 'deploy');
     }
 
 
-    static function canCreate()
+    public static function canCreate()
     {
         return Session::haveRight(static::$rightname, UPDATE);
     }
 
 
-    static function canPurge()
+    public static function canPurge()
     {
         return Session::haveRight(static::$rightname, UPDATE);
     }
 
 
-    function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
+    public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
     {
 
         if (get_class($item) == Group::getType()) {
@@ -83,7 +83,7 @@ class Group_Dynamic extends CommonDBTM
     }
 
 
-    static function getSpecificValueToDisplay($field, $values, array $options = [])
+    public static function getSpecificValueToDisplay($field, $values, array $options = [])
     {
 
         if (!is_array($values)) {
@@ -94,7 +94,7 @@ class Group_Dynamic extends CommonDBTM
             case 'search':
                 $count = 0;
                 if (strpos($values['id'], Search::NULLVALUE) === false) {
-                    $computergroup_dynamic = new Group_Dynamic();
+                    $computergroup_dynamic = new GroupDynamic();
                     $computergroup_dynamic->getFromDB($values['id']);
                     $count = $computergroup_dynamic->countDynamicItems();
                 }
@@ -160,7 +160,7 @@ class Group_Dynamic extends CommonDBTM
     }
 
 
-    static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
+    public static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
     {
         switch ($tabnum) {
             case 1:
@@ -171,7 +171,7 @@ class Group_Dynamic extends CommonDBTM
     }
 
 
-    function countDynamicItems()
+    public function countDynamicItems()
     {
         $count = 0;
         $computers_params = unserialize($this->fields['search']);
@@ -184,7 +184,7 @@ class Group_Dynamic extends CommonDBTM
         return $count;
     }
 
-    function isDynamicSearchMatchComputer(Computer $computer)
+    public function isDynamicSearchMatchComputer(Computer $computer)
     {
         $count = 0;
 
@@ -207,7 +207,7 @@ class Group_Dynamic extends CommonDBTM
     }
 
 
-    static function showForItem(Group $computergroup)
+    public static function showForItem(Group $computergroup)
     {
 
         $ID = $computergroup->getField('id');
@@ -240,7 +240,7 @@ class Group_Dynamic extends CommonDBTM
 
            //redirect to computergroup dynamic tab after saved search
             $target = Group::getFormURLWithID($ID);
-            $target .= "&_glpi_tab=Computer_Group_Dynamic$1";
+            $target .= "&_glpi_tab=Computer_GroupDynamic$1";
             $p['target'] = $target;
             $p['addhidden'] = [
                 'plugin_deploy_computers_groups_id' => $computergroup->getID(),
@@ -277,7 +277,7 @@ class Group_Dynamic extends CommonDBTM
     }
 
 
-    public static function install(Migration $migration)
+    public public static function install(Migration $migration)
     {
         global $DB;
         $table = self::getTable();

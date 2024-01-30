@@ -39,9 +39,9 @@ use Migration;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
-class Package_File extends CommonDBTM
+class PackageFile extends CommonDBTM
 {
-    use Package_Subitem;
+    use PackageSubitem;
 
     public static $rightname = 'entity';
 
@@ -234,14 +234,14 @@ class Package_File extends CommonDBTM
     {
         session_write_close(); // unlock session to ensure GLPI is still usable while huge file downloads is done in background
 
-        $package_file = new Package_File();
+        $package_file = new PackageFile();
         if ($file_id > 0 && $package_file->getFromDB($file_id)) {
             $mimetype = $package_file->fields['mimetype'];
             $filesize = $package_file->fields['filesize'];
             $filename = $package_file->fields['filename'];
             $sha512 = $package_file->fields['sha512'];
 
-            $repository = new Repository_File(
+            $repository = new RepositoryFile(
                 $filename,
                 "",
                 $filesize,

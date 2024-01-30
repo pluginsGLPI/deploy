@@ -60,10 +60,10 @@ class Package extends CommonDBTM
 
         $ong = [];
         $this->addDefaultFormTab($ong)
-            ->addStandardTab(Package_Check::getType(), $ong, $options)
-            ->addStandardTab(Package_File::getType(), $ong, $options)
-            ->addStandardTab(Package_Action::getType(), $ong, $options)
-            ->addStandardTab(Package_Target::getType(), $ong, $options)
+            ->addStandardTab(PackageCheck::getType(), $ong, $options)
+            ->addStandardTab(PackageFile::getType(), $ong, $options)
+            ->addStandardTab(PackageAction::getType(), $ong, $options)
+            ->addStandardTab(PackageTarget::getType(), $ong, $options)
             ->addStandardTab(__CLASS__, $ong, $options);
 
         return $ong;
@@ -79,9 +79,9 @@ class Package extends CommonDBTM
 
     public static function getJson(Package $package, bool $pretty_json = false): string
     {
-        $checks           = Package_Check::getFormattedArrayForPackage($package);
-        $files            = Package_File::getFormattedArrayForPackage($package);
-        $actions          = Package_Action::getFormattedArrayForPackage($package);
+        $checks           = PackageCheck::getFormattedArrayForPackage($package);
+        $files            = PackageFile::getFormattedArrayForPackage($package);
+        $actions          = PackageAction::getFormattedArrayForPackage($package);
 
         $json_array = [
             'jobs' => [
@@ -105,7 +105,7 @@ class Package extends CommonDBTM
         global $DB;
 
         $used_traits = class_uses($subitem_itemtype);
-        if (!in_array("Package_Subitem", $used_traits)) {
+        if (!in_array("PackageSubitem", $used_traits)) {
             return false;
         }
 
@@ -243,7 +243,7 @@ class Package extends CommonDBTM
     {
         $this->deleteChildrenAndRelationsFromDb(
             [
-                Package_Target::class,
+                PackageTarget::class,
             ]
         );
     }

@@ -35,7 +35,7 @@ use Session;
 
 class Repository
 {
-    public function AddFileFromComputer(): Repository_File
+    public function AddFileFromComputer(): RepositoryFile
     {
         $filename = $_FILES['file']['name']     ?? "";
         $tmp_name = $_FILES['file']['tmp_name'] ?? UPLOAD_ERR_NO_FILE;
@@ -75,7 +75,7 @@ class Repository
         }
 
         if (
-            false !== ($file = new Repository_File(
+            false !== ($file = new RepositoryFile(
                 $filename,
                 $tmp_name,
                 (int) $filesize,
@@ -87,11 +87,11 @@ class Repository
         return $file;
     }
 
-    public function addFileFromServer(string $path = ""): Repository_File
+    public function addFileFromServer(string $path = ""): RepositoryFile
     {
         $tmp_name = GLPI_UPLOAD_DIR . $path;
         if (
-            false !== ($file = new Repository_File(
+            false !== ($file = new RepositoryFile(
                 basename($tmp_name),
                 $tmp_name,
                 filesize($tmp_name),
@@ -115,7 +115,7 @@ class Repository
         // remove parts
         $parts_sha512 = file($manifest_path);
         foreach ($parts_sha512 as $part_sha512) {
-            $part_relative_dir = Repository_File::getRelativePathBySha512($part_sha512, false);
+            $part_relative_dir = RepositoryFile::getRelativePathBySha512($part_sha512, false);
             $part_absolute_dir = PLUGIN_DEPLOY_PARTS_PATH . "/$part_relative_dir";
             $part_parent_dir   = dirname($part_absolute_dir);
             $part_path         = trim($part_absolute_dir . $part_sha512);

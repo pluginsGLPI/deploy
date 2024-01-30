@@ -30,7 +30,7 @@
 
 namespace GlpiPlugin\Deploy;
 
-class Repository_File
+class RepositoryFile
 {
     private $max_part_size = 1024 * 1024;
 
@@ -58,7 +58,7 @@ class Repository_File
             $this->short_sha512 = substr($this->sha512, 0, 8);
         } else {
             trigger_error(
-                'Repository_File __construct expects to get \'path\' or \'sha512\' arguments, both are missing !!',
+                'RepositoryFile __construct expects to get \'path\' or \'sha512\' arguments, both are missing !!',
                 E_USER_WARNING
             );
         }

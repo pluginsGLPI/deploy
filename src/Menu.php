@@ -47,7 +47,7 @@ class Menu
     }
 
 
-    static function getMenuContent()
+    public static function getMenuContent()
     {
         $menu = [];
 

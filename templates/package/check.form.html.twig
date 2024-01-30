@@ -28,8 +28,8 @@
 
 {% import 'components/form/fields_macros.html.twig' as fields %}
 
-{% set types = call("GlpiPlugin\\Deploy\\Package_Check::getTypes") %}
-{% set types_with_value = call("GlpiPlugin\\Deploy\\Package_Check::getTypesWithValueField") %}
+{% set types = call("GlpiPlugin\\Deploy\\PackageCheck::getTypes") %}
+{% set types_with_value = call("GlpiPlugin\\Deploy\\PackageCheck::getTypesWithValueField") %}
 
 <div class="modal-body">
     {{ fields.textField(
@@ -118,7 +118,7 @@
     {{ fields.dropdownArrayField(
         'return',
         subitem_instance.fields['return'],
-        call("GlpiPlugin\\Deploy\\Package_Check::getReturnValues"),
+        call("GlpiPlugin\\Deploy\\PackageCheck::getReturnValues"),
         __("If not succesfull", 'deploy') ~ '<i class="ms-2 ti ti-alert-triangle"></i>',
         field_options
     ) }}

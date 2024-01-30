@@ -38,7 +38,7 @@ use GlpiPlugin\Deploy\Computer\Group;
 use Migration;
 use Session;
 
-class Package_Target extends CommonDBRelation
+class PackageTarget extends CommonDBRelation
 {
     public static $itemtype_1 = Package::class;
     public static $items_id_1 = "plugin_deploy_packages_id";
@@ -50,7 +50,7 @@ class Package_Target extends CommonDBRelation
     public static $logs_for_item_2     = false;
     public $auto_message_on_action     = false;
 
-    static $rightname  = 'computer_group';
+    public static $rightname  = 'computer_group';
 
     public static function getTypeName($nb = 0)
     {

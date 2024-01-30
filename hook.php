@@ -1,13 +1,13 @@
 <?php
 
 use GlpiPlugin\Deploy\Computer\Group;
-use GlpiPlugin\Deploy\Computer\Group_Dynamic;
-use GlpiPlugin\Deploy\Computer\Group_Static;
+use GlpiPlugin\Deploy\Computer\GroupDynamic;
+use GlpiPlugin\Deploy\Computer\GroupStatic;
 use GlpiPlugin\Deploy\Package;
-use GlpiPlugin\Deploy\Package_Action;
-use GlpiPlugin\Deploy\Package_Check;
-use GlpiPlugin\Deploy\Package_File;
-use GlpiPlugin\Deploy\Package_Target;
+use GlpiPlugin\Deploy\PackageAction;
+use GlpiPlugin\Deploy\PackageCheck;
+use GlpiPlugin\Deploy\PackageFile;
+use GlpiPlugin\Deploy\PackageTarget;
 use GlpiPlugin\Deploy\Profile;
 use GlpiPlugin\Deploy\Repository;
 
@@ -44,16 +44,16 @@ function plugin_deploy_install()
     $version   = plugin_version_deploy();
     $migration = new Migration($version['version']);
 
-    Package_Action::install($migration);
-    Package_Check::install($migration);
-    Package_File::install($migration);
+    PackageAction::install($migration);
+    PackageCheck::install($migration);
+    PackageFile::install($migration);
     Package::install($migration);
-    Package_Target::install($migration);
+    PackageTarget::install($migration);
     Profile::install($migration);
     Repository::install($migration);
     Group::install($migration);
-    Group_Dynamic::install($migration);
-    Group_Static::install($migration);
+    GroupDynamic::install($migration);
+    GroupStatic::install($migration);
 
     return true;
 }
@@ -67,13 +67,13 @@ function plugin_deploy_uninstall()
 {
     $migration = new Migration(PLUGIN_DEPLOY_VERSION);
 
-    Package_Target::uninstall($migration);
+    PackageTarget::uninstall($migration);
     Package::uninstall($migration);
     Profile::uninstall($migration);
     Repository::uninstall($migration);
     Group::uninstall($migration);
-    Group_Dynamic::uninstall($migration);
-    Group_Static::uninstall($migration);
+    GroupDynamic::uninstall($migration);
+    GroupStatic::uninstall($migration);
 
     return true;
 }

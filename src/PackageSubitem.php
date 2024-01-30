@@ -37,7 +37,7 @@ use Glpi\Application\View\TemplateRenderer;
 use Migration;
 use Session;
 
-trait Package_Subitem
+trait PackageSubitem
 {
     public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
     {

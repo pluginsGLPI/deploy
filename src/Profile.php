@@ -42,13 +42,13 @@ class Profile extends GlobalProfile
 {
     public static $rightname = 'profile';
 
-    static function getTypeName($nb = 0)
+    public static function getTypeName($nb = 0)
     {
         return __('Deploy', 'deploy');
     }
 
 
-    static function getAllRights($all = false)
+    public static function getAllRights($all = false)
     {
         $rights = [
             ['itemtype' => Group::getType(),
@@ -59,7 +59,7 @@ class Profile extends GlobalProfile
         return $rights;
     }
 
-    function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
+    public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
     {
 
         if ($item->getType() == GlobalProfile::class) {
@@ -69,7 +69,7 @@ class Profile extends GlobalProfile
     }
 
 
-    static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
+    public static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
     {
 
         if (
@@ -82,7 +82,7 @@ class Profile extends GlobalProfile
     }
 
 
-    static function showForProfile($profiles_id = 0)
+    public static function showForProfile($profiles_id = 0)
     {
         $canupdate = self::canUpdate();
         $profile = new GlobalProfile();
@@ -108,10 +108,10 @@ class Profile extends GlobalProfile
     }
 
 
-   /**
+    /**
     * @param $ID
     */
-    static function createFirstAccess($ID)
+    public static function createFirstAccess($ID)
     {
         self::addDefaultProfileInfos($ID, ['computer_group' => PURGE + CREATE + UPDATE + READ ], true);
     }
@@ -123,7 +123,7 @@ class Profile extends GlobalProfile
     *
     * @internal param $profile
     */
-    static function addDefaultProfileInfos($profiles_id, $rights, $drop_existing = false)
+    public static function addDefaultProfileInfos($profiles_id, $rights, $drop_existing = false)
     {
 
         $profileRight = new ProfileRight();

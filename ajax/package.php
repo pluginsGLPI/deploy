@@ -36,22 +36,22 @@ include("../../../inc/includes.php");
 
 switch (($_POST['action'] ?? "")) {
     case "add_check":
-        Package_Check::showAdd((int) ($_POST['plugin_deploy_packages_id'] ?? 0));
+        PackageCheck::showAdd((int) ($_POST['plugin_deploy_packages_id'] ?? 0));
         break;
     case "edit_check":
-        Package_Check::showEdit((int) ($_POST['id'] ?? 0));
+        PackageCheck::showEdit((int) ($_POST['id'] ?? 0));
         break;
     case "add_file":
-        Package_File::showAdd((int) ($_POST['plugin_deploy_packages_id'] ?? 0));
+        PackageFile::showAdd((int) ($_POST['plugin_deploy_packages_id'] ?? 0));
         break;
     case "edit_file":
-        Package_File::showEdit((int) ($_POST['id'] ?? 0));
+        PackageFile::showEdit((int) ($_POST['id'] ?? 0));
         break;
     case "add_action":
-        Package_Action::showAdd((int) ($_POST['plugin_deploy_packages_id'] ?? 0));
+        PackageAction::showAdd((int) ($_POST['plugin_deploy_packages_id'] ?? 0));
         break;
     case "edit_action":
-        Package_Action::showEdit((int) ($_POST['id'] ?? 0));
+        PackageAction::showEdit((int) ($_POST['id'] ?? 0));
         break;
     case "move_subitem":
         Package::moveSubitem(

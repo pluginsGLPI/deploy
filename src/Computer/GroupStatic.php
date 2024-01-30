@@ -42,7 +42,7 @@ use Search;
 use Session;
 use Toolbox;
 
-class Group_Static extends CommonDBRelation
+class GroupStatic extends CommonDBRelation
 {
    // From CommonDBRelation
     public static $itemtype_1 = 'GlpiPlugin\Deploy\Computer\Group';
@@ -54,35 +54,35 @@ class Group_Static extends CommonDBRelation
     public static $logs_for_item_2     = false;
     public $auto_message_on_action     = false;
 
-    static $rightname  = 'computer_group';
+    public static $rightname  = 'computer_group';
 
 
-    static function getTypeName($nb = 0)
+    public static function getTypeName($nb = 0)
     {
         return _n('Static groups', 'Static group', $nb, 'deploy');
     }
 
 
-    static function canCreate()
+    public static function canCreate()
     {
         return Session::haveRight(static::$rightname, UPDATE);
     }
 
 
-    function canCreateItem()
+    public function canCreateItem()
     {
         return Session::haveRight(static::$rightname, UPDATE);
     }
 
 
-    static function canPurge()
+    public static function canPurge()
     {
         return Session::haveRight(static::$rightname, UPDATE);
         return true;
     }
 
 
-    function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
+    public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
     {
         if (get_class($item) == Group::getType()) {
             $count = 0;
@@ -95,7 +95,7 @@ class Group_Static extends CommonDBRelation
     }
 
 
-    static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
+    public static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
     {
         switch ($tabnum) {
             case 1:
@@ -118,7 +118,7 @@ class Group_Static extends CommonDBRelation
     }
 
 
-    static function showForItem(Group $computergroup)
+    public static function showForItem(Group $computergroup)
     {
         global $DB;
 

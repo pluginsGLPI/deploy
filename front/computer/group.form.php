@@ -47,8 +47,8 @@ if (!isset($_GET["withtemplate"])) {
 }
 
 $computergroup = new Group();
-$computergroupstatic = new Group_Static();
-$computergroup_dynamic = new Group_Dynamic();
+$computergroupstatic = new GroupStatic();
+$computergroup_dynamic = new GroupDynamic();
 
 //Add a new computergroup
 if (isset($_POST["add"])) {
@@ -79,7 +79,7 @@ if (isset($_POST["add"])) {
     if ($newID = $computergroupstatic->add($_POST)) {
         Event::log(
             $newID,
-            "Computer_Group_Static",
+            "Computer_GroupStatic",
             4,
             "inventory",
             sprintf(__('%1$s adds the item %2$s'), $_SESSION["glpiname"], $computergroupstatic::getTypeName(0))
