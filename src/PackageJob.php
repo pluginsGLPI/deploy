@@ -36,6 +36,7 @@ use DBConnection;
 use DBmysqlIterator;
 use Glpi\Application\View\TemplateRenderer;
 use Migration;
+use Toolbox;
 
 class PackageJob extends CommonDBTM
 {
@@ -231,10 +232,22 @@ class PackageJob extends CommonDBTM
         // format data for datatable
         $entries = [];
         foreach ($filtered_jobs_list as $job) {
-            $agent = Agent::getById($job['agents_id']);
-            $job['agents_id'] = $agent->getLink(['display' => false]);
-            $job['status'] = '<span class="badge bg-' . self::getColorStatus($job['status']) . ' text-light">' . self::getStatusLabel($job['status']) . '</span>';
-            $entries[$job['id']] = $job;
+            if ($agent = Agent::getById($job['agents_id'])) {
+                $job['agents_id'] = $agent->getLink(['display' => false]);
+                $job['status'] = '<span class="badge bg-' . self::getColorStatus($job['status']) . ' text-light">' . self::getStatusLabel($job['status']) . '</span>';
+
+                //higlight keywords
+                if (strlen(($filters['log'] ?? ""))) {
+                    $job['log'] = str_replace($filters['log'], "<mark>" . $filters['log'] . "</mark>", $job['log']);
+                    $job['log_collapse'] = "";
+                    if (str_contains($job['log'], $filters['log'])) {
+                        //to open div if keyword is found
+                        $job['log_collapse'] = "show";
+                    }
+                }
+                $job['log'] = "<samp><small>" . nl2br($job['log']) . "</small></samp>";
+                $entries[$job['id']] = $job;
+            }
         }
 
         // search all status
@@ -248,15 +261,18 @@ class PackageJob extends CommonDBTM
         $agents = array_unique(array_column($jobs_list, 'agents_id'));
         $agents = array_combine($agents, $agents);
         foreach ($agents as $value) {
-            $agent = Agent::getById($value);
-            $agents[$value] = $agent->getName();
+            if ($agent = Agent::getById($value)) {
+                $agents[$value] = $agent->getName();
+            } else {
+                unset($agents[$value]);
+            }
         }
 
         // count total and filtered number
-        $total_number = count($jobs_list);
+        $total_number = count($entries);
         $filtered_number = count($filtered_jobs_list);
         // display datatable
-        TemplateRenderer::getInstance()->display('components/datatable.html.twig', [
+        TemplateRenderer::getInstance()->display('@deploy/package/datatable.html.twig', [
             'start' => $start,
             'sort' => $sort,
             'order' => $order,
@@ -270,9 +286,8 @@ class PackageJob extends CommonDBTM
             'columns' => [
                 'agents_id'      => __("Agent"),
                 'status'        => __("Status"),
+                'date_done'     => __("Date complete", "deploy"),
                 'log'           => _n("Log", 'Logs"', 2),
-                'date_creation' => __("Creation date"),
-                'date_mod'      => __("Modification date"),
             ],
             'columns_values' => [
                 'agents_id'      => $agents,
@@ -281,9 +296,15 @@ class PackageJob extends CommonDBTM
             'formatters' => [
                 'agents_id'          => 'array',
                 'status'             => 'array',
-                'log'                => 'text',
-                'date_creation'      => 'datetime',
-                'date_mod'           => 'datetime',
+                'log'                => 'collapse',
+                'date_done'          => 'datetime',
+            ],
+            'class' => [
+                'log'             => 'col-md-6',
+            ],
+            'row_formatters' => [
+                'agents_id'          => 'raw_html',
+                'status'             => 'raw_html',
             ],
             'entries' => $entries,
             'total_number' => $total_number,
