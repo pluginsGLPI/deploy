@@ -60,7 +60,7 @@ class PackageTarget extends CommonDBRelation
 
     public static function getIcon()
     {
-        return "ti ti-devices-pc";
+        return "ti ti-target-arrow";
     }
 
 

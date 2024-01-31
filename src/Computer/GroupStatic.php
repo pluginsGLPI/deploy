@@ -221,4 +221,9 @@ class GroupStatic extends CommonDBRelation
             $DB->doQuery("DROP TABLE IF EXISTS `" . self::getTable() . "`") or die($DB->error());
         }
     }
+
+    public static function getIcon()
+    {
+        return "ti ti-device-laptop";
+    }
 }
