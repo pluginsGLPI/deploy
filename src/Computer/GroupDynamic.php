@@ -310,5 +310,4 @@ class GroupDynamic extends CommonDBTM
     {
         return "ti ti-atom";
     }
-
 }
