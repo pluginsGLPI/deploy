@@ -89,7 +89,6 @@ class GroupDynamic extends CommonDBTM
         if (!is_array($values)) {
             $values = [$field => $values];
         }
-        Toolbox::logDebug($field);
         switch ($field) {
             case 'search':
                 $count = 0;
@@ -305,5 +304,10 @@ class GroupDynamic extends CommonDBTM
         if ($DB->tableExists($table)) {
             $DB->doQuery("DROP TABLE IF EXISTS `" . self::getTable() . "`") or die($DB->error());
         }
+    }
+
+    public static function getIcon()
+    {
+        return "ti ti-atom";
     }
 }

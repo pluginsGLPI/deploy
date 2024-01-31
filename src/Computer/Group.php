@@ -273,7 +273,7 @@ class Group extends CommonDBTM
 
     public static function getIcon()
     {
-        return "fa-fw ti ti-device-laptop";
+        return "ti ti-sitemap";
     }
 
 
