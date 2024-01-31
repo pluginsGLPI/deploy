@@ -1,0 +1,55 @@
+[1mdiff --git a/templates/package/datatable.html.twig b/templates/package/datatable.html.twig[m
+[1mindex ff0323b..83d1b61 100644[m
+[1m--- a/templates/package/datatable.html.twig[m
+[1m+++ b/templates/package/datatable.html.twig[m
+[36m@@ -1,32 +1,34 @@[m
+ {#[m
+[31m- # -------------------------------------------------------------------------[m
+[31m- # Deploy plugin for GLPI[m
+[31m- # -------------------------------------------------------------------------[m
+[32m+[m[32m # ---------------------------------------------------------------------[m
+[32m+[m[32m #[m
+[32m+[m[32m # GLPI - Gestionnaire Libre de Parc Informatique[m
+[32m+[m[32m #[m
+[32m+[m[32m # http://glpi-project.org[m
+[32m+[m[32m #[m
+[32m+[m[32m # @copyright 2015-2024 Teclib' and contributors.[m
+[32m+[m[32m # @copyright 2003-2014 by the INDEPNET Development Team.[m
+[32m+[m[32m # @licence   https://www.gnu.org/licenses/gpl-3.0.html[m
+[32m+[m[32m #[m
+[32m+[m[32m # ---------------------------------------------------------------------[m
+  #[m
+  # LICENSE[m
+  #[m
+[31m- # This file is part of Deploy.[m
+[32m+[m[32m # This file is part of GLPI.[m
+  #[m
+[31m- # Deploy is free software; you can redistribute it and/or modify[m
+[32m+[m[32m # This program is free software: you can redistribute it and/or modify[m
+  # it under the terms of the GNU General Public License as published by[m
+[31m- # the Free Software Foundation; either version 3 of the License, or[m
+[32m+[m[32m # the Free Software Foundation, either version 3 of the License, or[m
+  # (at your option) any later version.[m
+  #[m
+[31m- # Deploy is distributed in the hope that it will be useful,[m
+[32m+[m[32m # This program is distributed in the hope that it will be useful,[m
+  # but WITHOUT ANY WARRANTY; without even the implied warranty of[m
+  # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the[m
+  # GNU General Public License for more details.[m
+  #[m
+  # You should have received a copy of the GNU General Public License[m
+[31m- # along with Deploy. If not, see <http://www.gnu.org/licenses/>.[m
+[31m- # -------------------------------------------------------------------------[m
+[31m- # @copyright Copyright (C) 2022-2024 by Deploy plugin team.[m
+[31m- # @copyright 2015-2024 Teclib' and contributors.[m
+[31m- # @copyright 2003-2014 by the INDEPNET Development Team.[m
+[31m- # @licence   https://www.gnu.org/licenses/gpl-3.0.html[m
+[31m- # @license   GPLv3 https://www.gnu.org/licenses/gpl-3.0.html[m
+[31m- # @link      https://github.com/pluginsGLPI/deploy[m
+[31m- # -------------------------------------------------------------------------[m
+[32m+[m[32m # along with this program.  If not, see <https://www.gnu.org/licenses/>.[m
+[32m+[m[32m #[m
+[32m+[m[32m # ---------------------------------------------------------------------[m
+  #}[m
+ [m
+ {% set datatable_id = datatable_id|default('datatable' ~ random()) %}[m
