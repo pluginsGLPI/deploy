@@ -172,10 +172,11 @@ class Group extends CommonDBTM
     {
         $count = 0;
         $group = new GroupDynamic();
-        if ($group->getFromDBByCrit([
-            'plugin_deploy_computers_groups_id' => $this->fields['id']
-        ]))
-        {
+        if (
+            $group->getFromDBByCrit([
+                'plugin_deploy_computers_groups_id' => $this->fields['id']
+            ])
+        ) {
             $count = $group->countDynamicItems();
         }
 
