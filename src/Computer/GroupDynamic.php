@@ -97,7 +97,6 @@ class GroupDynamic extends CommonDBTM
                     $computergroup_dynamic->getFromDB($values['id']);
                     $count = $computergroup_dynamic->countDynamicItems();
                 }
-                Toolbox::logDebug($count);
                 return  ($count) ? $count : ' 0 ';
 
             case '_virtual_dynamic_list':
