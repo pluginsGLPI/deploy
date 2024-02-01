@@ -170,21 +170,13 @@ class Group extends CommonDBTM
 
     public function countDynamicItem()
     {
-        /** @var object $DB */
-        global $DB;
         $count = 0;
-
-        $params = [
-            'SELECT' => '*',
-            'FROM'   => GroupDynamic::getTable(),
-            'WHERE'  => ['plugin_deploy_computers_groups_id' => $this->fields['id']],
-        ];
-
-        $iterator = $DB->request($params);
-        foreach ($iterator as $group_dynamic) {
-            $group = new GroupDynamic();
-            $group->getFromDB($group_dynamic['id']);
-            $count += $group->countDynamicItems();
+        $group = new GroupDynamic();
+        if ($group->getFromDBByCrit([
+            'plugin_deploy_computers_groups_id' => $this->fields['id']
+        ]))
+        {
+            $count = $group->countDynamicItems();
         }
 
         return $count;
