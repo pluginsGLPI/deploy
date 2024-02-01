@@ -36,7 +36,6 @@ use Migration;
 
 class Timeslot extends CommonDropdown
 {
-
     public static function getTypeName($nb = 0)
     {
         return __('Timeslot', 'deploy');
@@ -60,6 +59,7 @@ class Timeslot extends CommonDropdown
 
     public static function install(Migration $migration)
     {
+        /** @var object $DB */
         global $DB;
 
         $table = self::getTable();

@@ -104,13 +104,12 @@ function plugin_version_deploy()
 function plugin_deploy_check_prerequisites()
 {
     $prerequisitesSuccess = true;
-     if ( !is_dir(__DIR__ . '/lib/') || !is_readable(__DIR__ . '/lib/.package-lock.json')) {
-       echo "Run `npm install` in the plugin directory<br>";
-       $prerequisitesSuccess = false;
+    if (!is_dir(__DIR__ . '/lib/') || !is_readable(__DIR__ . '/lib/.package-lock.json')) {
+        echo "Run `npm install` in the plugin directory<br>";
+        $prerequisitesSuccess = false;
     }
 
     return $prerequisitesSuccess;
-
 }
 
 /**
@@ -131,4 +130,3 @@ function plugin_deploy_check_config($verbose = false)
     }
     return false;
 }
-
