@@ -43,30 +43,39 @@ class TimeslotRange extends CommonDBTM
             'plugin_deploy_timeslots_id' => $timeslot->fields['id'],
         ]);
         $timeslots_data = [];
-        for ($i = 1; $i <= 7; $i++) {
-            $timeslots_data[$i] = [
-                'checked' => '',
-                'starttime' => 0,
-                'endtime' => 0,
-            ];
-        }
         foreach ($timeslots as $timeslot) {
-            $timeslots_data[$timeslot['weekday']] = [
+            $timeslots_data[$timeslot['weekday']][] = [
                 'checked' => 'checked',
                 'starttime' => intval(substr($timeslot['time_start'], 0, 2)),
                 'endtime' => intval(substr($timeslot['time_end'], 0, 2)),
             ];
         }
-
+        for ($i = 1; $i <= 7; $i++) {
+            if (!isset($timeslots_data[$i])) {
+                $timeslots_data[$i] = [
+                    [
+                        'checked' => '',
+                        'starttime' => 8,
+                        'endtime' => 12,
+                    ],
+                    [
+                        'checked' => '',
+                        'starttime' => 14,
+                        'endtime' => 18,
+                    ]
+                ];
+            }
+        }
         return $timeslots_data;
     }
 
     public static function showForTimeslot(Timeslot $timeslot)
     {
+        $timeslots_data = self::getForTimeslot($timeslot);
         TemplateRenderer::getInstance()->display('@deploy/timeslot/timeslotrange.html.twig', [
             'timeslot_id'   => $timeslot->fields['id'],
             'days_list'     => self::getDayList(),
-            'timeslots_data' => self::getForTimeslot($timeslot),
+            'timeslots_data' => $timeslots_data
         ]);
     }
 
@@ -83,41 +92,40 @@ class TimeslotRange extends CommonDBTM
         ];
     }
 
-    public static function chooseRequestType(array $input)
+    public static function cleanOldData(array $input)
     {
         $timeslot = new self();
-        $timeslot->getFromDBByCrit(
+        $olddata = $timeslot->find(
             [
                 'plugin_deploy_timeslots_id' => $input['plugin_deploy_timeslots_id'],
-                'weekday'                   => $input['weekday'],
             ]
         );
-        if (isset($timeslot->fields['id'])) {
-            $input['id'] = $timeslot->fields['id'];
-            if (isset($input['is_enable']) && $input['is_enable'] == false) {
-                $timeslot->delete($input);
-            } else {
-                $timeslot->update($input);
-            }
-        } else if (isset($input['is_enable']) && $input['is_enable'] == false) {
-            $timeslot->delete($input);
-        } else {
-            $timeslot->add($input);
+        foreach ($olddata as $data) {
+            $timeslot->delete(
+                [
+                    'id' => $data['id']
+                ]
+            );
         }
     }
 
     public static function cleanInput(array $input)
     {
         foreach ($input['timeslot'] as $key => $value) {
-            $start_time = sprintf('%02d:00:00', $value['starttime']);
-            $end_time = sprintf('%02d:00:00', $value['endtime']);
-            $output[$key] = [
-                'plugin_deploy_timeslots_id' => $input['plugin_deploy_timeslots_id'],
-                'weekday' => $key,
-                'time_start' => $start_time,
-                'time_end' => $end_time,
-                'is_enable' => $value['is_enable'],
-            ];
+            foreach ($value as $k => $v) {
+                if ($k == 'is_enable') {
+                    continue;
+                }
+                $start_time = sprintf('%02d:00:00', $v['starttime']);
+                $end_time = sprintf('%02d:00:00', $v['endtime']);
+                $output[$key][$k] = [
+                    'plugin_deploy_timeslots_id' => $input['plugin_deploy_timeslots_id'],
+                    'weekday' => $key,
+                    'time_start' => $start_time,
+                    'time_end' => $end_time,
+                    'is_enable' => $value['is_enable'],
+                ];
+            }
         }
 
         return $output;
