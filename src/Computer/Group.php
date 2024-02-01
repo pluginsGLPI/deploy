@@ -181,14 +181,10 @@ class Group extends CommonDBTM
         ];
 
         $iterator = $DB->request($params);
-        foreach ($iterator as $computergroup_dynamic) {
-            $params = unserialize($computergroup_dynamic['search']);
-            $computers_params["reset"] = true;
-            $search_params = Search::manageParams('Computer', $computers_params);
-            $data = Search::prepareDatasForSearch('Computer', $search_params);
-            Search::constructSQL($data);
-            Search::constructData($data, true);
-            $count += $data['data']['totalcount'];
+        foreach ($iterator as $group_dynamic) {
+            $group = new GroupDynamic();
+            $group->getFromDB($group_dynamic['id']);
+            $count += $group->countDynamicItems();
         }
 
         return $count;
