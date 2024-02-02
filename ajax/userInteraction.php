@@ -30,41 +30,11 @@
 
 namespace GlpiPlugin\Deploy;
 
-include("../../../inc/includes.php");
+use Toolbox;
+
+include ("../../../inc/includes.php");
 
 \Session::checkLoginUser();
 
-switch (($_POST['action'] ?? "")) {
-    case "add_check":
-        PackageCheck::showAdd((int) ($_POST['plugin_deploy_packages_id'] ?? 0));
-        break;
-    case "edit_check":
-        PackageCheck::showEdit((int) ($_POST['id'] ?? 0));
-        break;
-    case "add_file":
-        PackageFile::showAdd((int) ($_POST['plugin_deploy_packages_id'] ?? 0));
-        break;
-    case "edit_file":
-        PackageFile::showEdit((int) ($_POST['id'] ?? 0));
-        break;
-    case "add_action":
-        PackageAction::showAdd((int) ($_POST['plugin_deploy_packages_id'] ?? 0));
-        break;
-    case "edit_action":
-        PackageAction::showEdit((int) ($_POST['id'] ?? 0));
-        break;
-    case "add_userinteraction":
-        Package_UserInteraction::showAdd((int) ($_POST['plugin_deploy_packages_id'] ?? 0));
-        break;
-    case "edit_userinteraction":
-        Package_UserInteraction::showEdit((int) ($_POST['id'] ?? 0));
-        break;
-    case "move_subitem":
-        Package::moveSubitem(
-            $_POST['subitem_itemtype'],
-            (int) $_POST['subitem_id'],
-            (int) $_POST['ref_id'],
-            $_POST['sort_action']
-        );
-        break;
-}
+$out = Package_UserInteraction::Tryit($_GET);
+echo $out;
