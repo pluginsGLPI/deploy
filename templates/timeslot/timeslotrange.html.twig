@@ -43,6 +43,12 @@
                     {{ '%02d'|format(i) }}
                 </th>
             {% endfor %}
+            <th class="">
+                {{ __('Add', 'deploy')}}
+            </th>
+            <th class="">
+                {{ __('Delete', 'deploy')}}
+            </th>
         </tr>
     </thead>
 {% endset %}
@@ -55,18 +61,24 @@
                     {% for key, label in days_list %}
                         <tr>
                             <td> {{ label }} </td>
-                            <th class="col-auto">
+                            <td class="col-auto">
                                 <input class="form-check-input" type="checkbox" value="" id="notimeslot{{ key }}" {{ timeslots_data[key][0]['checked'] }}>
-                            </th>
-                            <th class="col-auto">
+                            </td>
+                            <td class="col-auto">
                                 <button type="" id="allday{{ key }}" class="btn btn-primary btn-sm"><i class="ti ti-clock-24"></i></button>
-                            </th>
+                            </td>
                             <td colspan="25">
                                 <div class="mx-2" id="slider{{ key }}"></div>
                                 {% for tkey, tvalue in timeslots_data[key] %}
                                     <input type="hidden" id="value{{ tkey }}_start{{ key }}" name="value{{ tkey }}_start{{ key }}" value="{{ tvalue['starttime'] }}">
                                     <input type="hidden" id="value{{ tkey }}_end{{ key }}" name="value{{ tkey }}_end{{ key }}" value="{{ tvalue['endtime'] }}">
                                 {% endfor %}
+                            </td>
+                            <td class="col-auto">
+                                <button type="" id="addrange{{ key }}" class="btn btn-primary btn-sm"><i class="ti ti-plus"></i></button>
+                            </td>
+                            <td class="col-auto">
+                                <button type="" id="delrange{{ key }}" class="btn btn-primary btn-sm"><i class="ti ti-minus"></i></button>
                             </td>
                         </tr>
                     {% endfor %}
@@ -77,7 +89,7 @@
     </div>
 </div>
 <div class="card-body">
-    <form action="{{get_plugin_web_dir('deploy') }}/front/timeslotrange.form.php" method="post">
+    <form id="rangeform" action="{{get_plugin_web_dir('deploy') }}/front/timeslotrange.form.php" method="post">
         <input type="hidden" id="timeslot" name="timeslot">
         <input type="hidden" name="plugin_deploy_timeslots_id" value="{{ timeslot_id }}">
         <input type="hidden" name="action" value="save_timeslot">
@@ -99,14 +111,15 @@
         slider.noUiSlider.set(values);
     }
 
-    function toggleSlider(slider, checkbox, i) {
+    function toggleSlider(slider, checkbox, addRangeButton, delRangeButton, i) {
         if (checkbox.checked) {
-            slider.removeAttribute('disabled');
+            addRangeButton.removeAttribute('disabled');
+            delRangeButton.removeAttribute('disabled');
             setSliderValues(slider, timeslotsData[i] ? timeslotsData[i].map(slot => [slot.starttime, slot.endtime]).flat() : [8, 12, 14, 18]);
             slider.style.display = 'block';
         } else {
-            slider.setAttribute('disabled', true);
-            setSliderValues(slider, [0, 0, 0, 0]);
+            addRangeButton.setAttribute('disabled', true);
+            delRangeButton.setAttribute('disabled', true);
             slider.style.display = 'none';
         }
     }
@@ -115,6 +128,8 @@
         let slider = document.getElementById('slider' + i);
         let checkbox = document.getElementById('notimeslot' + i);
         let alldayButton = document.getElementById('allday' + i);
+        let addRangeButton = document.getElementById('addrange' + i);
+        let delRangeButton = document.getElementById('delrange' + i);
 
         timeslot[i] = {
             is_enable: checkbox.checked
@@ -129,6 +144,7 @@
                 'min': 0,
                 'max': 24
             },
+            margin: 1,
         });
 
         slider.noUiSlider.on('update', function(values, handle) {
@@ -149,27 +165,65 @@
         });
 
         // Disable slider if checkbox is not checked
-        toggleSlider(slider, checkbox, i);
+        toggleSlider(slider, checkbox, addRangeButton, delRangeButton, i);
 
         // Enable or disable slider on checkbox change
         checkbox.addEventListener('change', function() {
-            toggleSlider(slider, this, i);
+            toggleSlider(slider, this, addRangeButton, delRangeButton, i);
         });
 
         alldayButton.addEventListener('click', function(event) {
-            checkbox.checked = true;
-            toggleSlider(slider, checkbox, i);
-            setSliderValues(slider, [0, 24]);
+            timeslot[i] = {
+                0: {
+                    starttime: '0.00',
+                    endtime: '24.00'
+                },
+                is_enable: true
+            };
+            document.getElementById('timeslot').value = JSON.stringify(timeslot);
+            document.getElementById("rangeform").submit();
         });
+
+        // Disable add button if there are already 12 ranges
+        if (Object.keys(timeslot[i]).length - 1 >= 12) {
+            addRangeButton.setAttribute('disabled', true);
+        }
+
+        addRangeButton.addEventListener('click', function(event) {
+            let lastKey = Object.keys(timeslot[i]).length - 1;
+            timeslot[i][lastKey + 1] = {
+                starttime: '23.00',
+                endtime: '24.00'
+            };
+            document.getElementById('timeslot').value = JSON.stringify(timeslot);
+            document.getElementById("rangeform").submit();
+        });
+
+        // Disable delete button if there is only 1 range
+        if (Object.keys(timeslot[i]).length - 1 === 1) {
+            delRangeButton.setAttribute('disabled', true);
+        }
+
+        delRangeButton.addEventListener('click', function(event) {
+            let lastKey = Object.keys(timeslot[i]).length - 1;
+            delete timeslot[i][lastKey - 1];
+            document.getElementById('timeslot').value = JSON.stringify(timeslot);
+            document.getElementById("rangeform").submit();
+        });
+
     }
 
     everydayButton.addEventListener('click', function(event) {
         for (let i = 1; i <= daysLength; i++) {
-            let slider = document.getElementById('slider' + i);
-            let checkbox = document.getElementById('notimeslot' + i);
-            checkbox.checked = true;
-            toggleSlider(slider, checkbox, i);
-            setSliderValues(slider, [0, 24]);
+            timeslot[i] = {
+                0: {
+                    starttime: '0.00',
+                    endtime: '24.00'
+                },
+                is_enable: true
+            };
+            document.getElementById('timeslot').value = JSON.stringify(timeslot);
+            document.getElementById("rangeform").submit();
         }
     });
 </script>
