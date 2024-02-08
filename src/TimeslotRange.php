@@ -101,9 +101,10 @@ class TimeslotRange extends CommonDBTM
     {
         $timeslots_data = self::getForTimeslot($timeslot);
         TemplateRenderer::getInstance()->display('@deploy/timeslot/timeslotrange.html.twig', [
+            'rand'         => mt_rand(),
             'timeslot_id'   => $timeslot->fields['id'],
             'days_list'     => self::getDayList(),
-            'timeslots_data' => $timeslots_data
+            'timeslots_data' => $timeslots_data ?? '-1'
         ]);
     }
 
