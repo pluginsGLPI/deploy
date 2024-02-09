@@ -1,8 +1,11 @@
-let timeslot = {};
-let timeslotsData = JSON.parse(document.getElementById('timeslotsData').dataset.value);
+var AJAX_URL = "/main/public/plugins/deploy/ajax/timeslot.php";
 
-let everydayButton = document.getElementById('everyday');
-let daysLength = parseInt(document.getElementById('daysLength').dataset.value);
+var timeslot = {};
+var timeslotsData = JSON.parse(document.getElementById('timeslotsData').dataset.value);
+
+var everydayButton = document.getElementById('everyday');
+var daysLength = parseInt(document.getElementById('daysLength').dataset.value);
+var timeslot_id = parseInt(document.getElementById('timeslotId').dataset.value);
 
 function setSliderValues(slider, values) {
     slider.noUiSlider.set(values);
@@ -19,6 +22,22 @@ function toggleSlider(slider, checkbox, addRangeButton, delRangeButton, i) {
         delRangeButton.setAttribute('disabled', true);
         slider.style.display = 'none';
     }
+    timeslot[i]['is_enable'] = +checkbox.checked;
+    document.getElementById('timeslot').value = JSON.stringify(timeslot);
+}
+
+function sendAjaxRequest(action, timeslot, timeslot_id) {
+    $.ajax({
+        method: 'POST',
+        url: AJAX_URL,
+        data: {
+            action: action,
+            timeslot: timeslot,
+            plugin_deploy_timeslots_id: timeslot_id
+        }
+    }).done(function(response) {
+        $('#tr_countainer').html(response);
+    });
 }
 
 for (let i = 1; i <= daysLength; i++) {
@@ -29,7 +48,7 @@ for (let i = 1; i <= daysLength; i++) {
     let delRangeButton = document.getElementById('delrange' + i);
 
     timeslot[i] = {
-        is_enable: checkbox.checked
+        is_enable: +checkbox.checked
     };
 
     noUiSlider.create(slider, {
@@ -45,7 +64,7 @@ for (let i = 1; i <= daysLength; i++) {
     });
 
     slider.noUiSlider.on('update', function(values, handle) {
-        timeslot[i]['is_enable'] = checkbox.checked;
+        timeslot[i]['is_enable'] = +checkbox.checked;
         let order = Math.floor(handle / 2);
         let start = document.getElementById('value' + order + '_start' + i);
         let end = document.getElementById('value' + order + '_end' + i);
@@ -61,9 +80,6 @@ for (let i = 1; i <= daysLength; i++) {
         document.getElementById('timeslot').value = JSON.stringify(timeslot);
     });
 
-    if (timeslotsData === '-1') {
-        checkbox.checked = false;
-    }
     // Disable slider if checkbox is not checked
     toggleSlider(slider, checkbox, addRangeButton, delRangeButton, i);
 
@@ -78,10 +94,10 @@ for (let i = 1; i <= daysLength; i++) {
                 starttime: '0.00',
                 endtime: '24.00'
             },
-            is_enable: true
+            is_enable: 1
         };
         document.getElementById('timeslot').value = JSON.stringify(timeslot);
-        document.getElementById("rangeform").submit();
+        sendAjaxRequest('add', timeslot, timeslot_id);
     });
 
     // Disable add button if there are already 12 ranges
@@ -96,7 +112,7 @@ for (let i = 1; i <= daysLength; i++) {
             endtime: '24.00'
         };
         document.getElementById('timeslot').value = JSON.stringify(timeslot);
-        document.getElementById("rangeform").submit();
+        sendAjaxRequest('add', timeslot, timeslot_id);
     });
 
     // Disable delete button if there is only 1 range
@@ -108,7 +124,7 @@ for (let i = 1; i <= daysLength; i++) {
         let lastKey = Object.keys(timeslot[i]).length - 1;
         delete timeslot[i][lastKey - 1];
         document.getElementById('timeslot').value = JSON.stringify(timeslot);
-        document.getElementById("rangeform").submit();
+        sendAjaxRequest('add', timeslot, timeslot_id);
     });
 
 }
@@ -120,7 +136,7 @@ everydayButton.addEventListener('click', function(event) {
                 starttime: '0.00',
                 endtime: '24.00'
             },
-            is_enable: true
+            is_enable: 1
         };
         document.getElementById('timeslot').value = JSON.stringify(timeslot);
         document.getElementById("rangeform").submit();

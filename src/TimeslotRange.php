@@ -77,6 +77,7 @@ class TimeslotRange extends CommonDBTM
                 'starttime' => intval(substr($timeslot['time_start'], 0, 2)),
                 'endtime' => intval(substr($timeslot['time_end'], 0, 2)),
             ];
+            $timeslots_data['as_data'] = true;
         }
         for ($i = 1; $i <= 7; $i++) {
             if (!isset($timeslots_data[$i])) {
@@ -104,7 +105,7 @@ class TimeslotRange extends CommonDBTM
             'rand'         => mt_rand(),
             'timeslot_id'   => $timeslot->fields['id'],
             'days_list'     => self::getDayList(),
-            'timeslots_data' => $timeslots_data ?? '-1'
+            'timeslots_data' => $timeslots_data
         ]);
     }
 
@@ -153,7 +154,7 @@ class TimeslotRange extends CommonDBTM
                     'weekday' => $key,
                     'time_start' => $start_time,
                     'time_end' => $end_time,
-                    'is_enable' => $value['is_enable'],
+                    'is_enable' => (bool)$value['is_enable'],
                 ];
             }
         }
