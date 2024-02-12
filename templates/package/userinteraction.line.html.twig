@@ -33,12 +33,12 @@
 </td>
 <td>{{ call("Glpi\\RichText\\RichText::getEnhancedHtml", [entry['title']])|raw }}</td>
 <td>{{ call("Glpi\\RichText\\RichText::getEnhancedHtml", [entry['text']])|raw }}</td>
-<td>{{ call("GlpiPlugin\\Deploy\\Package_UserInteraction::getLabelForType", [entry['type']]) }}</td>
-<td>{{ call("GlpiPlugin\\Deploy\\Package_UserInteraction::getLabelForInteractionType", [entry['interaction_type']]) }}</td>
+<td>{{ call("GlpiPlugin\\Deploy\\UserInteraction::getLabelForType", [entry['type']]) }}</td>
+<td>{{ call("GlpiPlugin\\Deploy\\UserInteraction::getLabelForInteractionType", [entry['interaction_type']]) }}</td>
 <td>
    <span>
-    {{ call("GlpiPlugin\\Deploy\\Package_UserInteraction::getIconForLabel", [entry['icon']])|raw }}
-    {{ call("GlpiPlugin\\Deploy\\Package_UserInteraction::getLabelForIcon", [entry['icon']])|raw }}
+    {{ call("GlpiPlugin\\Deploy\\UserInteraction::getIconForLabel", [entry['icon']])|raw }}
+    {{ call("GlpiPlugin\\Deploy\\UserInteraction::getLabelForIcon", [entry['icon']])|raw }}
    </span>
 </td>
 

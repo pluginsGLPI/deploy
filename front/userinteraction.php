@@ -30,11 +30,12 @@
 
 namespace GlpiPlugin\Deploy;
 
-use Toolbox;
+use Html;
+use Search;
+use Session;
 
-include ("../../../inc/includes.php");
+include('../../../inc/includes.php');
 
-\Session::checkLoginUser();
-
-$out = UserInteraction::Tryit($_GET);
-echo $out;
+Session::checkRight("config", UPDATE);
+$dropdown = new UserInteraction();
+include(GLPI_ROOT . "/front/dropdown.common.php");

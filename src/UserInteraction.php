@@ -30,18 +30,18 @@
 
 namespace GlpiPlugin\Deploy;
 
-use CommonDBTM;
+use CommonDropdown;
 use DBConnection;
 use Glpi\Application\View\TemplateRenderer;
-use Glpi\RichText\RichText;
 use Migration;
-use Toolbox;
 
-class Package_UserInteraction extends CommonDBTM
+class UserInteraction extends CommonDropdown
 {
-    use Package_Subitem;
+    use PackageSubitem;
 
-    public static $rightname = 'entity';
+    public $can_be_translated = false;
+
+    public static $rightname = 'config';
 
     private const SUBITEM_TYPE = 'userinteraction';
 
@@ -127,13 +127,13 @@ class Package_UserInteraction extends CommonDBTM
     {
         return [
             self::ICON_NONE     => __('None', 'deploy'),
-            self::ICON_WARNING  => ($with_icon ? '<i class="' . $size_icon . ' fa-fw me-1 text-warning ti ti-alert-triangle"></i>' : "")
+            self::ICON_WARNING  => ($with_icon ? '<i class="' . $size_icon . ' fa-fw text-warning ti ti-alert-triangle"></i>' : "")
                                    . ($with_label ? __('Warning', 'deploy') : ''),
-            self::ICON_INFO     => ($with_icon ? '<i class="' . $size_icon . ' fa-fw me-1 text-info ti ti-info-circle"></i>' : "")
+            self::ICON_INFO     => ($with_icon ? '<i class="' . $size_icon . ' fa-fw text-info ti ti-info-circle"></i>' : "")
                                    . ($with_label ? __('Information', 'deploy') : ''),
-            self::ICON_ERROR    => ($with_icon ? '<i class="' . $size_icon . ' fa-fw me-1 text-danger ti ti-alert-octagon"></i>' : "")
+            self::ICON_ERROR    => ($with_icon ? '<i class="' . $size_icon . ' fa-fw text-danger ti ti-alert-octagon"></i>' : "")
                                    . ($with_label ? __('Error', 'deploy') : ''),
-            self::ICON_QUESTION => ($with_icon ? '<i class="' . $size_icon . ' fa-fw me-1 ti ti-question-mark"></i>' : "")
+            self::ICON_QUESTION => ($with_icon ? '<i class="' . $size_icon . ' fa-fw ti ti-question-mark"></i>' : "")
                                    . ($with_label ? __('Question', 'deploy') : ''),
         ];
     }
@@ -167,11 +167,20 @@ class Package_UserInteraction extends CommonDBTM
     }
 
 
-    public function prepareInputForAdd($input)
+    public function showForm($id, array $options = [])
     {
-        $input["order"] = $input['order'] ?? $this->getNextOrder((int) $input['plugin_deploy_packages_id']);
+        if (!empty($id)) {
+            $this->getFromDB($id);
+        } else {
+            $this->getEmpty();
+        }
+         $this->initForm($id, $options);
 
-        return $input;
+        TemplateRenderer::getInstance()->display('@deploy/package/userinteraction.form.html.twig', [
+            'item'         => $this,
+            'params'       => $options,
+        ]);
+         return true;
     }
 
 
@@ -227,7 +236,6 @@ class Package_UserInteraction extends CommonDBTM
                 `type` varchar(50) DEFAULT NULL,
                 `interaction_type` varchar(50) DEFAULT NULL,
                 `icon` varchar(10) DEFAULT NULL,
-                `order` smallint unsigned NOT NULL DEFAULT '0',
                 `date_creation` timestamp NULL DEFAULT NULL,
                 `date_mod` timestamp NULL DEFAULT NULL,
                 PRIMARY KEY (`id`),

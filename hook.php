@@ -37,6 +37,7 @@ use GlpiPlugin\Deploy\PackageAction;
 use GlpiPlugin\Deploy\PackageCheck;
 use GlpiPlugin\Deploy\PackageFile;
 use GlpiPlugin\Deploy\PackageTarget;
+use GlpiPlugin\Deploy\UserInteraction;
 use GlpiPlugin\Deploy\Profile;
 use GlpiPlugin\Deploy\Repository;
 
@@ -79,6 +80,7 @@ function plugin_deploy_install()
     Package::install($migration);
     PackageJob::install($migration);
     PackageTarget::install($migration);
+    UserInteraction::install($migration);
     Profile::install($migration);
     Repository::install($migration);
     Group::install($migration);
@@ -102,10 +104,18 @@ function plugin_deploy_uninstall()
     PackageJob::uninstall($migration);
     PackageTarget::uninstall($migration);
     Profile::uninstall($migration);
+    UserInteraction::uninstall($migration);
     Repository::uninstall($migration);
     Group::uninstall($migration);
     GroupDynamic::uninstall($migration);
     GroupStatic::uninstall($migration);
 
     return true;
+}
+
+
+function plugin_deploy_getDropdown()
+{
+    $dropdowns = [UserInteraction::class => UserInteraction::getTypeName(2)];
+    return $dropdowns;
 }

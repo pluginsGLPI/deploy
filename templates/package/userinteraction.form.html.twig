@@ -1,154 +1,267 @@
-{#
- # -------------------------------------------------------------------------
- # Deploy plugin for GLPI
- # -------------------------------------------------------------------------
- #
- # LICENSE
- #
- # This file is part of Deploy.
- #
- # Deploy is free software; you can redistribute it and/or modify
- # it under the terms of the GNU General Public License as published by
- # the Free Software Foundation; either version 3 of the License, or
- # (at your option) any later version.
- #
- # Deploy is distributed in the hope that it will be useful,
- # but WITHOUT ANY WARRANTY; without even the implied warranty of
- # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- # GNU General Public License for more details.
- #
- # You should have received a copy of the GNU General Public License
- # along with Deploy. If not, see <http://www.gnu.org/licenses/>.
- # -------------------------------------------------------------------------
- # @copyright Copyright (C) 2022-2024 by Deploy plugin team.
- # @license   GPLv3 https://www.gnu.org/licenses/gpl-3.0.html
- # @link      https://github.com/pluginsGLPI/deploy
- # -------------------------------------------------------------------------
- #}
-
 {% import 'components/form/fields_macros.html.twig' as fields %}
 
-<div class="modal-body">
-  <div class="row">
-    <div class="col-md">
-      {{ fields.textField(
-            'name',
-            subitem_instance.fields['name'],
-            __("Label", 'deploy') ~ '<i class="ms-2 ti ti-tag"></i>',
-            field_options|merge({
-                mb: 'mb-4',
-            })
-        ) }}
+{% set no_header = no_header|default(not item.isNewItem() and not _get._in_modal|default(false)) %}
+{% set bg = '' %}
+{% if item.isDeleted() %}
+   {% set bg = 'asset-deleted' %}
+{% endif %}
 
-        {{ fields.textField(
-            'title',
-            subitem_instance.fields['title'],
-            __("Title", 'deploy') ~ '<i class="ms-2 ti ti-tag"></i>',
-            field_options
-        ) }}
+<div class="asset {{ bg }}">
+    {{ include('components/form/header.html.twig', {'in_twig': true}) }}
 
-        {{ fields.textareaField(
-                'text',
-                subitem_instance.fields['text']|join("\n"),
-                __("Text", 'deploy') ~ '<i class="ms-2 action-icon-type ti ti-blockquote"></i>',
-                field_options
-            ) }}
+<div class="col-6 col-xxl-12 flex-column">
+    <div class="d-flex align-items-center justify-content-center">
+        <div class="w-50 p-3">
+            <div class="modal-dialog preview">
+                <div class="modal-content-deploy">
+                    <div class="modal-header-deploy">
+                        <input type="text" placeholder="Give a title" name="title" class="form-control tox-textfield title-editable" id="modalTryItLabel" value="{{ item.fields['title'] }}">
+                    </div>
+                    <div class="d-flex modal-body-deploy">
+                        <div class="me-2">
+                            <select class="form-control dropdown-editable" data-show-content="true" id="icon" name="icon">
+                                {% for icon_key, icon in call("GlpiPlugin\\Deploy\\UserInteraction::getIcons", [true,false]) %}
+                                    <option value="{{ icon_key }}" {{ item.fields['icon'] == icon_key ? "selected" : "" }}>
+                                        {{ icon }}
+                                    </option>
+                                {% endfor %}
+                            </select>
 
-        {% set type_field %}
-            <select class="form-select" id="type" name="type">
-                <option value="">--</option>
-                {% for type_key, type in call("GlpiPlugin\\Deploy\\Package_UserInteraction::getTypes") %}
-                    <option value="{{ type_key }}" {{ subitem_instance.fields['type'] == type_key ? "selected" : "" }}>
-                        {{ type }}
-                    </option>
-                {% endfor %}
-            </select>
-        {% endset %}
-        {{ fields.field(
-            'type',
-            type_field,
-            __("Type", 'deploy') ~ '<i class="ms-2 ' ~ call("GlpiPlugin\\Deploy\\Package_UserInteraction::getIcon") ~ '"></i>',
-            field_options
-        ) }}
 
-        {% set interaction_type_field %}
-            <select class="form-select" id="interaction_type" name="interaction_type">
-                <option value="">--</option>
-                {% for interaction_type_key, interaction_type in call("GlpiPlugin\\Deploy\\Package_UserInteraction::getInteractionTypes") %}
-                    <option value="{{ interaction_type_key }}" {{ subitem_instance.fields['interaction_type'] == interaction_type_key ? "selected" : "" }}>
-                        {{ interaction_type }}
-                    </option>
-                {% endfor %}
-            </select>
-        {% endset %}
-        {{ fields.field(
-            'type',
-            interaction_type_field,
-            __("Interaction type", 'deploy') ~ '<i class="ms-2 ' ~ call("GlpiPlugin\\Deploy\\Package_UserInteraction::getIcon") ~ '"></i>',
-            field_options
-        ) }}
 
-        {% set icon_field %}
-            <select class="form-select" id="icon" name="icon">
-                {% for icon_key, icon in call("GlpiPlugin\\Deploy\\Package_UserInteraction::getIcons") %}
-                    <option value="{{ icon_key }}" {{ subitem_instance.fields['icon'] == icon_key ? "selected" : "" }}>
-                        {{ icon }}
-                    </option>
-                {% endfor %}
-            </select>
-        {% endset %}
-        {{ fields.field(
-            'icon',
-            icon_field,
-            __("Icon", 'deploy') ~ '<i class="ms-2 ti ti-flag"></i>',
-            field_options
-        ) }}
-    </div>
-    <div class="col-sm">
-        <h2>{{ __('Preview alert', 'deploy') }}</h2>
-        <div id="preview">
+
+
+
+
+                            {#{{ call("GlpiPlugin\\Deploy\\UserInteraction::getIconForLabel", ['info', 'fa-2x'])|raw }}#}
+                        </div>
+                        <textarea placeholder="Give a descrption" name="text" class="tox-textfield textarea-editable" id="modalTryItLabel" rows="6" cols="50">{{ item.fields['description'] }}</textarea>
+                    </div>
+                    <div class="modal-footer-deploy">
+
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-  </div>
 </div>
 
+    {#
+    {% set rand = random() %}
+    {% set params  = params ?? [] %}
+    {% set target       = params['target'] ?? item.getFormURL() %}
+    {% set item_type = item.getType() %}
+    {% set field_options = {
+        'locked_fields': item.getLockedFields(),
+        'label_class' : 'col-xxl-4'
+    } %}
+
+    <div class="card-body d-flex flex-wrap">
+        <div class="col-12 col-xxl-12 flex-column">
+            <div class="d-flex flex-row flex-wrap flex-xl-nowrap">
+                <div class="row flex-row align-items-start flex-grow-1">
+
+                    {% set alert_legend %}
+                        <div class="hr-text" style="margin: 0px;">
+                            <span>{{ __('User interaction', 'deploy') }}</span>
+                        </div>
+                    {% endset %}
+                    {{ fields.htmlField('', alert_legend, '', field_options) }}
+
+                    {% set behavior_legent %}
+                        <div class="hr-text" style="margin: 0px;">
+                            <span>{{ __('Behavior', 'deploy') }}</span>
+                        </div>
+                    {% endset %}
+                    {{ fields.htmlField('', behavior_legent, '', field_options) }}
+
+
+                    {{ fields.textField(
+                        'name',
+                        item.fields['name'],
+                        __("Name", 'deploy') ~ '<i class="ms-2 ti ti-tag"></i>',
+                        field_options|merge({
+                            mb: 'mb-4',
+                        })
+                    ) }}
+
+                    {{ fields.textField(
+                        'name',
+                        item.fields['on_ok'],
+                        __("Button ok", 'deploy') ~ '<i class="ms-2 ti ti-tag"></i>',
+                        field_options|merge({
+                            mb: 'mb-4',
+                        })
+                    ) }}
+
+
+                    {{ fields.textField(
+                        'title',
+                        item.fields['title'],
+                        __("Title", 'deploy') ~ '<i class="ms-2 ti ti-tag"></i>',
+                        field_options
+                    ) }}
+
+                    {{ fields.textField(
+                        'name',
+                        item.fields['on_ok'],
+                        __("No active session", 'deploy') ~ '<i class="ms-2 ti ti-tag"></i>',
+                        field_options|merge({
+                            mb: 'mb-4',
+                        })
+                    ) }}
+
+
+                    {% set icon_field %}
+                        <select class="form-select" id="icon" name="icon">
+                            {% for icon_key, icon in call("GlpiPlugin\\Deploy\\UserInteraction::getIcons") %}
+                                <option value="{{ icon_key }}" {{ item.fields['icon'] == icon_key ? "selected" : "" }}>
+                                    {{ icon }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    {% endset %}
+
+                    {{ fields.field(
+                        'icon',
+                        icon_field,
+                        __("Icon", 'deploy') ~ '<i class="ms-2 ti ti-flag"></i>',
+                        field_options
+                    ) }}
+
+                    {{ fields.textField(
+                        'name',
+                        item.fields['on_ok'],
+                        __("Alert timeout exceeded	", 'deploy') ~ '<i class="ms-2 ti ti-tag"></i>',
+                        field_options|merge({
+                            mb: 'mb-4',
+                        })
+                    ) }}
+
+
+                    {% set interaction_type_field %}
+                        <select class="form-select" id="interaction_type" name="interaction_type">
+                            <option value="">--</option>
+                            {% for interaction_type_key, interaction_type in call("GlpiPlugin\\Deploy\\UserInteraction::getInteractionTypes") %}
+                                <option value="{{ interaction_type_key }}" {{ item.fields['interaction_type'] == interaction_type_key ? "selected" : "" }}>
+                                    {{ interaction_type }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    {% endset %}
+                    {{ fields.field(
+                        'type',
+                        interaction_type_field,
+                        __("Interaction type", 'deploy') ~ '<i class="ms-2 ' ~ call("GlpiPlugin\\Deploy\\UserInteraction::getIcon") ~ '"></i>',
+                        field_options
+                    ) }}
+
+                    {{ fields.textField(
+                        'name',
+                        item.fields['on_ok'],
+                        __("Several active sessions", 'deploy') ~ '<i class="ms-2 ti ti-tag"></i>',
+                        field_options|merge({
+                            mb: 'mb-4',
+                        })
+                    ) }}
+
+
+                    {{ fields.textareaField(
+                        'text',
+                        item.fields['text']|join("\n"),
+                        __("Description", 'deploy') ~ '<i class="ms-2 action-icon-type ti ti-blockquote"></i>',
+                        field_options
+                    ) }}
+
+
+
+
+ <div class="hr-text">
+                            <span>{{ __('Preview', 'deploy') }}</span>
+                        </div>
+
+                    <div class="col-6 col-xxl-12 flex-column">
+                        <div class="d-flex align-items-center justify-content-center" style="height: 250px;">
+                            <div class="w-25 p-3">
+                                <div id="preview"></div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+    #}
+
+    {% if item_type == 'Contract' %}
+        {{ include('components/form/support_hours.html.twig') }}
+    {% endif %}
+    {% if no_form_buttons is not defined or no_form_buttons == false %}
+        {{ include('components/form/buttons.html.twig') }}
+    {% endif %}
+    {% if no_inventory_footer is not defined or no_inventory_footer == false %}
+        {{ include('components/form/inventory_info.html.twig') }}
+    {% endif %}
+
+    {% if params['formfooter'] is null or params['formfooter'] == true %}
+        <div class="card-footer mx-n2 mb-n2 mt-4">
+            {{ include('components/form/dates.html.twig') }}
+        </div>
+    {% endif %}
+</div>
+
+
 <script type="text/javascript">
-$(document).ready(function() {
-    $('#type').on('change', function() {
-        $('.specificfields, .modal-footer').addClass('d-none');
-        var actiontype = $(this).val();
-        if (actiontype != "") {
-            $('.modal-footer').removeClass('d-none');
-        }
-    });
+    $(document).ready(function() {
+function format (state) {
+    if (!state.id) { return state.text; }
+    return '<i class="fa fa-lg '+state.id.toLowerCase()+'"></i> '+state.text;
+} 
 
-    function updatePreview() {
-        var ajax_url = CFG_GLPI.root_doc + '/' + GLPI_PLUGINS_PATH.deploy + '/ajax/userInteraction.php';
-        var data = $('#modal_userinteraction').find('form:first').serializeArray().reduce(
-            function(obj, item) {
-                obj[item.name] = item.value;
-                return obj;
-            },
-            {}
-        );
-
-        $.ajax({
-            url: ajax_url,
-            method: "GET",
-            data: data,
-        success:function(response) {
-            $('#preview').html(response);
-        },
-        error:function(){
-            alert("error");
-        }
-      });
-    };
-
-    $('#modal_userinteraction').find('form:first').on('keyup change paste', 'input, select, textarea', function(){
-        updatePreview();
-    });
-
-    updatePreview();
+$("#icon").select2({
+    formatResult: format,
+    formatSelection: format,
+    width : 70, //define width
+    minimumResultsForSearch: -1, //no search
+    escapeMarkup: function(m) { return m; }
 });
+    });
 </script>
+
+{#<script type="text/javascript">
+   $(document).ready(function() {
+       function updatePreview() {
+           var ajax_url = CFG_GLPI.root_doc + '/' + GLPI_PLUGINS_PATH.deploy + '/ajax/userInteraction.php';
+           var data = $("form[name='asset_form']").serializeArray().reduce(
+               function(obj, item) {
+                   obj[item.name] = item.value;
+                   return obj;
+               },
+               {}
+           );
+           $.ajax({
+               url: ajax_url,
+               method: "GET",
+               data: data,
+           success:function(response) {
+               $('#preview').html(response);
+           },
+           error:function(){
+               alert("error");
+           }
+         });
+       };
+       $("form[name='asset_form']").on('keyup change paste', 'input, select, textarea', function(){
+           updatePreview();
+       });
+       updatePreview();
+   });
+</script>
+#}

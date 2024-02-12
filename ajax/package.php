@@ -54,10 +54,10 @@ switch (($_POST['action'] ?? "")) {
         PackageAction::showEdit((int) ($_POST['id'] ?? 0));
         break;
     case "add_userinteraction":
-        Package_UserInteraction::showAdd((int) ($_POST['plugin_deploy_packages_id'] ?? 0));
+        UserInteraction::showAdd((int) ($_POST['plugin_deploy_packages_id'] ?? 0));
         break;
     case "edit_userinteraction":
-        Package_UserInteraction::showEdit((int) ($_POST['id'] ?? 0));
+        UserInteraction::showEdit((int) ($_POST['id'] ?? 0));
         break;
     case "move_subitem":
         Package::moveSubitem(

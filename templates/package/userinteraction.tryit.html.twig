@@ -27,19 +27,20 @@
  #}
 
 <div class="modal-dialog preview">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title-preview" id="modalTryItLabel">{{ call("Glpi\\RichText\\RichText::getEnhancedHtml", [entry['title']])|raw }}</h5>
+    <div class="modal-content-deploy">
+        <div class="modal-header-deploy">
+            <h5 class="modal-title preview" id="modalTryItLabel">{{ call("Glpi\\RichText\\RichText::getEnhancedHtml", [entry['title']])|raw }}</h5>
         </div>
-        <div class="d-flex modal-body">
+        <div class="d-flex modal-body-deploy">
             <div class="me-2">
-                {{ call("GlpiPlugin\\Deploy\\Package_UserInteraction::getIconForLabel", [entry['icon'], 'fa-2x'])|raw }}
+                
+                {{ call("GlpiPlugin\\Deploy\\UserInteraction::getIconForLabel", [entry['icon'], 'fa-2x'])|raw }}
             </div>
             <div>
                 {{ call("Glpi\\RichText\\RichText::getEnhancedHtml", [entry['text']])|raw }}
             </div>
         </div>
-        <div class="modal-footer">
+        <div class="modal-footer-deploy">
             {% if entry['interaction_type'] == 'ok' or entry['interaction_type'] == 'ok_sync' %}
                 <button type="button"  class="btn">OK</button>
             {% elseif entry['interaction_type'] == 'okcancel' %}
