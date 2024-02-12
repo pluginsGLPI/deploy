@@ -26,7 +26,7 @@
  * -------------------------------------------------------------------------
  */
 
-var AJAX_URL = "/main/public/plugins/deploy/ajax/timeslot.php";
+var AJAX_URL = CFG_GLPI.root_doc + '/' + GLPI_PLUGINS_PATH.deploy + '/ajax/timeslot.php';
 
 var timeslot = {};
 var timeslotsData = JSON.parse(document.getElementById('timeslotsData').dataset.value);
