@@ -36,10 +36,12 @@
             <span>{{ add_title }}</span>
         </button>
 
-        <button class="btn btn-ghost-secondary next-tab" type="button">
-            <i class="ti ti-arrow-right"></i>
-            <span>{{ __("Next") }}</span>
-        </button>
+        {% if not (subitem_type == "userinteraction") %}
+            <button class="btn btn-ghost-secondary next-tab" type="button">
+                <i class="ti ti-arrow-right"></i>
+                <span>{{ __("Next") }}</span>
+            </button>
+        {% endif %}
     </div>
 
     <form name="massaction_{{ rand }}" id="massaction_{{ rand }}" method="post"
@@ -50,7 +52,13 @@
         <input type="hidden" name="processor" value="MassiveAction">
 
         <div class="modal fade" id="modal_{{ subitem_type }}" role="dialog">
-            <div class="modal-dialog modal-lg">
+
+                {% if subitem_type == "userinteraction" %}
+                    <div class="modal-dialog modal-xl">
+                {% else %}
+                    <div class="modal-dialog modal-lg">
+                {% endif %}
+
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title"></h4>

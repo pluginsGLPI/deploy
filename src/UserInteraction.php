@@ -1,0 +1,354 @@
+<?php
+
+/**
+ * -------------------------------------------------------------------------
+ * Deploy plugin for GLPI
+ * -------------------------------------------------------------------------
+ *
+ * LICENSE
+ *
+ * This file is part of Deploy.
+ *
+ * Deploy is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Deploy is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Deploy. If not, see <http://www.gnu.org/licenses/>.
+ * -------------------------------------------------------------------------
+ * @copyright Copyright (C) 2022-2024 by Deploy plugin team.
+ * @license   GPLv3 https://www.gnu.org/licenses/gpl-3.0.html
+ * @link      https://github.com/pluginsGLPI/deploy
+ * -------------------------------------------------------------------------
+ */
+
+namespace GlpiPlugin\Deploy;
+
+use atoum\atoum\report\field;
+use CommonDropdown;
+use DBConnection;
+use Glpi\Application\View\TemplateRenderer;
+use Migration;
+use Session;
+use Toolbox;
+
+class UserInteraction extends CommonDropdown
+{
+    use PackageSubitem;
+
+    public $can_be_translated = false;
+
+    public static $rightname = 'config';
+
+    private const SUBITEM_TYPE = 'userinteraction';
+
+    public const BEFORE_DOWLOAD      = "before";
+    public const AFTER_DOWLOAD       = "after_download";
+    public const AFTER_ACTIONS       = "after";
+    public const AFTER_DOWNLOAD_FAIL = "after_download_failure";
+    public const AFTER_ACTION_FAIL   = "after_failure";
+
+    public const IT_OK                  = "ok";
+    public const IT_OK_ASYNC            = "ok_sync";
+    public const IT_OK_CANCEL           = "okcancel";
+    public const IT_YES_NO              = "yesno";
+    public const IT_ABORT_RETRY_IGNORE  = "abortretryignore";
+    public const IT_RETRY_CANCEL        = "retrycancel";
+    public const IT_CANCEL_TRY_CONTINUE = "canceltrycontinue";
+    public const IT_YES_NO_CANCEL       = "yesnocancel";
+
+    public const ICON_NONE     = "none";
+    public const ICON_WARNING  = "warn";
+    public const ICON_INFO     = "info";
+    public const ICON_ERROR    = "error";
+    public const ICON_QUESTION = "question";
+
+    public const ACTION_CONTINUE = 'continue:continue';
+    public const ACTION_STOP     = 'stop:stop';
+    public const ACTION_POSTPONE = 'stop:postpone';
+
+    public static function canPurge()
+    {
+        return Session::haveRight(static::$rightname, UPDATE);
+    }
+
+
+    public static function canCreate()
+    {
+        return Session::haveRight(static::$rightname, UPDATE);
+    }
+
+
+    public static function getTypeName($nb = 0)
+    {
+        return _n('Alert', 'Alerts', $nb, 'deploy');
+    }
+
+
+    public static function getIcon()
+    {
+        return 'ti ti-message-report';
+    }
+
+
+    private static function getheadings(): array
+    {
+        return [
+            'name'              => __('Label', 'deploy'),
+            'title'             => __('Title', 'deploy'),
+            'text'              => __('Text', 'deploy'),
+            'type'              => __('Type', 'deploy'),
+            'interaction_type'  => __('Interaction type', 'deploy'),
+            'icon'              => __('Icon', 'deploy'),
+        ];
+    }
+
+
+    public static function getTime($forRetry = true): array
+    {
+        $tab[0] = __('Never');
+
+        // Minutes
+        for ($i=30; $i<60; $i+=5) {
+            $tab[$i] = sprintf(_n('%d second', '%d seconds', $i), $i);
+        }
+
+        $tab[MINUTE_TIMESTAMP]   = sprintf(_n('%d minute', '%d minutes', 1), 1);
+        $tab[2*MINUTE_TIMESTAMP] = sprintf(_n('%d minute', '%d minutes', 2), 2);
+        $tab[3*MINUTE_TIMESTAMP] = sprintf(_n('%d minute', '%d minutes', 3), 3);
+        $tab[4*MINUTE_TIMESTAMP] = sprintf(_n('%d minute', '%d minutes', 4), 4);
+
+        // Minutes
+        for ($i=5; $i<60; $i+=5) {
+            $tab[$i*MINUTE_TIMESTAMP] = sprintf(_n('%d minute', '%d minutes', $i), $i);
+        }
+
+        // Heures
+        for ($i=1; $i<24; $i++) {
+            $tab[$i*HOUR_TIMESTAMP] = sprintf(_n('%d hour', '%d hours', $i), $i);
+        }
+
+        if ($forRetry) {
+            // Jours
+            $tab[DAY_TIMESTAMP] = __('Each day');
+            for ($i=2; $i<7; $i++) {
+                $tab[$i*DAY_TIMESTAMP] = sprintf(_n('%d day', '%d days', $i), $i);
+            }
+
+            $tab[WEEK_TIMESTAMP]  = __('Each week');
+            $tab[MONTH_TIMESTAMP] = __('Each month');
+        }
+
+        return $tab;
+    }
+
+    public static function getTimeout(): array
+    {
+        $tab[0] = __('Never');
+
+        // Minutes
+        for ($i=30; $i<60; $i+=5) {
+           $tab[$i] = sprintf(_n('%d second', '%d seconds', $i), $i);
+        }
+
+        $tab[MINUTE_TIMESTAMP]   = sprintf(_n('%d minute', '%d minutes', 1), 1);
+        $tab[2*MINUTE_TIMESTAMP] = sprintf(_n('%d minute', '%d minutes', 2), 2);
+        $tab[3*MINUTE_TIMESTAMP] = sprintf(_n('%d minute', '%d minutes', 3), 3);
+        $tab[4*MINUTE_TIMESTAMP] = sprintf(_n('%d minute', '%d minutes', 4), 4);
+
+        // Minutes
+        for ($i=5; $i<60; $i+=5) {
+           $tab[$i*MINUTE_TIMESTAMP] = sprintf(_n('%d minute', '%d minutes', $i), $i);
+        }
+
+        // Hours
+        for ($i=1; $i<13; $i++) {
+           $tab[$i*HOUR_TIMESTAMP] = sprintf(_n('%d hour', '%d hours', $i), $i);
+        }
+
+        return $tab;
+    }
+
+
+
+    public static function getActions() {
+        return [
+            self::ACTION_CONTINUE   => __('Continue job without user interaction', 'fusioninventory'),
+            self::ACTION_POSTPONE   => __('Retry deploy later', 'fusioninventory'),
+            self::ACTION_STOP       => __('Cancel deploy', 'fusioninventory')
+        ];
+    }
+
+
+    public static function getTypes(bool $with_icon = false): array
+    {
+        return [
+            SELF::BEFORE_DOWLOAD      => ($with_icon ? '<i class="fa-fw me-1 fas fa-cloud-arrow-down"></i>' : "")
+                                   . __('Before download', 'deploy'),
+            SELF::AFTER_DOWLOAD       => ($with_icon ? '<i class="fa-fw me-1 fas fa-desktop-arrow-down"></i>' : "")
+                                   . __('After download', 'deploy'),
+            SELF::AFTER_ACTIONS       => ($with_icon ? '<i class="fa-fw me-1 fas fa-folder-gear"></i>' : "")
+                                   . __('After actions execution', 'deploy'),
+            SELF::AFTER_DOWNLOAD_FAIL => ($with_icon ? '<i class="fa-fw me-1 fas fa-cloud-exclamation"></i>' : "")
+                                   . __('On download failure', 'deploy'),
+            SELF::AFTER_ACTION_FAIL   => ($with_icon ? '<i class="fa-fw me-1 fas fa-folder-xmark"></i>' : "")
+                                   . __('On actions failure', 'deploy'),
+        ];
+    }
+
+
+    public static function getInteractionTypes(): array
+    {
+        return [
+            self::IT_OK                  => __('OK', 'deploy'),
+            self::IT_OK_ASYNC            => __('OK (Asynchronous)', 'deploy'),
+            self::IT_OK_CANCEL           => __('OK - Cancel', 'deploy'),
+            self::IT_YES_NO              => __('Yes - No', 'deploy'),
+            self::IT_YES_NO_CANCEL       => __('Yes - No - Cancel', 'deploy'),
+            self::IT_ABORT_RETRY_IGNORE  => __('Abort - Retry - Ignore', 'deploy'),
+            self::IT_RETRY_CANCEL        => __('Retry - Cancel', 'deploy'),
+            self::IT_CANCEL_TRY_CONTINUE => __('Cancel - Try - Continue', 'deploy'),
+        ];
+    }
+
+
+    public static function getInteractionTypesIcon(): array
+    {
+        return [
+            self::IT_OK                  => '<button type="button" class="btn m-1 btn-success">' . __('OK', 'deploy').  '</button>',
+            self::IT_OK_ASYNC            => '<button type="button" class="btn m-1 btn-success">' . __('OK', 'deploy').  '</button>' . __('(Asynchronous)', 'deploy'),
+            self::IT_OK_CANCEL           => '<button type="button" class="btn m-1 btn-success">' . __('Ok').  '</button>
+                                             <button type="button" class="btn m-1 btn-danger">' . __('Cancel').  '</button>',
+            self::IT_YES_NO              => '<button type="button" class="btn m-1 btn-success">' . __('Yes').  '</button>
+                                             <button type="button" class="btn m-1 btn-danger">' . __('No').  '</button>',
+            self::IT_YES_NO_CANCEL       => '<button type="button" class="btn m-1 btn-success">' . __('Yes').  '</button>
+                                             <button type="button" class="btn m-1 btn-danger">' . __('No').  '</button>
+                                             <button type="button" class="btn m-1 btn-danger">' . __('Cancel').  '</button>',
+            self::IT_ABORT_RETRY_IGNORE  => '<button type="button" class="btn m-1 btn-danger">' . __('Abort').  '</button>
+                                             <button type="button" class="btn m-1 btn-success">' . __('Retry').  '</button>
+                                             <button type="button" class="btn m-1 btn-secondary">' . __('Ignore').  '</button>',
+            self::IT_RETRY_CANCEL        => '<button type="button" class="btn m-1 btn-success">' . __('Retry').  '</button>
+                                             <button type="button" class="btn m-1 btn-danger">' . __('Cancel').  '</button>',
+            self::IT_CANCEL_TRY_CONTINUE => '<button type="button" class="btn m-1 btn-danger">' . __('Cancel').  '</button>
+                                             <button type="button" class="btn m-1 btn-secondary">' . __('Try').  '</button>
+                                             <button type="button" class="btn m-1 btn-success">' . __('Continue').  '</button>',
+        ];
+    }
+
+
+    public static function getIcons(bool $with_icon = false, bool $with_label = true, string $size_icon = ''): array
+    {
+        return [
+            self::ICON_NONE     => __('--', 'deploy'),
+            self::ICON_WARNING  => ($with_icon ? '<i class="' . $size_icon . ' fa-fw text-warning ti ti-alert-triangle" style="font-size: x-large;"></i>' : "")
+                                   . ($with_label ? __('Warning', 'deploy') : ''),
+            self::ICON_INFO     => ($with_icon ? '<i class="' . $size_icon . ' fa-fw text-info ti ti-info-circle" style="font-size: x-large;"></i>' : "")
+                                   . ($with_label ? __('Information', 'deploy') : ''),
+            self::ICON_ERROR    => ($with_icon ? '<i class="' . $size_icon . ' fa-fw text-danger ti ti-alert-octagon" style="font-size: x-large;"></i>' : "")
+                                   . ($with_label ? __('Error', 'deploy') : ''),
+            self::ICON_QUESTION => ($with_icon ? '<i class="' . $size_icon . ' fa-fw ti ti-question-mark" style="font-size: x-large;"></i>' : "")
+                                   . ($with_label ? __('Question', 'deploy') : ''),
+        ];
+    }
+
+
+    /**
+     * Actions done at the end of the getEmpty function
+     *
+     * @return void
+     **/
+    public function post_getEmpty()
+    {
+        $this->fields['icon'] = self::ICON_INFO;
+    }
+
+
+    public function showForm($id, array $options = [])
+    {
+        if (!empty($id)) {
+            $this->getFromDB($id);
+        } else {
+            $this->getEmpty();
+        }
+        $this->initForm($id, $options);
+
+        TemplateRenderer::getInstance()->display('@deploy/package/userinteraction.form.html.twig', [
+            'item'         => $this,
+            'params'       => $options,
+        ]);
+         return true;
+    }
+
+
+    public static function getFormattedArrayForPackage(Package $package): array
+    {
+        $alerts = [];
+        foreach (self::getForPackage($package) as $entry) {
+            $checks[$entry['id']] = [
+                'name'  => $entry['name'] ?? "",
+                'title' => $entry['title'] ?? "",
+                'text'  => $entry['text'] ?? "",
+                'type'  => $entry['type'] ?? "",
+                'icon'  => $entry['icon'] ?? "",
+            ];
+        }
+
+        return $alerts;
+    }
+
+
+    public static function Tryit(array $values)
+    {
+        $entry = [];
+        $entry['title'] = $values['title'] ?? '';
+        $entry['text'] = $values['text'] ?? '';
+        $entry['interaction_type'] = $values['interaction_type'] ?? '';
+        $entry['icon'] = $values['icon'] ?? '';
+
+        echo TemplateRenderer::getInstance()->render('@deploy/package/userinteraction.tryit.html.twig', [
+            'entry'     => $entry
+        ]);
+    }
+
+
+    public static function install(Migration $migration)
+    {
+        global $DB;
+
+        $table = self::getTable();
+        if (!$DB->tableExists($table)) {
+            $migration->displayMessage("Installing $table");
+
+            $default_charset   = DBConnection::getDefaultCharset();
+            $default_collation = DBConnection::getDefaultCollation();
+            $sign              = DBConnection::getDefaultPrimaryKeySignOption();
+
+            $query = "CREATE TABLE IF NOT EXISTS `$table` (
+                `id` int $sign NOT NULL AUTO_INCREMENT,
+                `plugin_deploy_packages_id` int $sign NOT NULL DEFAULT '0',
+                `name` varchar(255) DEFAULT NULL,
+                `title` varchar(255) DEFAULT NULL,
+                `text` text,
+                `type` varchar(50) DEFAULT NULL,
+                `interaction_type` varchar(50) DEFAULT NULL,
+                `retry_job_after` int(11) DEFAULT 0,
+                `nb_max_retry` int(11) DEFAULT 1,
+                `timeout` int(11) DEFAULT 0,
+                `icon` varchar(10) DEFAULT NULL,
+                `date_creation` timestamp NULL DEFAULT NULL,
+                `date_mod` timestamp NULL DEFAULT NULL,
+                PRIMARY KEY (`id`),
+                KEY `plugin_deploy_packages_id` (`plugin_deploy_packages_id`),
+                KEY `date_creation` (`date_creation`),
+                KEY `date_mod` (`date_mod`)
+            ) ENGINE=InnoDB DEFAULT CHARSET={$default_charset} COLLATE={$default_collation} ROW_FORMAT=DYNAMIC;";
+            $DB->doQuery($query) or die($DB->error());
+        }
+    }
+}

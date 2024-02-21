@@ -83,12 +83,14 @@ class Package extends CommonDBTM
         $checks           = PackageCheck::getFormattedArrayForPackage($package);
         $files            = PackageFile::getFormattedArrayForPackage($package);
         $actions          = PackageAction::getFormattedArrayForPackage($package);
+        $userinteractions = UserInteraction::getFormattedArrayForPackage($package);
 
         $json_array = [
             'jobs' => [
                 'checks'           => $checks,
                 'associatedFiles'  => array_keys($files),
                 'actions'          => $actions,
+                'userinteractions' => $userinteractions,
             ],
             'associatedFiles' => $files,
         ];

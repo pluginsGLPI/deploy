@@ -1,0 +1,215 @@
+/*!
+ * -------------------------------------------------------------------------
+ * Deploy plugin for GLPI
+ * -------------------------------------------------------------------------
+ *
+ * LICENSE
+ *
+ * This file is part of Deploy.
+ *
+ * Deploy is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Deploy is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Deploy. If not, see <http://www.gnu.org/licenses/>.
+ * -------------------------------------------------------------------------
+ * @copyright Copyright (C) 2022-2024 by Deploy plugin team.
+ * @license   GPLv3 https://www.gnu.org/licenses/gpl-3.0.html
+ * @link      https://github.com/pluginsGLPI/deploy
+ * -------------------------------------------------------------------------
+ */
+
+.modal-dialog.preview {
+  border: 1px solid #d9dbde;
+  border-radius: 4px;
+}
+
+.modal-title.preview {
+  font-size: 1rem;
+
+}
+
+.modal-title.preview > p {
+  margin: auto;
+}
+
+.modal-dialog {
+  left: auto;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.modal-header-deploy {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: start;
+  -ms-flex-align: start;
+  align-items: flex-start;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  padding: 6px;
+  border-bottom: 1px solid #e9ecef;
+  border-top-left-radius: 0.3rem;
+  border-top-right-radius: 0.3rem;
+}
+
+.modal-content-deploy {
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  width: 100%;
+  pointer-events: auto;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid rgba(0,0,0,.2);
+  border-radius: 0.3rem;
+  outline: 0;
+}
+
+.modal-body-deploy {
+  position: relative;
+  -webkit-box-flex: 1;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  padding: 0.5rem;
+}
+
+.modal-footer-deploy {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: end;
+  -ms-flex-pack: end;
+  padding: 0.5rem;
+  border-top: 1px solid #e9ecef;
+}
+
+.modal-footer-deploy>:not(:first-child) {
+  margin-left: 0.25rem;
+}
+
+.title-editable {
+  font-size: 1.4rem !important;
+  font-weight: var(--tblr-font-weight-medium);
+  border: 0;
+  padding: 2px 4px;
+  background-color: transparent;
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  border: none !important;
+  border-radius: none !important;
+  box-shadow: none !important;
+}
+
+
+
+.textarea-editable {
+  border: none !important;
+  outline: none;
+  border-style: none;
+  border-color: transparent;
+  overflow: auto;
+  padding: 2px 4px;
+  margin-bottom: 1rem;
+  background-color: transparent;
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  resize: none;
+  box-sizing:border-box;
+}
+
+
+
+.modal-body-deploy > div > span.select2-container.select2-container--focus .select2-selection {
+  border: var(--tblr-border-width) solid var(--tblr-border-color)!important;
+  box-shadow: 0 0 1 0.25rem color-mix(in srgb, var(--tblr-primary), transparent 75%);
+  height: 50px !important;
+}
+
+.modal-body-deploy > div > span.select2-container .select2-selection.select2-selection--single {
+  font-size: var(--tblr-body-font-size);
+  height: calc(calc(20em / 14) + (0.5625rem * 2) + 2px);
+  position: relative;
+  height: 50px !important;
+}
+
+.modal-body-deploy > div > span.select2-container .select2-selection.select2-selection--single .select2-selection__arrow {
+  height: calc(calc(20em / 14) + (0.5625rem * 2) + 10px) !important;
+}
+
+
+
+.modal-footer-deploy > span.select2-container.select2-container--focus .select2-selection {
+  border: var(--tblr-border-width) solid var(--tblr-border-color)!important;
+  box-shadow: 0 0 1 0.25rem color-mix(in srgb, var(--tblr-primary), transparent 75%);
+  height: 50px !important;
+}
+
+.modal-footer-deploy > span.select2-container .select2-selection.select2-selection--single {
+  font-size: var(--tblr-body-font-size);
+  height: calc(calc(20em / 14) + (0.5625rem * 2) + 2px);
+  position: relative;
+  height: 50px !important;
+}
+
+.modal-footer-deploy > span.select2-container .select2-selection.select2-selection--single .select2-selection__arrow {
+  height: calc(calc(20em / 14) + (0.5625rem * 2) + 15px) !important;
+}
+
+.modal-footer-deploy > span.select2-container .select2-selection.select2-selection--single .select2-selection__rendered {
+  text-align: right !important;
+  direction: unset !important;
+}
+
+
+
+
+
+
+
+
+
+
+#select2-icon-container{
+  font-size: x-large;
+}
+
+.deploy_btn_userinteraction_render {
+  float: right;
+  margin-left: 5px
+}
+
+.w-40 {
+  width: 40% !important;
+}
+
+.w-30 {
+  width: 30% !important;
+}
+
+.w-20 {
+  width: 20% !important;
+}
+
+.w-10 {
+  width: 10% !important;
+}
