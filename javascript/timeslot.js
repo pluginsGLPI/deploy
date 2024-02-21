@@ -28,12 +28,12 @@
 
 var AJAX_URL = CFG_GLPI.root_doc + '/' + GLPI_PLUGINS_PATH.deploy + '/ajax/timeslot.php';
 
-const timeslot = {};
-const timeslotsData = JSON.parse(document.getElementById('timeslotsData').dataset.value);
+var timeslot = {};
+var timeslotsData = JSON.parse(document.getElementById('timeslotsData').dataset.value);
 
-const everydayButton = document.getElementById('everyday');
-const daysLength = parseInt(document.getElementById('daysLength').dataset.value);
-const timeslot_id = parseInt(document.getElementById('timeslotId').dataset.value);
+var everydayButton = document.getElementById('everyday');
+var daysLength = parseInt(document.getElementById('daysLength').dataset.value);
+var timeslot_id = parseInt(document.getElementById('timeslotId').dataset.value);
 
 function setSliderValues(slider, values) {
     slider.noUiSlider.set(values);
@@ -63,7 +63,7 @@ function sendAjaxRequest(action, timeslot, timeslot_id) {
             timeslot: timeslot,
             plugin_deploy_timeslots_id: timeslot_id
         }
-    }).then((response) => {
+    }).done(function(response) {
         $('#tr_countainer').html(response);
     });
 }
@@ -134,7 +134,7 @@ for (let i = 1; i <= daysLength; i++) {
     }
 
     addRangeButton.addEventListener('click', function(event) {
-        let lastKey = Object.keys(timeslot[i]).length - 1;
+        const lastKey = Object.keys(timeslot[i]).length - 1;
         timeslot[i][lastKey + 1] = {
             starttime: '23.00',
             endtime: '24.00'
