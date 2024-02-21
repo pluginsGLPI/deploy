@@ -28,12 +28,12 @@
 
 var AJAX_URL = CFG_GLPI.root_doc + '/' + GLPI_PLUGINS_PATH.deploy + '/ajax/timeslot.php';
 
-var timeslot = {};
-var timeslotsData = JSON.parse(document.getElementById('timeslotsData').dataset.value);
+const timeslot = {};
+const timeslotsData = JSON.parse(document.getElementById('timeslotsData').dataset.value);
 
-var everydayButton = document.getElementById('everyday');
-var daysLength = parseInt(document.getElementById('daysLength').dataset.value);
-var timeslot_id = parseInt(document.getElementById('timeslotId').dataset.value);
+const everydayButton = document.getElementById('everyday');
+const daysLength = parseInt(document.getElementById('daysLength').dataset.value);
+const timeslot_id = parseInt(document.getElementById('timeslotId').dataset.value);
 
 function setSliderValues(slider, values) {
     slider.noUiSlider.set(values);
