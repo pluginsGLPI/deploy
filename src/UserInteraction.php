@@ -30,10 +30,13 @@
 
 namespace GlpiPlugin\Deploy;
 
+use atoum\atoum\report\field;
 use CommonDropdown;
 use DBConnection;
 use Glpi\Application\View\TemplateRenderer;
 use Migration;
+use Session;
+use Toolbox;
 
 class UserInteraction extends CommonDropdown
 {
@@ -66,6 +69,22 @@ class UserInteraction extends CommonDropdown
     public const ICON_ERROR    = "error";
     public const ICON_QUESTION = "question";
 
+    public const ACTION_CONTINUE = 'continue:continue';
+    public const ACTION_STOP     = 'stop:stop';
+    public const ACTION_POSTPONE = 'stop:postpone';
+
+    public static function canPurge()
+    {
+        return Session::haveRight(static::$rightname, UPDATE);
+    }
+
+
+    public static function canCreate()
+    {
+        return Session::haveRight(static::$rightname, UPDATE);
+    }
+
+
     public static function getTypeName($nb = 0)
     {
         return _n('Alert', 'Alerts', $nb, 'deploy');
@@ -91,12 +110,88 @@ class UserInteraction extends CommonDropdown
     }
 
 
+    public static function getTime($forRetry = true): array
+    {
+        $tab[0] = __('Never');
+
+        // Minutes
+        for ($i=30; $i<60; $i+=5) {
+            $tab[$i] = sprintf(_n('%d second', '%d seconds', $i), $i);
+        }
+
+        $tab[MINUTE_TIMESTAMP]   = sprintf(_n('%d minute', '%d minutes', 1), 1);
+        $tab[2*MINUTE_TIMESTAMP] = sprintf(_n('%d minute', '%d minutes', 2), 2);
+        $tab[3*MINUTE_TIMESTAMP] = sprintf(_n('%d minute', '%d minutes', 3), 3);
+        $tab[4*MINUTE_TIMESTAMP] = sprintf(_n('%d minute', '%d minutes', 4), 4);
+
+        // Minutes
+        for ($i=5; $i<60; $i+=5) {
+            $tab[$i*MINUTE_TIMESTAMP] = sprintf(_n('%d minute', '%d minutes', $i), $i);
+        }
+
+        // Heures
+        for ($i=1; $i<24; $i++) {
+            $tab[$i*HOUR_TIMESTAMP] = sprintf(_n('%d hour', '%d hours', $i), $i);
+        }
+
+        if ($forRetry) {
+            // Jours
+            $tab[DAY_TIMESTAMP] = __('Each day');
+            for ($i=2; $i<7; $i++) {
+                $tab[$i*DAY_TIMESTAMP] = sprintf(_n('%d day', '%d days', $i), $i);
+            }
+
+            $tab[WEEK_TIMESTAMP]  = __('Each week');
+            $tab[MONTH_TIMESTAMP] = __('Each month');
+        }
+
+        return $tab;
+    }
+
+    public static function getTimeout(): array
+    {
+        $tab[0] = __('Never');
+
+        // Minutes
+        for ($i=30; $i<60; $i+=5) {
+           $tab[$i] = sprintf(_n('%d second', '%d seconds', $i), $i);
+        }
+
+        $tab[MINUTE_TIMESTAMP]   = sprintf(_n('%d minute', '%d minutes', 1), 1);
+        $tab[2*MINUTE_TIMESTAMP] = sprintf(_n('%d minute', '%d minutes', 2), 2);
+        $tab[3*MINUTE_TIMESTAMP] = sprintf(_n('%d minute', '%d minutes', 3), 3);
+        $tab[4*MINUTE_TIMESTAMP] = sprintf(_n('%d minute', '%d minutes', 4), 4);
+
+        // Minutes
+        for ($i=5; $i<60; $i+=5) {
+           $tab[$i*MINUTE_TIMESTAMP] = sprintf(_n('%d minute', '%d minutes', $i), $i);
+        }
+
+        // Hours
+        for ($i=1; $i<13; $i++) {
+           $tab[$i*HOUR_TIMESTAMP] = sprintf(_n('%d hour', '%d hours', $i), $i);
+        }
+
+        return $tab;
+    }
+
+
+
+    public static function getActions() {
+        return [
+            self::ACTION_CONTINUE   => __('Continue job without user interaction', 'fusioninventory'),
+            self::ACTION_POSTPONE   => __('Retry deploy later', 'fusioninventory'),
+            self::ACTION_STOP       => __('Cancel deploy', 'fusioninventory')
+        ];
+    }
+
+
     public static function getTypes(bool $with_icon = false): array
     {
         return [
             SELF::BEFORE_DOWLOAD      => ($with_icon ? '<i class="fa-fw me-1 fas fa-cloud-arrow-down"></i>' : "")
                                    . __('Before download', 'deploy'),
-            SELF::AFTER_DOWLOAD       => ($with_icon ? '<i class="fa-fw me-1 fas fa-desktop-arrow-down' : "")
+            SELF::AFTER_DOWLOAD       => ($with_icon ? '<i class="fa-fw me-1 fas fa-desktop-arrow-down"></i>' : "")
                                    . __('After download', 'deploy'),
             SELF::AFTER_ACTIONS       => ($with_icon ? '<i class="fa-fw me-1 fas fa-folder-gear"></i>' : "")
                                    . __('After actions execution', 'deploy'),
@@ -123,47 +218,54 @@ class UserInteraction extends CommonDropdown
     }
 
 
+    public static function getInteractionTypesIcon(): array
+    {
+        return [
+            self::IT_OK                  => '<button type="button" class="btn m-1 btn-success">' . __('OK', 'deploy').  '</button>',
+            self::IT_OK_ASYNC            => '<button type="button" class="btn m-1 btn-success">' . __('OK', 'deploy').  '</button>' . __('(Asynchronous)', 'deploy'),
+            self::IT_OK_CANCEL           => '<button type="button" class="btn m-1 btn-success">' . __('Ok').  '</button>
+                                             <button type="button" class="btn m-1 btn-danger">' . __('Cancel').  '</button>',
+            self::IT_YES_NO              => '<button type="button" class="btn m-1 btn-success">' . __('Yes').  '</button>
+                                             <button type="button" class="btn m-1 btn-danger">' . __('No').  '</button>',
+            self::IT_YES_NO_CANCEL       => '<button type="button" class="btn m-1 btn-success">' . __('Yes').  '</button>
+                                             <button type="button" class="btn m-1 btn-danger">' . __('No').  '</button>
+                                             <button type="button" class="btn m-1 btn-danger">' . __('Cancel').  '</button>',
+            self::IT_ABORT_RETRY_IGNORE  => '<button type="button" class="btn m-1 btn-danger">' . __('Abort').  '</button>
+                                             <button type="button" class="btn m-1 btn-success">' . __('Retry').  '</button>
+                                             <button type="button" class="btn m-1 btn-secondary">' . __('Ignore').  '</button>',
+            self::IT_RETRY_CANCEL        => '<button type="button" class="btn m-1 btn-success">' . __('Retry').  '</button>
+                                             <button type="button" class="btn m-1 btn-danger">' . __('Cancel').  '</button>',
+            self::IT_CANCEL_TRY_CONTINUE => '<button type="button" class="btn m-1 btn-danger">' . __('Cancel').  '</button>
+                                             <button type="button" class="btn m-1 btn-secondary">' . __('Try').  '</button>
+                                             <button type="button" class="btn m-1 btn-success">' . __('Continue').  '</button>',
+        ];
+    }
+
+
     public static function getIcons(bool $with_icon = false, bool $with_label = true, string $size_icon = ''): array
     {
         return [
-            self::ICON_NONE     => __('None', 'deploy'),
-            self::ICON_WARNING  => ($with_icon ? '<i class="' . $size_icon . ' fa-fw text-warning ti ti-alert-triangle"></i>' : "")
+            self::ICON_NONE     => __('--', 'deploy'),
+            self::ICON_WARNING  => ($with_icon ? '<i class="' . $size_icon . ' fa-fw text-warning ti ti-alert-triangle" style="font-size: x-large;"></i>' : "")
                                    . ($with_label ? __('Warning', 'deploy') : ''),
-            self::ICON_INFO     => ($with_icon ? '<i class="' . $size_icon . ' fa-fw text-info ti ti-info-circle"></i>' : "")
+            self::ICON_INFO     => ($with_icon ? '<i class="' . $size_icon . ' fa-fw text-info ti ti-info-circle" style="font-size: x-large;"></i>' : "")
                                    . ($with_label ? __('Information', 'deploy') : ''),
-            self::ICON_ERROR    => ($with_icon ? '<i class="' . $size_icon . ' fa-fw text-danger ti ti-alert-octagon"></i>' : "")
+            self::ICON_ERROR    => ($with_icon ? '<i class="' . $size_icon . ' fa-fw text-danger ti ti-alert-octagon" style="font-size: x-large;"></i>' : "")
                                    . ($with_label ? __('Error', 'deploy') : ''),
-            self::ICON_QUESTION => ($with_icon ? '<i class="' . $size_icon . ' fa-fw ti ti-question-mark"></i>' : "")
+            self::ICON_QUESTION => ($with_icon ? '<i class="' . $size_icon . ' fa-fw ti ti-question-mark" style="font-size: x-large;"></i>' : "")
                                    . ($with_label ? __('Question', 'deploy') : ''),
         ];
     }
 
 
-    public static function getLabelForInteractionType(string $type = null): string
+    /**
+     * Actions done at the end of the getEmpty function
+     *
+     * @return void
+     **/
+    public function post_getEmpty()
     {
-        $types = self::getInteractionTypes();
-        return $types[$type] ?? "";
-    }
-
-
-    public static function getLabelForType(string $type = null, bool $with_icon = false): string
-    {
-        $types = self::getTypes($with_icon);
-        return $types[$type] ?? "";
-    }
-
-
-    public static function getLabelForIcon(string $icon = null): string
-    {
-        $icons = self::getIcons(false, true);
-        return $icons[$icon] ?? "";
-    }
-
-
-    public static function getIconForLabel(string $icon = null, $size = ''): string
-    {
-        $icons = self::getIcons(true, false, $size);
-        return $icons[$icon] ?? "";
+        $this->fields['icon'] = self::ICON_INFO;
     }
 
 
@@ -174,7 +276,7 @@ class UserInteraction extends CommonDropdown
         } else {
             $this->getEmpty();
         }
-         $this->initForm($id, $options);
+        $this->initForm($id, $options);
 
         TemplateRenderer::getInstance()->display('@deploy/package/userinteraction.form.html.twig', [
             'item'         => $this,
@@ -235,6 +337,9 @@ class UserInteraction extends CommonDropdown
                 `text` text,
                 `type` varchar(50) DEFAULT NULL,
                 `interaction_type` varchar(50) DEFAULT NULL,
+                `retry_job_after` int(11) DEFAULT 0,
+                `nb_max_retry` int(11) DEFAULT 1,
+                `timeout` int(11) DEFAULT 0,
                 `icon` varchar(10) DEFAULT NULL,
                 `date_creation` timestamp NULL DEFAULT NULL,
                 `date_mod` timestamp NULL DEFAULT NULL,

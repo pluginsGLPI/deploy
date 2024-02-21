@@ -9,196 +9,114 @@
 <div class="asset {{ bg }}">
     {{ include('components/form/header.html.twig', {'in_twig': true}) }}
 
-<div class="col-6 col-xxl-12 flex-column">
-    <div class="d-flex align-items-center justify-content-center">
-        <div class="w-50 p-3">
-            <div class="modal-dialog preview">
-                <div class="modal-content-deploy">
-                    <div class="modal-header-deploy">
-                        <input type="text" placeholder="Give a title" name="title" class="form-control tox-textfield title-editable" id="modalTryItLabel" value="{{ item.fields['title'] }}">
-                    </div>
-                    <div class="d-flex modal-body-deploy">
-                        <div class="me-2">
-                            <select class="form-control dropdown-editable" data-show-content="true" id="icon" name="icon">
-                                {% for icon_key, icon in call("GlpiPlugin\\Deploy\\UserInteraction::getIcons", [true,false]) %}
-                                    <option value="{{ icon_key }}" {{ item.fields['icon'] == icon_key ? "selected" : "" }}>
-                                        {{ icon }}
+        {# based field 'name' #}
+        <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
+            <label class="col-form-label col-xxl-2 text-xxl-end" for="name">
+                {{ __('Name') }}
+            </label>
+            <div class="col-xxl-7 field-container">
+                <input type="text" id="name" class="form-control " name="name" value="{{ item.fields['name'] }}">
+            </div>
+        </div>
+
+        {# hr text #}
+        <div class="d-flex align-items-center justify-content-center">
+            <div class="w-30 p-3">
+                <div class="hr-text">
+                    <i class="ti ti-settings"></i>
+                    <span>{{ __('User interaction') }}</span>
+                </div>
+            </div>
+            <div class="w-30 p-3">
+                <div class="hr-text">
+                    <i class="ti ti-presentation"></i>
+                    <span>{{ __('preview') }}</span>
+                </div>
+            </div>
+            <div class="w-30 p-3">
+                <div class="hr-text">
+                    <i class="ti ti-settings"></i>
+                    <span>{{ __('behavior') }}</span>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="d-flex align-items-center justify-content-center">
+            {# Config #}
+            <div class="w-30 p-3">
+                {% set field_option = {
+                    full_width: true,
+                } %}
+
+                {{ fields.dropdownArrayField(
+                    'retry_job_after',
+                    item.fields['retry_job_after'],
+                    call("GlpiPlugin\\Deploy\\UserInteraction::getTime", [true]),
+                    __('Retry job after', 'deploy'),
+                    field_option
+                )}}
+                {{ fields.nullField() }}
+
+                {{ fields.dropdownNumberField(
+                'nb_max_retry',
+                item.fields['nb_max_retry'],
+                __('Maximum number of retry allowed', 'deploy'),
+                {
+                    'min'      : 1,
+                    'max'      : 20,
+                    'step'     : 1,
+                }|merge(field_option)
+                ) }}
+                {{ fields.nullField() }}
+
+                {{ fields.dropdownArrayField(
+                    'timeout',
+                    item.fields['timeout'],
+                    call("GlpiPlugin\\Deploy\\UserInteraction::getTime", [false]),
+                    __('Alert display timeout', 'deploy'),
+                    field_option
+                )}}
+                {{ fields.nullField() }}
+            </div>
+
+            {# Preview #}
+            <div class="w-30 p-3">
+                <div class="modal-dialog preview">
+                    <div class="modal-content-deploy">
+                        <div class="modal-header-deploy">
+                            <input type="text" placeholder="Give a title" name="title" class="form-control tox-textfield title-editable"  value="{{ item.fields['title'] }}">
+                        </div>
+                        <div class="d-flex modal-body-deploy">
+                            <div class="me-2">
+                                <select class="dropdown-editable" data-show-content="true" id="icon" name="icon">
+                                    {% for icon_key, icon in call("GlpiPlugin\\Deploy\\UserInteraction::getIcons", [true,false]) %}
+                                        <option value="{{ icon_key }}" {{ item.fields['icon'] == icon_key ? "selected" : "" }}>
+                                            {{ icon }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <textarea placeholder="Give a descrption" name="text" class="tox-textfield textarea-editable" rows="6" cols="50">{{ item.fields['text'] }}</textarea>
+                        </div>
+                        <div class="modal-footer-deploy">
+                            <select class="dropdown-editable" data-show-content="true" id="interaction_type" name="interaction_type">
+                                {% for interaction_type_key, interaction_type in call("GlpiPlugin\\Deploy\\UserInteraction::getInteractionTypesIcon") %}
+                                    <option value="{{ interaction_type_key }}" {{ item.fields['interaction_type'] == interaction_type_key ? "selected" : "" }}>
+                                        {{ interaction_type }}
                                     </option>
                                 {% endfor %}
                             </select>
-
-
-
-
-
-
-
-                            {#{{ call("GlpiPlugin\\Deploy\\UserInteraction::getIconForLabel", ['info', 'fa-2x'])|raw }}#}
                         </div>
-                        <textarea placeholder="Give a descrption" name="text" class="tox-textfield textarea-editable" id="modalTryItLabel" rows="6" cols="50">{{ item.fields['description'] }}</textarea>
-                    </div>
-                    <div class="modal-footer-deploy">
-
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
+            {# Behaviors #}
+            <div class="w-30 p-3">
 
-    {#
-    {% set rand = random() %}
-    {% set params  = params ?? [] %}
-    {% set target       = params['target'] ?? item.getFormURL() %}
-    {% set item_type = item.getType() %}
-    {% set field_options = {
-        'locked_fields': item.getLockedFields(),
-        'label_class' : 'col-xxl-4'
-    } %}
-
-    <div class="card-body d-flex flex-wrap">
-        <div class="col-12 col-xxl-12 flex-column">
-            <div class="d-flex flex-row flex-wrap flex-xl-nowrap">
-                <div class="row flex-row align-items-start flex-grow-1">
-
-                    {% set alert_legend %}
-                        <div class="hr-text" style="margin: 0px;">
-                            <span>{{ __('User interaction', 'deploy') }}</span>
-                        </div>
-                    {% endset %}
-                    {{ fields.htmlField('', alert_legend, '', field_options) }}
-
-                    {% set behavior_legent %}
-                        <div class="hr-text" style="margin: 0px;">
-                            <span>{{ __('Behavior', 'deploy') }}</span>
-                        </div>
-                    {% endset %}
-                    {{ fields.htmlField('', behavior_legent, '', field_options) }}
-
-
-                    {{ fields.textField(
-                        'name',
-                        item.fields['name'],
-                        __("Name", 'deploy') ~ '<i class="ms-2 ti ti-tag"></i>',
-                        field_options|merge({
-                            mb: 'mb-4',
-                        })
-                    ) }}
-
-                    {{ fields.textField(
-                        'name',
-                        item.fields['on_ok'],
-                        __("Button ok", 'deploy') ~ '<i class="ms-2 ti ti-tag"></i>',
-                        field_options|merge({
-                            mb: 'mb-4',
-                        })
-                    ) }}
-
-
-                    {{ fields.textField(
-                        'title',
-                        item.fields['title'],
-                        __("Title", 'deploy') ~ '<i class="ms-2 ti ti-tag"></i>',
-                        field_options
-                    ) }}
-
-                    {{ fields.textField(
-                        'name',
-                        item.fields['on_ok'],
-                        __("No active session", 'deploy') ~ '<i class="ms-2 ti ti-tag"></i>',
-                        field_options|merge({
-                            mb: 'mb-4',
-                        })
-                    ) }}
-
-
-                    {% set icon_field %}
-                        <select class="form-select" id="icon" name="icon">
-                            {% for icon_key, icon in call("GlpiPlugin\\Deploy\\UserInteraction::getIcons") %}
-                                <option value="{{ icon_key }}" {{ item.fields['icon'] == icon_key ? "selected" : "" }}>
-                                    {{ icon }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    {% endset %}
-
-                    {{ fields.field(
-                        'icon',
-                        icon_field,
-                        __("Icon", 'deploy') ~ '<i class="ms-2 ti ti-flag"></i>',
-                        field_options
-                    ) }}
-
-                    {{ fields.textField(
-                        'name',
-                        item.fields['on_ok'],
-                        __("Alert timeout exceeded	", 'deploy') ~ '<i class="ms-2 ti ti-tag"></i>',
-                        field_options|merge({
-                            mb: 'mb-4',
-                        })
-                    ) }}
-
-
-                    {% set interaction_type_field %}
-                        <select class="form-select" id="interaction_type" name="interaction_type">
-                            <option value="">--</option>
-                            {% for interaction_type_key, interaction_type in call("GlpiPlugin\\Deploy\\UserInteraction::getInteractionTypes") %}
-                                <option value="{{ interaction_type_key }}" {{ item.fields['interaction_type'] == interaction_type_key ? "selected" : "" }}>
-                                    {{ interaction_type }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    {% endset %}
-                    {{ fields.field(
-                        'type',
-                        interaction_type_field,
-                        __("Interaction type", 'deploy') ~ '<i class="ms-2 ' ~ call("GlpiPlugin\\Deploy\\UserInteraction::getIcon") ~ '"></i>',
-                        field_options
-                    ) }}
-
-                    {{ fields.textField(
-                        'name',
-                        item.fields['on_ok'],
-                        __("Several active sessions", 'deploy') ~ '<i class="ms-2 ti ti-tag"></i>',
-                        field_options|merge({
-                            mb: 'mb-4',
-                        })
-                    ) }}
-
-
-                    {{ fields.textareaField(
-                        'text',
-                        item.fields['text']|join("\n"),
-                        __("Description", 'deploy') ~ '<i class="ms-2 action-icon-type ti ti-blockquote"></i>',
-                        field_options
-                    ) }}
-
-
-
-
- <div class="hr-text">
-                            <span>{{ __('Preview', 'deploy') }}</span>
-                        </div>
-
-                    <div class="col-6 col-xxl-12 flex-column">
-                        <div class="d-flex align-items-center justify-content-center" style="height: 250px;">
-                            <div class="w-25 p-3">
-                                <div id="preview"></div>
-                            </div>
-                        </div>
-                    </div>
-
-
-
-                    </div>
-                </div>
             </div>
-
-
-
         </div>
     </div>
-    #}
 
     {% if item_type == 'Contract' %}
         {{ include('components/form/support_hours.html.twig') }}
@@ -209,7 +127,6 @@
     {% if no_inventory_footer is not defined or no_inventory_footer == false %}
         {{ include('components/form/inventory_info.html.twig') }}
     {% endif %}
-
     {% if params['formfooter'] is null or params['formfooter'] == true %}
         <div class="card-footer mx-n2 mb-n2 mt-4">
             {{ include('components/form/dates.html.twig') }}
@@ -217,51 +134,32 @@
     {% endif %}
 </div>
 
-
 <script type="text/javascript">
     $(document).ready(function() {
-function format (state) {
-    if (!state.id) { return state.text; }
-    return '<i class="fa fa-lg '+state.id.toLowerCase()+'"></i> '+state.text;
-} 
+        function formatIcon (state) {
+            if (!state.id) { return state.text; }
+            return '<i class="fa fa-lg '+state.id.toLowerCase()+'"></i> '+state.text;
+        }
 
-$("#icon").select2({
-    formatResult: format,
-    formatSelection: format,
-    width : 70, //define width
-    minimumResultsForSearch: -1, //no search
-    escapeMarkup: function(m) { return m; }
-});
+        $("#icon").select2({
+            formatResult: formatIcon,
+            formatSelection: formatIcon,
+            width : 60, //define width
+            minimumResultsForSearch: -1, //no search
+            escapeMarkup: function(m) { return m; }
+        });
+
+
+        function formatInteractiontype (state) {
+            return interaction.text;
+        }
+
+        $("#interaction_type").select2({
+            formatResult: formatInteractiontype,
+            formatSelection: formatInteractiontype,
+            width : '100%', //define width
+            minimumResultsForSearch: -1, //no search
+            escapeMarkup: function(m) { return m; }
+        });
     });
 </script>
-
-{#<script type="text/javascript">
-   $(document).ready(function() {
-       function updatePreview() {
-           var ajax_url = CFG_GLPI.root_doc + '/' + GLPI_PLUGINS_PATH.deploy + '/ajax/userInteraction.php';
-           var data = $("form[name='asset_form']").serializeArray().reduce(
-               function(obj, item) {
-                   obj[item.name] = item.value;
-                   return obj;
-               },
-               {}
-           );
-           $.ajax({
-               url: ajax_url,
-               method: "GET",
-               data: data,
-           success:function(response) {
-               $('#preview').html(response);
-           },
-           error:function(){
-               alert("error");
-           }
-         });
-       };
-       $("form[name='asset_form']").on('keyup change paste', 'input, select, textarea', function(){
-           updatePreview();
-       });
-       updatePreview();
-   });
-</script>
-#}
