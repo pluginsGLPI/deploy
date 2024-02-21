@@ -69,11 +69,11 @@ function sendAjaxRequest(action, timeslot, timeslot_id) {
 }
 
 for (let i = 1; i <= daysLength; i++) {
-    let slider = document.getElementById('slider' + i);
-    let checkbox = document.getElementById('notimeslot' + i);
-    let alldayButton = document.getElementById('allday' + i);
-    let addRangeButton = document.getElementById('addrange' + i);
-    let delRangeButton = document.getElementById('delrange' + i);
+    const slider = document.getElementById('slider' + i);
+    const checkbox = document.getElementById('notimeslot' + i);
+    const alldayButton = document.getElementById('allday' + i);
+    const addRangeButton = document.getElementById('addrange' + i);
+    const delRangeButton = document.getElementById('delrange' + i);
 
     timeslot[i] = {
         is_enable: +checkbox.checked
