@@ -149,7 +149,7 @@ for (let i = 1; i <= daysLength; i++) {
     }
 
     delRangeButton.addEventListener('click', function(event) {
-        let lastKey = Object.keys(timeslot[i]).length - 1;
+        const lastKey = Object.keys(timeslot[i]).length - 1;
         delete timeslot[i][lastKey - 1];
         document.getElementById('timeslot').value = JSON.stringify(timeslot);
         sendAjaxRequest('add', timeslot, timeslot_id);
