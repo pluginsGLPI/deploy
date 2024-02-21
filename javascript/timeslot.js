@@ -93,9 +93,9 @@ for (let i = 1; i <= daysLength; i++) {
 
     slider.noUiSlider.on('update', function(values, handle) {
         timeslot[i]['is_enable'] = +checkbox.checked;
-        let order = Math.floor(handle / 2);
-        let start = document.getElementById('value' + order + '_start' + i);
-        let end = document.getElementById('value' + order + '_end' + i);
+        const order = Math.floor(handle / 2);
+        const start = document.getElementById('value' + order + '_start' + i);
+        const end = document.getElementById('value' + order + '_end' + i);
         if (handle % 2 === 1) {
             end.value = values[handle];
         } else {
