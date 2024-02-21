@@ -13,10 +13,10 @@ if (!isset($_GET["id"])) {
     $_GET["id"] = "";
 }
 
-$package_timeslot = new Package_Timeslot();
+$package_timeslot = new PackageTimeslot();
 
 if (isset($_POST['time_end']) && isset($_POST['time_start'])) {
-    $_POST['weekday'] = Package_Timeslot::getDayNumber($_POST['weekday']);
-    Package_Timeslot::chooseUpdateOrAdd($_POST);
+    $_POST['weekday'] = PackageTimeslot::getDayNumber($_POST['weekday']);
+    PackageTimeslot::chooseUpdateOrAdd($_POST);
 }
 Html::back();

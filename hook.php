@@ -38,7 +38,7 @@ use GlpiPlugin\Deploy\PackageCheck;
 use GlpiPlugin\Deploy\PackageFile;
 use GlpiPlugin\Deploy\PackageTarget;
 use GlpiPlugin\Deploy\Profile;
-use GlpiPlugin\Deploy\Package_Timeslot;
+use GlpiPlugin\Deploy\PackageTimeslot;
 use GlpiPlugin\Deploy\Repository;
 use GlpiPlugin\Deploy\Timeslot;
 use GlpiPlugin\Deploy\TimeslotRange;
@@ -87,7 +87,7 @@ function plugin_deploy_install()
     PackageCheck::install($migration);
     PackageFile::install($migration);
     Package::install($migration);
-    Package_Timeslot::install($migration);
+    PackageTimeslot::install($migration);
     PackageJob::install($migration);
     PackageTarget::install($migration);
     Profile::install($migration);
@@ -111,7 +111,7 @@ function plugin_deploy_uninstall()
     $migration = new Migration(PLUGIN_DEPLOY_VERSION);
 
     PackageTarget::uninstall($migration);
-    Package_Timeslot::uninstall($migration);
+    PackageTimeslot::uninstall($migration);
     Package::uninstall($migration);
     PackageJob::uninstall($migration);
     PackageTarget::uninstall($migration);

@@ -9,9 +9,9 @@ use Glpi\Application\View\TemplateRenderer;
 use Html;
 use Migration;
 
-class Package_Timeslot extends CommonDBTM
+class PackageTimeslot extends CommonDBTM
 {
-    use Package_Subitem;
+    use PackageSubitem;
 
     public static function getTypeName($nb = 0)
     {
