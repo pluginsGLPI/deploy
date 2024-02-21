@@ -87,7 +87,6 @@ function plugin_deploy_install()
     PackageCheck::install($migration);
     PackageFile::install($migration);
     Package::install($migration);
-    PackageTimeslot::install($migration);
     PackageJob::install($migration);
     PackageTarget::install($migration);
     Profile::install($migration);
@@ -111,7 +110,6 @@ function plugin_deploy_uninstall()
     $migration = new Migration(PLUGIN_DEPLOY_VERSION);
 
     PackageTarget::uninstall($migration);
-    PackageTimeslot::uninstall($migration);
     Package::uninstall($migration);
     PackageJob::uninstall($migration);
     PackageTarget::uninstall($migration);
