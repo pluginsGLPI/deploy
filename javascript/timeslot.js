@@ -63,7 +63,7 @@ function sendAjaxRequest(action, timeslot, timeslot_id) {
             timeslot: timeslot,
             plugin_deploy_timeslots_id: timeslot_id
         }
-    }).done(function(response) {
+    }).then((response) => {
         $('#tr_countainer').html(response);
     });
 }
