@@ -65,7 +65,6 @@ class Package extends CommonDBTM
             ->addStandardTab(PackageAction::getType(), $ong, $options)
             ->addStandardTab(PackageTarget::getType(), $ong, $options)
             ->addStandardTab(PackageJob::getType(), $ong, $options)
-            ->addStandardTab(PackageTimeslot::getType(), $ong, $options)
             ->addStandardTab(__CLASS__, $ong, $options);
 
         return $ong;
