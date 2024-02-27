@@ -29,28 +29,43 @@
 {% import 'components/form/fields_macros.html.twig' as fields %}
 {% extends "@deploy/package/subitemtarget.list.html.twig" %}
 
-
 {% block subitem_form %}
-    {{ fields.dropdownField(
-        "GlpiPlugin\\Deploy\\Computer\\Group",
-        'plugin_deploy_computers_groups_id',
-        '0',
-        call('GlpiPlugin\\Deploy\\Computer\\Group::getTypeName', [0]),
-        {
-            'used': used_item,
-        }
-    ) }}
+    <div class="col">
+        <div class="row">
+            {{ fields.dropdownField(
+                "GlpiPlugin\\Deploy\\Timeslot",
+                'plugin_deploy_timeslots_id',
+                '0',
+                __("Choose a timeslot", 'deploy'),
+                {
+                    'required': true,
+                }
+            ) }}
+        </div>
+        <div class="row">
+            {{ fields.dropdownField(
+                "GlpiPlugin\\Deploy\\Computer\\Group",
+                'plugin_deploy_computers_groups_id',
+                '0',
+                call('GlpiPlugin\\Deploy\\Computer\\Group::getTypeName', [0]),
+                {
+                    'used': used_item,
+                    'required': true,
+                }
+            ) }}
 
-    {% set btn_add %}
-        <button class="btn btn-primary mb-2" type="submit" name="add_target">
-            <i class="{{ call("GlpiPlugin\\Deploy\\PackageTarget::getIcon") }}"></i>
-            <span>{{ __("Add a new target", 'deploy') }}</span>
-        </button>
-    {% endset %}
+            {% set btn_add %}
+                <button class="btn btn-primary mb-2" type="submit" name="add_target">
+                    <i class="{{ call("GlpiPlugin\\Deploy\\PackageTarget::getIcon") }}"></i>
+                    <span>{{ __("Add a new target", 'deploy') }}</span>
+                </button>
+            {% endset %}
 
-    {{ fields.htmlField(
-        '',
-        btn_add,
-        ''
-    ) }}
+            {{ fields.htmlField(
+                '',
+                btn_add,
+                ''
+            ) }}
+        </div>
+    </div>
 {% endblock %}

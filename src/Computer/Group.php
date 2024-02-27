@@ -34,6 +34,8 @@ use CommonDBTM;
 use Computer;
 use DisplayPreference;
 use Glpi\Application\View\TemplateRenderer;
+use GlpiPlugin\Deploy\PackageTarget;
+use GlpiPlugin\Deploy\Timeslot;
 use Migration;
 use Search;
 use Session;
@@ -148,6 +150,24 @@ class Group extends CommonDBTM
             ]
         ];
 
+        $tab[] = [
+            'id'                 => '9',
+            'table'              => Timeslot::getTable(),
+            'field'              => 'name',
+            'datatype'           => 'itemlink',
+            'name'               => __('Timeslot linked', 'deploy'),
+            'forcegroupby'       => true,
+            'massiveaction'      => false,
+            'joinparams'         => [
+                'beforejoin'         => [
+                    'table'              => PackageTarget::getTable(),
+                    'joinparams'         => [
+                        'jointype'           => 'child',
+                    ]
+                ]
+            ]
+        ];
+
         return $tab;
     }
 
@@ -200,6 +220,27 @@ class Group extends CommonDBTM
         $count = count($iterator);
 
         return $count;
+    }
+
+    public function getTimeslotLink()
+    {
+        /** @var object $DB */
+        global $DB;
+
+        $params = [
+            'SELECT' => 'plugin_deploy_timeslots_id',
+            'FROM'   => PackageTarget::getTable(),
+            'WHERE'  => ['plugin_deploy_computers_groups_id' => $this->fields['id']],
+        ];
+        $iterator = $DB->request($params);
+        $plugin_deploy_timeslots_id = 0;
+        foreach ($iterator as $data) {
+            $plugin_deploy_timeslots_id     = $data['plugin_deploy_timeslots_id'];
+        }
+
+        $timeslot = new Timeslot();
+        $timeslot->getFromDB($plugin_deploy_timeslots_id);
+        return $timeslot->getLink();
     }
 
 

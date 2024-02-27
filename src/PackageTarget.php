@@ -134,11 +134,13 @@ class PackageTarget extends CommonDBRelation
 
             $package_fk = getForeignKeyFieldForItemType(Package::class);
             $computer_group_fk = getForeignKeyFieldForItemType(Group::class);
+            $timeslot_fk = getForeignKeyFieldForItemType(Timeslot::class);
 
             $query = "CREATE TABLE IF NOT EXISTS `$table` (
                 `id` int $sign NOT NULL AUTO_INCREMENT,
                 `$package_fk` int $sign NOT NULL DEFAULT '0',
                 `$computer_group_fk` int $sign NOT NULL DEFAULT '0',
+                `$timeslot_fk` int $sign NOT NULL DEFAULT '0',
                 `date_creation` timestamp NULL DEFAULT NULL,
                 `date_mod` timestamp NULL DEFAULT NULL,
                 PRIMARY KEY (`id`),

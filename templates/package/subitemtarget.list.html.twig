@@ -87,6 +87,9 @@
                                 <th>
                                     {{ __('Number of statics items', 'deploy') }}
                                 </th>
+                                <th>
+                                    {{ __('Timeslot linked', 'deploy') }}
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -117,6 +120,9 @@
                                     </td>
                                     <td>
                                         {{ subitem.countStaticItem() }}
+                                    </td>
+                                    <td>
+                                        {{ subitem.getTimeslotLink()|raw }}
                                     </td>
                                 </tr>
                             {% endfor %}
