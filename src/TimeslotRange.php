@@ -51,7 +51,7 @@ class TimeslotRange extends CommonDBTM
     public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
     {
         if ($item->getType() == Timeslot::class) {
-            return self::createTabEntry(self::getTypeName(1), 1);
+            return self::createTabEntry(self::getTypeName(1), 0);
         }
         return '';
     }
