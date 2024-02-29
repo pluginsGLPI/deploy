@@ -155,7 +155,7 @@ class Group extends CommonDBTM
             'table'              => Timeslot::getTable(),
             'field'              => 'name',
             'datatype'           => 'itemlink',
-            'name'               => __('Timeslot linked', 'deploy'),
+            'name'               => __('Timeslot', 'deploy'),
             'forcegroupby'       => true,
             'massiveaction'      => false,
             'joinparams'         => [

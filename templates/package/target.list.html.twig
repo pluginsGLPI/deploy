@@ -33,17 +33,6 @@
     <div class="col">
         <div class="row">
             {{ fields.dropdownField(
-                "GlpiPlugin\\Deploy\\Timeslot",
-                'plugin_deploy_timeslots_id',
-                '0',
-                __("Choose a timeslot", 'deploy'),
-                {
-                    'required': true,
-                }
-            ) }}
-        </div>
-        <div class="row">
-            {{ fields.dropdownField(
                 "GlpiPlugin\\Deploy\\Computer\\Group",
                 'plugin_deploy_computers_groups_id',
                 '0',
@@ -51,6 +40,18 @@
                 {
                     'used': used_item,
                     'required': true,
+                    'field_class': 'col-12 col-sm-3',
+                }
+            ) }}
+
+            {{ fields.dropdownField(
+                "GlpiPlugin\\Deploy\\Timeslot",
+                'plugin_deploy_timeslots_id',
+                '0',
+                __("Choose a timeslot", 'deploy'),
+                {
+                    'required': true,
+                    'field_class': 'col-12 col-sm-3',
                 }
             ) }}
 
