@@ -38,7 +38,10 @@ use GlpiPlugin\Deploy\PackageCheck;
 use GlpiPlugin\Deploy\PackageFile;
 use GlpiPlugin\Deploy\PackageTarget;
 use GlpiPlugin\Deploy\Profile;
+use GlpiPlugin\Deploy\PackageTimeslot;
 use GlpiPlugin\Deploy\Repository;
+use GlpiPlugin\Deploy\Timeslot;
+use GlpiPlugin\Deploy\TimeslotRange;
 
 /**
  * -------------------------------------------------------------------------
@@ -68,6 +71,13 @@ use GlpiPlugin\Deploy\Repository;
  * -------------------------------------------------------------------------
  */
 
+ // Define Dropdown tables to be manage in GLPI :
+function plugin_deploy_getDropdown()
+{
+    $dropdowns = [Timeslot::class => Timeslot::getTypeName(2)];
+    return $dropdowns;
+}
+
 function plugin_deploy_install()
 {
     $version   = plugin_version_deploy();
@@ -84,6 +94,8 @@ function plugin_deploy_install()
     Group::install($migration);
     GroupDynamic::install($migration);
     GroupStatic::install($migration);
+    Timeslot::install($migration);
+    TimeslotRange::install($migration);
 
     return true;
 }
@@ -106,6 +118,8 @@ function plugin_deploy_uninstall()
     Group::uninstall($migration);
     GroupDynamic::uninstall($migration);
     GroupStatic::uninstall($migration);
+    Timeslot::uninstall($migration);
+    TimeslotRange::uninstall($migration);
 
     return true;
 }

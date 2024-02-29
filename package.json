@@ -1,0 +1,12 @@
+{
+    "name": "@glpi-plugins/deploy",
+    "description": "GLPI Deploy plugin",
+    "private": true,
+    "license": "GPL-3.0",
+    "dependencies": {
+        "nouislider": "^15.7.1"
+    },
+    "scripts": {
+      "postinstall": "mv node_modules lib"
+    }
+  }

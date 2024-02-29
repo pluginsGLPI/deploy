@@ -1,3 +1,5 @@
+<?php
+
 /**
  * -------------------------------------------------------------------------
  * Deploy plugin for GLPI
@@ -26,13 +28,28 @@
  * -------------------------------------------------------------------------
  */
 
-module.exports = {
-    "extends": "stylelint-config-standard",
-    "ignoreFiles": [
-        "lib/**/*",
-        "vendor/**/*"
-    ],
-    "rules": {
-        "selector-class-pattern": null, // DISABLE: Expected class selector to be kebab-case
-    },
-};
+namespace GlpiPlugin\Deploy;
+
+use Glpi\Application\View\TemplateRenderer;
+
+include("../../../inc/includes.php");
+
+\Session::checkLoginUser();
+$trange = new TimeslotRange();
+$id = $_POST['plugin_deploy_timeslots_id'];
+TimeslotRange::cleanOldData($_POST);
+$_POST = TimeslotRange::cleanInput($_POST);
+foreach ($_POST as $timeslot) {
+    foreach ($timeslot as $range) {
+        if ((bool)$range['is_enable'] == true) {
+            $trange->add($range);
+        }
+    }
+}
+$timeslots_data = TimeslotRange::getForTimeslot(Timeslot::getById($id));
+echo TemplateRenderer::getInstance()->render('@deploy/timeslot/timeslotrange.html.twig', [
+    'rand'           => mt_rand(),
+    'timeslot_id'    => $id,
+    'days_list'      => TimeslotRange ::getDayList(),
+    'timeslots_data' => $timeslots_data
+]);

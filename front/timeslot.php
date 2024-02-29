@@ -1,3 +1,5 @@
+<?php
+
 /**
  * -------------------------------------------------------------------------
  * Deploy plugin for GLPI
@@ -26,13 +28,14 @@
  * -------------------------------------------------------------------------
  */
 
-module.exports = {
-    "extends": "stylelint-config-standard",
-    "ignoreFiles": [
-        "lib/**/*",
-        "vendor/**/*"
-    ],
-    "rules": {
-        "selector-class-pattern": null, // DISABLE: Expected class selector to be kebab-case
-    },
-};
+namespace GlpiPlugin\Deploy;
+
+use Html;
+use Search;
+use Session;
+
+include('../../../inc/includes.php');
+
+Session::checkRight("entity", UPDATE);
+$dropdown = new Timeslot();
+include(GLPI_ROOT . "/front/dropdown.common.php");

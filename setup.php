@@ -28,12 +28,14 @@
  * -------------------------------------------------------------------------
  */
 
+use Glpi\Plugin\Hooks;
+
 define('PLUGIN_DEPLOY_VERSION', '0.0.5');
 define('PLUGIN_DEPLOY_REPOSITORY_PATH', GLPI_PLUGIN_DOC_DIR . "/deploy/repository");
 define('PLUGIN_DEPLOY_MANIFESTS_PATH', PLUGIN_DEPLOY_REPOSITORY_PATH . "/manifests");
 define('PLUGIN_DEPLOY_PARTS_PATH', PLUGIN_DEPLOY_REPOSITORY_PATH . "/parts");
-define("PLUGIN_DEPLOY_MIN_GLPI", "10.1.0");
-define("PLUGIN_DEPLOY_MAX_GLPI", "10.1.99");
+define("PLUGIN_DEPLOY_MIN_GLPI", "11.0.0");
+define("PLUGIN_DEPLOY_MAX_GLPI", "11.0.99");
 
 /**
  * Init hooks of the plugin.
@@ -62,6 +64,9 @@ function plugin_init_deploy()
         'tools' => 'GlpiPlugin\Deploy\Menu',
     ];
     $PLUGIN_HOOKS['config_page']['deploy'] = 'front/package.php';
+
+    $PLUGIN_HOOKS[Hooks::ADD_CSS]['deploy'][] = 'lib/nouislider/dist/nouislider.css';
+    $PLUGIN_HOOKS[Hooks::ADD_JAVASCRIPT]['deploy'][] = 'lib/nouislider/dist/nouislider.min.js';
 
     Plugin::registerClass('GlpiPlugin\Deploy\Profile', ['addtabon' => ['Profile']]);
 }
@@ -98,8 +103,13 @@ function plugin_version_deploy()
  */
 function plugin_deploy_check_prerequisites()
 {
+    $prerequisitesSuccess = true;
+    if (!is_dir(__DIR__ . '/lib/') || !is_readable(__DIR__ . '/lib/.package-lock.json')) {
+        echo "Run `npm install` in the plugin directory<br>";
+        $prerequisitesSuccess = false;
+    }
 
-    return true;
+    return $prerequisitesSuccess;
 }
 
 /**

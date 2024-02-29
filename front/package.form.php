@@ -112,7 +112,7 @@ if (isset($_POST["add"])) {
     $action->delete($_POST);
     Html::back();
 } else if (isset($_POST["add_target"])) {
-    if ($_POST['plugin_deploy_computers_groups_id'] > 0) {
+    if ($_POST['plugin_deploy_computers_groups_id'] > 0 && $_POST['plugin_deploy_timeslots_id'] > 0) {
         $package_target = new PackageTarget();
         $package_target->add($_POST);
     }
