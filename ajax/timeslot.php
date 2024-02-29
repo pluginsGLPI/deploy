@@ -48,8 +48,8 @@ foreach ($_POST as $timeslot) {
 }
 $timeslots_data = TimeslotRange::getForTimeslot(Timeslot::getById($id));
 echo TemplateRenderer::getInstance()->render('@deploy/timeslot/timeslotrange.html.twig', [
-    'rand'         => mt_rand(),
-    'timeslot_id'   => $id,
-    'days_list'     => TimeslotRange::getDayList(),
+    'rand'           => mt_rand(),
+    'timeslot_id'    => $id,
+    'days_list'      => TimeslotRange ::getDayList(),
     'timeslots_data' => $timeslots_data
 ]);

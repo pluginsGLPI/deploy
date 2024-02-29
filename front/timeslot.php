@@ -36,6 +36,6 @@ use Session;
 
 include('../../../inc/includes.php');
 
-Session::checkRight("dashboard", UPDATE);
+Session::checkRight("entity", UPDATE);
 $dropdown = new Timeslot();
 include(GLPI_ROOT . "/front/dropdown.common.php");
