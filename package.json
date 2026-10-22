@@ -4,7 +4,7 @@
     "private": true,
     "license": "GPL-3.0",
     "dependencies": {
-        "nouislider": "^15.7.1"
+        "nouislider": "^15.8.1"
     },
     "scripts": {
       "postinstall": "mv node_modules lib"
