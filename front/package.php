@@ -39,6 +39,10 @@ include('../../../inc/includes.php');
 
 Session::checkRight("dashboard", UPDATE);
 
+if (!Package::canView()) {
+    throw new AccessDeniedHttpException();
+}
+
 Html::header(
     Package::getTypeName(Session::getPluralNumber()),
     '',
@@ -47,11 +51,6 @@ Html::header(
     'package'
 );
 
-$package = new Package();
-if ($package->canView()) {
-    Search::show('GlpiPlugin\Deploy\Package');
-} else {
-    throw new AccessDeniedHttpException();
-}
+Search::show('GlpiPlugin\Deploy\Package');
 
 Html::footer();
