@@ -10,5 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - Fix plugin installation failing on raw queries executed through `DBmysql::request()`
 - Fix fatal error caused by missing `bool` return types on computer group rights methods
+- Fix plugin uninstallation failing and leaving package tables and display preferences behind
+- Fix PHP 8.4 deprecation on implicitly nullable parameters
 - Replace deprecated `Html::displayErrorAndDie()` and `Html::displayRightError()` calls with HTTP exceptions
 - CI: fix PHPStan bootstrap for GLPI 11, migrate ESLint configuration to flat config, drop the stray `glpi-project/tools` composer dependency, declare a unique composer autoloader suffix

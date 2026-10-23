@@ -304,7 +304,4 @@ class Group extends CommonDBTM
     {
         return "ti ti-sitemap";
     }
-
-
-    public function post_purgeItem() {}
 }
