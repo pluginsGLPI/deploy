@@ -112,8 +112,8 @@ class PackageCheck extends CommonDBTM
                     self::WINVALUEMISSING    => __("Registry value missing", 'deploy'),
                     self::WINKEYEQUALS       => __("Registry value equals to", 'deploy'),
                     self::WINKEYNOTEQUALS    => __("Registry value not equals to", 'deploy'),
-                    self::WINVALUETYPE       => __("Type of registry value equals to", 'deploy')
-                ]
+                    self::WINVALUETYPE       => __("Type of registry value equals to", 'deploy'),
+                ],
             ],
             'file' => [
                 'icon'     => 'ti ti-file',
@@ -126,7 +126,7 @@ class PackageCheck extends CommonDBTM
                     self::FILESIZELOWER      => __("File size is lower than", 'deploy'),
                     self::FILESHA512         => __("SHA-512 hash value matches", 'deploy'),
                     self::FILESHA512MISMATCH => __("SHA-512 hash value mismatch", 'deploy'),
-                ]
+                ],
             ],
             'directory' => [
                 'icon'     => 'ti ti-subtask',
@@ -134,15 +134,15 @@ class PackageCheck extends CommonDBTM
                 'subtypes' => [
                     self::DIRECTORYEXISTS  => __("Directory exists", 'deploy'),
                     self::DIRECTORYMISSING => __("Directory is missing", 'deploy'),
-                ]
+                ],
             ],
             'other' => [
                 'icon'     => 'ti ti-dots',
                 'label'    => __('Other'),
                 'subtypes' => [
-                    self::FREESPACEGREATER => __("Free space is greater than", 'deploy')
-                ]
-            ]
+                    self::FREESPACEGREATER => __("Free space is greater than", 'deploy'),
+                ],
+            ],
         ];
 
         if ($flat) {
@@ -175,7 +175,7 @@ class PackageCheck extends CommonDBTM
     }
 
 
-    public static function getIconForParentType(string $parent_type = null): string
+    public static function getIconForParentType(?string $parent_type = null): string
     {
         $types = self::getTypes(false);
         return $types[$parent_type]['icon'] ?? "";
@@ -183,7 +183,7 @@ class PackageCheck extends CommonDBTM
 
 
 
-    public static function getLabelForType(string $type = null): string
+    public static function getLabelForType(?string $type = null): string
     {
         $types = self::getTypes(true);
         return $types[$type] ?? "";
@@ -216,12 +216,12 @@ class PackageCheck extends CommonDBTM
             self::RET_INFO     => ($with_icon ? '<i class="fa-fw me-1 ti ti-info-circle"></i>' : "")
                                   . __("Report info", 'deploy'),
             self::RET_WARNING  => ($with_icon ? '<i class="fa-fw me-1 ti ti-alert-triangle"></i>' : "")
-                                  . __("Report warning", 'deploy')
+                                  . __("Report warning", 'deploy'),
         ];
     }
 
 
-    public static function getLabelForReturnValue(string $value = null, bool $with_icon = false): string
+    public static function getLabelForReturnValue(?string $value = null, bool $with_icon = false): string
     {
         $values = self::getReturnValues($with_icon);
         $string = $values[$value] ?? "";

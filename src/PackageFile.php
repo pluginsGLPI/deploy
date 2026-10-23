@@ -34,7 +34,8 @@ use CommonDBTM;
 use DBConnection;
 use DOMDocument;
 use FilesystemIterator;
-use Html;
+use Glpi\Exception\Http\BadRequestHttpException;
+use Glpi\Exception\Http\NotFoundHttpException;
 use Migration;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -101,7 +102,7 @@ class PackageFile extends CommonDBTM
     public function pre_deleteItem()
     {
         $found_files = $this->find([
-            'sha512' => $this->fields['sha512']
+            'sha512' => $this->fields['sha512'],
         ]);
 
         // do not delete file in repository if it's also used in other packages
@@ -119,7 +120,7 @@ class PackageFile extends CommonDBTM
         $path = GLPI_UPLOAD_DIR;
 
         $dir_iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::SELF_FIRST);
-        $dom = new DomDocument("1.0");
+        $dom = new DOMDocument("1.0");
         $list = $dom->createElement("ul");
         $list->setAttribute('id', "treeData");
         $dom->appendChild($list);
@@ -257,7 +258,7 @@ class PackageFile extends CommonDBTM
                     // If there is any extra data, the sent file will be corrupted.
                     // 1. Turn off any extra buffering level. Keep one buffering level if PHP output_buffering directive is not "off".
                     $ob_config = ini_get('output_buffering');
-                    $max_buffering_level = $ob_config !== false && (strtolower($ob_config) === 'on' || (is_numeric($ob_config) && (int)$ob_config > 0))
+                    $max_buffering_level = $ob_config !== false && (strtolower($ob_config) === 'on' || (is_numeric($ob_config) && (int) $ob_config > 0))
                         ? 1
                         : 0;
                     while (ob_get_level() > $max_buffering_level) {
@@ -280,13 +281,13 @@ class PackageFile extends CommonDBTM
                         readgzfile($path);
                     }
                 } else {
-                    Html::displayErrorAndDie(__('An error occurs', 'deploy'), true);
+                    throw new BadRequestHttpException();
                 }
             } else {
-                Html::displayErrorAndDie(__('File not found', 'deploy'), true); // Not found
+                throw new NotFoundHttpException();
             }
         } else {
-            Html::displayErrorAndDie(__('File not found', 'deploy'), true); // Not found
+            throw new NotFoundHttpException();
         }
     }
 

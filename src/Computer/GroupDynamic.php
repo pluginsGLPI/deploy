@@ -50,13 +50,13 @@ class GroupDynamic extends CommonDBTM
     }
 
 
-    public static function canCreate()
+    public static function canCreate(): bool
     {
         return Session::haveRight(static::$rightname, UPDATE);
     }
 
 
-    public static function canPurge()
+    public static function canPurge(): bool
     {
         return Session::haveRight(static::$rightname, UPDATE);
     }
@@ -70,7 +70,7 @@ class GroupDynamic extends CommonDBTM
             $computergroup_dynamic = new self();
             if (
                 $computergroup_dynamic->getFromDBByCrit([
-                    'plugin_deploy_computers_groups_id' => $item->getID()
+                    'plugin_deploy_computers_groups_id' => $item->getID(),
                 ])
             ) {
                 $count = $computergroup_dynamic->countDynamicItems();
@@ -126,7 +126,7 @@ class GroupDynamic extends CommonDBTM
                     $line_delimiter = '<hr>';
                 }
 
-               //move full list to tooltip if needed
+                //move full list to tooltip if needed
                 if (
                     count($values) > 1
                     && Toolbox::strlen($value) > $CFG_GLPI['cut']
@@ -144,7 +144,7 @@ class GroupDynamic extends CommonDBTM
                             'awesome-class'   => 'fa-comments',
                             'display'         => false,
                             'autoclose'       => false,
-                            'onclick'         => true
+                            'onclick'         => true,
                         ]
                     );
                     $out .= $values[0] . $valTip;
@@ -187,7 +187,7 @@ class GroupDynamic extends CommonDBTM
     {
         $count = 0;
 
-       //add new criteria to force computer ID
+        //add new criteria to force computer ID
         $search = unserialize($this->fields['search']);
         $search['criteria'][] = [
             "link" => "AND",
@@ -217,11 +217,11 @@ class GroupDynamic extends CommonDBTM
         $canedit = $computergroup->canEdit($ID);
         if ($canedit) {
             $firsttime = true;
-           //load dynamic search criteria from DB if exist
+            //load dynamic search criteria from DB if exist
             $computergroup_dynamic = new self();
             if (
                 $computergroup_dynamic->getFromDBByCrit([
-                    'plugin_deploy_computers_groups_id' => $ID
+                    'plugin_deploy_computers_groups_id' => $ID,
                 ])
             ) {
                 $computers_params = unserialize($computergroup_dynamic->fields['search']);
@@ -229,7 +229,7 @@ class GroupDynamic extends CommonDBTM
                 $p = $search_params = Search::manageParams('Computer', $computers_params);
                 $firsttime = false;
             } else {
-               //retrieve filter value from search if exist and reset it
+                //retrieve filter value from search if exist and reset it
                 $_GET["reset"] = true;
                 $p = $search_params = Search::manageParams('Computer', $_GET);
                 if (isset($_SESSION['glpisearch']['Computer'])) {
@@ -237,21 +237,21 @@ class GroupDynamic extends CommonDBTM
                 }
             }
 
-           //redirect to computergroup dynamic tab after saved search
+            //redirect to computergroup dynamic tab after saved search
             $target = Group::getFormURLWithID($ID);
             $target .= "&_glpi_tab=Computer_GroupDynamic$1";
             $p['target'] = $target;
             $p['addhidden'] = [
                 'plugin_deploy_computers_groups_id' => $computergroup->getID(),
                 'id'                                         => $computergroup->getID(),
-                'start'                                      => 0
+                'start'                                      => 0,
             ];
             $p['actionname']   = 'save';
             $p['actionvalue']  = _sx('button', 'Save');
             $p['showbookmark'] = false;
             Search::showGenericSearch(Computer::getType(), $p);
 
-           //display result from search
+            //display result from search
             if (!$firsttime) {
                 $data = Search::prepareDatasForSearch('Computer', $search_params);
                 Search::constructSQL($data);
@@ -261,7 +261,7 @@ class GroupDynamic extends CommonDBTM
                 $data['search']['is_deleted'] = false;
                 Search::displayData($data);
 
-               //remove search header(trashbin / map switch)
+                //remove search header(trashbin / map switch)
                 echo Html::scriptBlock("
                $(document).ready(
                   function() {

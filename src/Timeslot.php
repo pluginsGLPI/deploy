@@ -79,7 +79,7 @@ class Timeslot extends CommonDropdown
                 KEY `date_creation` (`date_creation`),
                 KEY `date_mod` (`date_mod`)
             ) ENGINE=InnoDB DEFAULT CHARSET={$default_charset} COLLATE={$default_collation} ROW_FORMAT=DYNAMIC;";
-            $DB->request($query);
+            $DB->doQuery($query);
         }
     }
 

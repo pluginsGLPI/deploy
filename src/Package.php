@@ -30,13 +30,12 @@
 
 namespace GlpiPlugin\Deploy;
 
-use Agent;
 use CommonDBTM;
-use Migration;
 use DBConnection;
 use DisplayPreference;
 use Entity;
 use Glpi\Application\View\TemplateRenderer;
+use Migration;
 
 class Package extends CommonDBTM
 {
@@ -73,7 +72,7 @@ class Package extends CommonDBTM
     public function showDebug()
     {
         TemplateRenderer::getInstance()->display('@deploy/package/debug_json.html.twig', [
-            'json' => self::getJson($this, true)
+            'json' => self::getJson($this, true),
         ]);
     }
 
@@ -120,12 +119,12 @@ class Package extends CommonDBTM
         if ($ref_ID) { // Move after/before an existing line
             $subitem->getFromDB($ref_ID);
             $new_rank = $subitem->fields["order"];
-        } else if ($type == self::MOVE_AFTER) {
+        } elseif ($type == self::MOVE_AFTER) {
             // Move after all
             $result = $DB->request([
                 'SELECT' => ['MAX' => 'order AS maxi'],
                 'FROM'   => $subitem::getTable(),
-                'WHERE'  => ['plugin_deploy_packages_id' => $package_id]
+                'WHERE'  => ['plugin_deploy_packages_id' => $package_id],
             ])->current();
             $new_rank = $result['maxi'];
         } else {
@@ -148,14 +147,14 @@ class Package extends CommonDBTM
                 'WHERE'  => [
                     'plugin_deploy_packages_id' => $package_id,
                     ['order' => ['>', $old_rank]],
-                    ['order' => ['<=', $new_rank]]
-                ]
+                    ['order' => ['<=', $new_rank]],
+                ],
             ]);
             foreach ($iterator as $data) {
                 $data['order']--;
                 $result = $subitem->update($data);
             }
-        } else if ($old_rank > $new_rank) {
+        } elseif ($old_rank > $new_rank) {
             if ($type == self::MOVE_AFTER) {
                 $new_rank++;
             }
@@ -167,8 +166,8 @@ class Package extends CommonDBTM
                 'WHERE'  => [
                     'plugin_deploy_packages_id' => $package_id,
                     ['order' => ['>=', $new_rank]],
-                    ['order' => ['<', $old_rank]]
-                ]
+                    ['order' => ['<', $old_rank]],
+                ],
             ]);
             foreach ($iterator as $data) {
                 $data['order']++;
@@ -182,7 +181,7 @@ class Package extends CommonDBTM
         if ($result && ($old_rank != $new_rank)) {
             $result = $subitem->update([
                 'id'    => $ID,
-                'order' => $new_rank
+                'order' => $new_rank,
             ]);
         }
         return ($result ? true : false);
@@ -200,7 +199,7 @@ class Package extends CommonDBTM
             'field'              => 'id',
             'name'               => __('ID'),
             'massiveaction'      => false, // implicit field is id
-            'datatype'           => 'number'
+            'datatype'           => 'number',
         ];
 
         $tab[] = [
@@ -208,7 +207,7 @@ class Package extends CommonDBTM
             'table'              => $this->getTable(),
             'field'              => 'comment',
             'name'               => __('Comments'),
-            'datatype'           => 'text'
+            'datatype'           => 'text',
         ];
 
         $tab[] = [
@@ -217,7 +216,7 @@ class Package extends CommonDBTM
             'field'              => 'date_mod',
             'name'               => __('Last update'),
             'datatype'           => 'datetime',
-            'massiveaction'      => false
+            'massiveaction'      => false,
         ];
 
         $tab[] = [
@@ -226,7 +225,7 @@ class Package extends CommonDBTM
             'field'              => 'date_creation',
             'name'               => __('Creation date'),
             'datatype'           => 'datetime',
-            'massiveaction'      => false
+            'massiveaction'      => false,
         ];
 
         $tab[] = [
@@ -234,7 +233,7 @@ class Package extends CommonDBTM
             'table'              => 'glpi_entities',
             'field'              => 'completename',
             'name'               => Entity::getTypeName(1),
-            'datatype'           => 'dropdown'
+            'datatype'           => 'dropdown',
         ];
 
         return $tab;
@@ -288,7 +287,7 @@ class Package extends CommonDBTM
 
         // add display preferences
         $nb_display_pref = countElementsInTable(DisplayPreference::getTable(), [
-            'itemtype' => self::getType()
+            'itemtype' => self::getType(),
         ]);
         if ($nb_display_pref == 0) {
             $dp = new DisplayPreference();
@@ -314,6 +313,6 @@ class Package extends CommonDBTM
         $migration->displayMessage("Uninstalling $table");
         $migration->dropTable($table);
 
-        $DB->doQuery("DELETE FROM `glpi_displaypreferences` WHERE `itemtype` = '" . self::getType() . "'");
+        $DB->delete(DisplayPreference::getTable(), ['itemtype' => self::class]);
     }
 }

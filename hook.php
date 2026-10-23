@@ -32,13 +32,12 @@ use GlpiPlugin\Deploy\Computer\Group;
 use GlpiPlugin\Deploy\Computer\GroupDynamic;
 use GlpiPlugin\Deploy\Computer\GroupStatic;
 use GlpiPlugin\Deploy\Package;
-use GlpiPlugin\Deploy\PackageJob;
 use GlpiPlugin\Deploy\PackageAction;
 use GlpiPlugin\Deploy\PackageCheck;
 use GlpiPlugin\Deploy\PackageFile;
+use GlpiPlugin\Deploy\PackageJob;
 use GlpiPlugin\Deploy\PackageTarget;
 use GlpiPlugin\Deploy\Profile;
-use GlpiPlugin\Deploy\PackageTimeslot;
 use GlpiPlugin\Deploy\Repository;
 use GlpiPlugin\Deploy\Timeslot;
 use GlpiPlugin\Deploy\TimeslotRange;
@@ -71,7 +70,7 @@ use GlpiPlugin\Deploy\TimeslotRange;
  * -------------------------------------------------------------------------
  */
 
- // Define Dropdown tables to be manage in GLPI :
+// Define Dropdown tables to be manage in GLPI :
 function plugin_deploy_getDropdown()
 {
     $dropdowns = [Timeslot::class => Timeslot::getTypeName(2)];
@@ -103,16 +102,18 @@ function plugin_deploy_install()
 /**
  * Plugin uninstall process
  *
- * @return boolean
+ * @return bool
  */
 function plugin_deploy_uninstall()
 {
     $migration = new Migration(PLUGIN_DEPLOY_VERSION);
 
+    PackageAction::uninstall($migration);
+    PackageCheck::uninstall($migration);
+    PackageFile::uninstall($migration);
     PackageTarget::uninstall($migration);
     Package::uninstall($migration);
     PackageJob::uninstall($migration);
-    PackageTarget::uninstall($migration);
     Profile::uninstall($migration);
     Repository::uninstall($migration);
     Group::uninstall($migration);

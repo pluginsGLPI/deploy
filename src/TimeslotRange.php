@@ -91,7 +91,7 @@ class TimeslotRange extends CommonDBTM
                         'checked' => '',
                         'starttime' => 14,
                         'endtime' => 18,
-                    ]
+                    ],
                 ];
             }
         }
@@ -105,7 +105,7 @@ class TimeslotRange extends CommonDBTM
             'rand'         => mt_rand(),
             'timeslot_id'   => $timeslot->fields['id'],
             'days_list'     => self::getDayList(),
-            'timeslots_data' => $timeslots_data
+            'timeslots_data' => $timeslots_data,
         ]);
     }
 
@@ -133,7 +133,7 @@ class TimeslotRange extends CommonDBTM
         foreach ($olddata as $data) {
             $timeslot->delete(
                 [
-                    'id' => $data['id']
+                    'id' => $data['id'],
                 ]
             );
         }
@@ -154,7 +154,7 @@ class TimeslotRange extends CommonDBTM
                     'weekday' => $key,
                     'time_start' => $start_time,
                     'time_end' => $end_time,
-                    'is_enable' => (bool)$value['is_enable'],
+                    'is_enable' => (bool) $value['is_enable'],
                 ];
             }
         }
@@ -190,7 +190,7 @@ class TimeslotRange extends CommonDBTM
                 KEY `is_recursive` (`is_recursive`),
                 KEY `date_mod` (`date_mod`)
             ) ENGINE=InnoDB DEFAULT CHARSET={$default_charset} COLLATE={$default_collation} ROW_FORMAT=DYNAMIC;";
-            $DB->request($query);
+            $DB->doQuery($query);
         }
     }
 
