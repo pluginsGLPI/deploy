@@ -28,7 +28,7 @@
  * -------------------------------------------------------------------------
  */
 
- namespace GlpiPlugin\Deploy\Computer;
+namespace GlpiPlugin\Deploy\Computer;
 
 use CommonDBRelation;
 use CommonGLPI;
@@ -36,15 +36,13 @@ use Computer;
 use Dropdown;
 use Entity;
 use Glpi\Application\View\TemplateRenderer;
-use Html;
 use Migration;
-use Search;
 use Session;
 use Toolbox;
 
 class GroupStatic extends CommonDBRelation
 {
-   // From CommonDBRelation
+    // From CommonDBRelation
     public static $itemtype_1 = 'GlpiPlugin\Deploy\Computer\Group';
     public static $items_id_1 = 'plugin_deploy_computers_groups_id';
     public static $itemtype_2 = 'Computer';
@@ -63,19 +61,19 @@ class GroupStatic extends CommonDBRelation
     }
 
 
-    public static function canCreate()
+    public static function canCreate(): bool
     {
         return Session::haveRight(static::$rightname, UPDATE);
     }
 
 
-    public function canCreateItem()
+    public function canCreateItem(): bool
     {
         return Session::haveRight(static::$rightname, UPDATE);
     }
 
 
-    public static function canPurge()
+    public static function canPurge(): bool
     {
         return Session::haveRight(static::$rightname, UPDATE);
         return true;

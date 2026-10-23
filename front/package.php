@@ -30,6 +30,7 @@
 
 namespace GlpiPlugin\Deploy;
 
+use Glpi\Exception\Http\AccessDeniedHttpException;
 use Html;
 use Search;
 use Session;
@@ -50,7 +51,7 @@ $package = new Package();
 if ($package->canView()) {
     Search::show('GlpiPlugin\Deploy\Package');
 } else {
-    Html::displayRightError();
+    throw new AccessDeniedHttpException();
 }
 
 Html::footer();
