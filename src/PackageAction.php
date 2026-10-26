@@ -107,7 +107,7 @@ class PackageAction extends CommonDBTM
     }
 
 
-    public static function getLabelForType(string $type = null, bool $with_icon = false): string
+    public static function getLabelForType(?string $type = null, bool $with_icon = false): string
     {
         $types = self::getTypes($with_icon);
         return $types[$type] ?? "";
@@ -183,7 +183,7 @@ class PackageAction extends CommonDBTM
         $json_array = [
             $input['type'] => [
                 'name' => $input['name'] ?? "",
-            ]
+            ],
         ];
         switch ($input['type']) {
             case self::ACTION_CMD:

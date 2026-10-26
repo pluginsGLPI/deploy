@@ -36,7 +36,6 @@ use DBConnection;
 use DBmysqlIterator;
 use Glpi\Application\View\TemplateRenderer;
 use Migration;
-use Toolbox;
 
 class PackageJob extends CommonDBTM
 {
@@ -135,8 +134,8 @@ class PackageJob extends CommonDBTM
         $iterator = $DBread->request([
             'FROM'  => self::getTable(),
             'WHERE' => [
-                'plugin_deploy_packages_id' => $package->fields['id']
-            ]
+                'plugin_deploy_packages_id' => $package->fields['id'],
+            ],
         ]);
 
         return $iterator;
@@ -150,12 +149,12 @@ class PackageJob extends CommonDBTM
             [
                 "plugin_deploy_packages_id" => $package->getID(),
                 "NOT" => [
-                    "agents_id" => 0
-                ]
+                    "agents_id" => 0,
+                ],
             ]
         );
         $agent_list = [
-            0 => __('No agent')
+            0 => __('No agent'),
         ];
         $agent = new Agent();
         foreach ($agent_id_list as $agent_id) {
@@ -278,7 +277,7 @@ class PackageJob extends CommonDBTM
             'order' => $order,
             'href' => $package::getFormURLWithID($package->getID()),
             'additional_params' => $is_filtered ? http_build_query([
-                'filters' => $filters
+                'filters' => $filters,
             ]) : "",
             'is_tab' => true,
             'items_id' => $package->fields['id'],
@@ -341,7 +340,7 @@ class PackageJob extends CommonDBTM
                 KEY `date_mod` (`date_mod`),
                 KEY `date_done` (`date_done`)
             ) ENGINE=InnoDB DEFAULT CHARSET={$default_charset} COLLATE={$default_collation} ROW_FORMAT=DYNAMIC;";
-            $DB->request($query);
+            $DB->doQuery($query);
         }
     }
 
@@ -353,7 +352,7 @@ class PackageJob extends CommonDBTM
         $table = self::getTable();
         if ($DB->tableExists($table)) {
             $migration->displayMessage("Uninstalling $table");
-            $DB->request("DROP TABLE {$table}");
+            $DB->doQuery("DROP TABLE {$table}");
         }
     }
 }

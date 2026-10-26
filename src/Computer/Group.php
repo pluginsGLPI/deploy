@@ -28,7 +28,7 @@
  * -------------------------------------------------------------------------
  */
 
- namespace GlpiPlugin\Deploy\Computer;
+namespace GlpiPlugin\Deploy\Computer;
 
 use CommonDBTM;
 use Computer;
@@ -37,7 +37,6 @@ use Glpi\Application\View\TemplateRenderer;
 use GlpiPlugin\Deploy\PackageTarget;
 use GlpiPlugin\Deploy\Timeslot;
 use Migration;
-use Search;
 use Session;
 
 class Group extends CommonDBTM
@@ -51,12 +50,12 @@ class Group extends CommonDBTM
         return _n('Computer Group', 'Computers Group', $nb, 'deploy');
     }
 
-    public static function canCreate()
+    public static function canCreate(): bool
     {
         return Session::haveRight(static::$rightname, UPDATE);
     }
 
-    public static function canPurge()
+    public static function canPurge(): bool
     {
         return Session::haveRight(static::$rightname, UPDATE);
     }
@@ -81,7 +80,7 @@ class Group extends CommonDBTM
             'field'              => 'id',
             'name'               => __('ID'),
             'massiveaction'      => false, // implicit field is id
-            'datatype'           => 'number'
+            'datatype'           => 'number',
         ];
 
         $tab[] = [
@@ -89,7 +88,7 @@ class Group extends CommonDBTM
             'table'              => $this->getTable(),
             'field'              => 'comment',
             'name'               => __('Comment'),
-            'datatype'           => 'text'
+            'datatype'           => 'text',
         ];
 
         $tab[] = [
@@ -145,9 +144,9 @@ class Group extends CommonDBTM
                     'table'              => GroupStatic::getTable(),
                     'joinparams'         => [
                         'jointype'           => 'child',
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ];
 
         $tab[] = [
@@ -163,9 +162,9 @@ class Group extends CommonDBTM
                     'table'              => PackageTarget::getTable(),
                     'joinparams'         => [
                         'jointype'           => 'child',
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ];
 
         return $tab;
@@ -179,13 +178,13 @@ class Group extends CommonDBTM
         } else {
             $this->getEmpty();
         }
-         $this->initForm($id, $options);
+        $this->initForm($id, $options);
 
-         TemplateRenderer::getInstance()->display('generic_show_form.html.twig', [
-             'item'         => $this,
-             'params'       => $options,
-         ]);
-         return true;
+        TemplateRenderer::getInstance()->display('generic_show_form.html.twig', [
+            'item'         => $this,
+            'params'       => $options,
+        ]);
+        return true;
     }
 
     public function countDynamicItem()
@@ -194,7 +193,7 @@ class Group extends CommonDBTM
         $group = new GroupDynamic();
         if (
             $group->getFromDBByCrit([
-                'plugin_deploy_computers_groups_id' => $this->fields['id']
+                'plugin_deploy_computers_groups_id' => $this->fields['id'],
             ])
         ) {
             $count = $group->countDynamicItems();
@@ -265,15 +264,15 @@ class Group extends CommonDBTM
                       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
             $DB->doQuery($query) or die($DB->error());
 
-           // install default display preferences
+            // install default display preferences
 
-                 // add display preferences
+            // add display preferences
             $nb_display_pref = countElementsInTable(DisplayPreference::getTable(), [
-                'itemtype' => self::getType()
+                'itemtype' => self::getType(),
             ]);
             if ($nb_display_pref == 0) {
-                  $dp = new DisplayPreference();
-                  $i  = 1;
+                $dp = new DisplayPreference();
+                $i  = 1;
                 foreach ([3, 5, 6] as $id_so) {
                     $dp->add([
                         'itemtype' => self::getType(),
@@ -304,10 +303,5 @@ class Group extends CommonDBTM
     public static function getIcon()
     {
         return "ti ti-sitemap";
-    }
-
-
-    public function post_purgeItem()
-    {
     }
 }
