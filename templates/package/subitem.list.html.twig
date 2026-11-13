@@ -75,8 +75,7 @@
                             <th style="width: 32px;">
                                 <input class="form-check-input" type="checkbox" id="checkall_{{ rand }}"
                                     value="" title="{{ __('Check all as') }}"
-                                    data-bs-toggle="tooltip"
-                                    onclick="checkAsCheckboxes('checkall_{{ rand }}', '{{ table_id }}');" />
+                                    data-bs-toggle="tooltip" />
                             </th>
                             {% for label in headings %}
                                 <th>
@@ -138,6 +137,10 @@ $(document).ready(function() {
         });
 
         bs_modal.show();
+    });
+
+    $('#checkall_{{ rand }}').on('click', function() {
+        checkAsCheckboxes(this, '{{ table_id }}');
     });
 
     $('.edit_{{ subitem_type }}').on('click', function() {
