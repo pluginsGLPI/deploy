@@ -86,6 +86,7 @@ function plugin_version_deploy()
         'author'         => '<a href="http://www.teclib.com">Teclib\'</a>',
         'license'        => '',
         'homepage'       => '',
+        'csp_compliant'  => true,
         'requirements'   => [
             'glpi' => [
                 'min' => PLUGIN_DEPLOY_MIN_GLPI,

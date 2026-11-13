@@ -59,7 +59,7 @@
                             <div>
                                 <input class="form-check-input massive_action_checkbox" type="checkbox" id="checkall_{{ massiveactionparams['container'] }}"
                                     value="" aria-label="{{ __('Check all') }}"
-                                    onclick="checkAsCheckboxes(this, '{{ massiveactionparams['container'] }}', '.massive_action_checkbox');" />
+                                    data-glpi-check-all="{{ massiveactionparams['container'] }}" />
                             </div>
                         </th>
                     {% endif %}
@@ -71,12 +71,12 @@
                             {% set new_order = (order == 'ASC' ? 'DESC' : 'ASC') %}
                         {% endif %}
 
-                        {% set sort_href = "javascript:reloadTab('sort=" ~ colkey ~ "&order=" ~ new_order ~ "&" ~ additional_params ~ "');" %}
+                        {% set sort_query = "sort=" ~ colkey ~ "&order=" ~ new_order ~ "&" ~ additional_params %}
 
-                        <th><a href="{{ sort_href }}">
+                        <th><button type="button" class="btn-as-link" data-glpi-reload-tab="{{ sort_query }}">
                             <i class="{{ sort_icon }}"></i>
                             <span>{{ colum }}</span>
-                        </a></th>
+                        </button></th>
                     {% endfor %}
 
                    {% if nofilter is not defined or csv_url|length %}
