@@ -73,10 +73,9 @@
                         <thead>
                             <tr>
                                 <th style="width: 32px;">
-                                    <input class="form-check-input" type="checkbox" id="checkall_{{ rand }}"
+                                    <input class="form-check-input" type="checkbox" id="checkall_{{ rand }}" data-deploy-check-all="package_list_{{ rand }}"
                                         value="" title="{{ __('Check all as') }}"
-                                        data-bs-toggle="tooltip"
-                                        onclick="checkAsCheckboxes('checkall_{{ rand }}', 'package_list_{{ rand }}');" />
+                                        data-bs-toggle="tooltip" />
                                 </th>
                                 <th>
                                     {{ __("Name") }}
@@ -143,12 +142,3 @@
 
 </div>
 
-<script type="text/javascript">
-$(document).ready(function() {
-    $(".next-tab").on('click', function() {
-        const next_tab_el = $("#tabspanel li a.active").parent('li').next('li').find("a")[0];
-        const next_tab = new bootstrap.Tab(next_tab_el);
-        next_tab.show();
-    });
-});
-</script>

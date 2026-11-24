@@ -67,6 +67,7 @@ function plugin_init_deploy()
 
     $PLUGIN_HOOKS[Hooks::ADD_CSS]['deploy'][] = 'lib/nouislider/dist/nouislider.css';
     $PLUGIN_HOOKS[Hooks::ADD_JAVASCRIPT]['deploy'][] = 'lib/nouislider/dist/nouislider.min.js';
+    $PLUGIN_HOOKS[Hooks::ADD_JAVASCRIPT]['deploy'][] = 'javascript/listeners.js';
 
     Plugin::registerClass('GlpiPlugin\Deploy\Profile', ['addtabon' => ['Profile']]);
 }
@@ -86,6 +87,7 @@ function plugin_version_deploy()
         'author'         => '<a href="http://www.teclib.com">Teclib\'</a>',
         'license'        => '',
         'homepage'       => '',
+        'csp_compliant'  => true,
         'requirements'   => [
             'glpi' => [
                 'min' => PLUGIN_DEPLOY_MIN_GLPI,
