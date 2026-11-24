@@ -26,6 +26,8 @@
  * -------------------------------------------------------------------------
  */
 
+/* global checkAsCheckboxes, reloadTab, bootstrap */
+
 /* Delegated on document: loaded once per page, works for AJAX-rendered content. */
 
 /* Optional data-deploy-checkboxes overrides checkAsCheckboxes' default selector. */
@@ -38,7 +40,7 @@ $(document).on('click', '[data-deploy-reload-tab]', function(e) {
     reloadTab($(this).attr('data-deploy-reload-tab'));
 });
 
-$(document).on('click', '.next-tab', function() {
+$(document).on('click', '.next-tab', () => {
     const next_tab_el = $("#tabspanel li a.active").parent('li').next('li').find("a")[0];
     const next_tab = new bootstrap.Tab(next_tab_el);
     next_tab.show();
@@ -47,7 +49,7 @@ $(document).on('click', '.next-tab', function() {
 function deployOpenSubitemModal(modal, title, data) {
     modal.find('.modal-title').html(title);
     modal.find('.modal-ajax-content').load(
-        CFG_GLPI.root_doc + '/' + GLPI_PLUGINS_PATH.deploy + '/ajax/package.php',
+        `${CFG_GLPI.root_doc  }/${  GLPI_PLUGINS_PATH.deploy  }/ajax/package.php`,
         data
     );
     bootstrap.Modal.getOrCreateInstance(modal[0]).show();
@@ -55,19 +57,19 @@ function deployOpenSubitemModal(modal, title, data) {
 
 $(document).on('click', '[data-deploy-subitem-add]', function() {
     const subitem_type = $(this).attr('data-deploy-subitem-add');
-    const modal = $('#modal_' + subitem_type);
+    const modal = $(`#modal_${  subitem_type}`);
     deployOpenSubitemModal(modal, modal.attr('data-deploy-add-title'), {
         'plugin_deploy_packages_id': modal.attr('data-deploy-package-id'),
-        'action': 'add_' + subitem_type,
+        'action': `add_${  subitem_type}`,
     });
 });
 
 $(document).on('click', '[data-deploy-subitem-edit]', function() {
     const subitem_type = $(this).attr('data-deploy-subitem-edit');
-    const modal = $('#modal_' + subitem_type);
+    const modal = $(`#modal_${  subitem_type}`);
     deployOpenSubitemModal(modal, modal.attr('data-deploy-edit-title'), {
         'id': $(this).data('id'),
-        'action': 'edit_' + subitem_type,
+        'action': `edit_${  subitem_type}`,
     });
 });
 
@@ -93,19 +95,19 @@ $(document).on('change', '#actiontype', function() {
 $(document).on('change', '[name="parent_type"]', function() {
     $('.subtype, .subfields, #return-bloc, .modal-footer').addClass('d-none');
 
-    var parent_type = $(this).val();
+    const parent_type = $(this).val();
     if (parent_type.length > 0) {
         $('#return-block').removeClass('d-none');
-        $('#subtype-' + $(this).val()).removeClass('d-none');
+        $(`#subtype-${  $(this).val()}`).removeClass('d-none');
     }
 });
 
 $(document).on('change', '.checktype', function() {
-    var parentype = $('[name="parent_type"]:checked').val();
-    var checktype = $(this).val();
+    const parentype = $('[name="parent_type"]:checked').val();
+    const checktype = $(this).val();
 
     $('.valuefield').addClass('d-none')
-        .find('label').html(__("Value", 'deploy') + '<i class="ms-2 ti ti-forms"></i>');
+        .find('label').html(`${__("Value", 'deploy')  }<i class="ms-2 ti ti-forms"></i>`);
     $('.subfields, .modal-footer').removeClass('d-none');
 
     $('#checktype_value').val(checktype);
@@ -124,7 +126,7 @@ $(document).on('change', '.checktype', function() {
             break;
     }
 
-    var types_with_value = JSON.parse($(this).attr('data-deploy-types-with-value'));
+    const types_with_value = JSON.parse($(this).attr('data-deploy-types-with-value'));
     if (Object.keys(types_with_value).includes(checktype)) {
         $('.valuefield').removeClass('d-none')
             .find('label').html(types_with_value[checktype]);
@@ -134,7 +136,7 @@ $(document).on('change', '.checktype', function() {
 $(document).on('select2:select', '[id^="dropdown_upload_mode"]', function() {
     $('#file_options, #file_more_options, #from_computer, #from_server, .modal-footer').addClass('d-none');
 
-    var mode = $(this).val();
+    const mode = $(this).val();
     if (mode.length > 0) {
         $('#file_options, #file_more_options, .modal-footer').removeClass('d-none');
         if (mode == 'from_computer') {

@@ -26,6 +26,8 @@
  * -------------------------------------------------------------------------
  */
 
+/* global sortable, displayAjaxMessageAfterRedirect */
+
 /* Loaded right after the markup it initialises; every init skips elements already marked ready. */
 (() => {
     function initFilterSelects() {
@@ -62,18 +64,18 @@
         $('[data-deploy-sortable]:not([data-deploy-sortable-ready])').each(function() {
             const $list = $(this).attr('data-deploy-sortable-ready', '');
             const subitem_itemtype = $list.attr('data-deploy-sortable');
-            const ajax_url = CFG_GLPI.root_doc + '/' + GLPI_PLUGINS_PATH.deploy + '/ajax/package.php';
+            const ajax_url = `${CFG_GLPI.root_doc  }/${  GLPI_PLUGINS_PATH.deploy  }/ajax/package.php`;
 
             sortable([this], {
                 handle: '.reorder-subitem',
-                placeholder: '<tr><td colspan="' + $list.attr('data-deploy-colspan') + '" class="sortable-placeholder">&nbsp;</td></tr>'
-            })[0].addEventListener('sortupdate', function(e) {
-                var sort_detail      = e.detail;
-                var subitem_id       = sort_detail.item.dataset.subitemId;
-                var new_index        = sort_detail.destination.index;
-                var old_index        = sort_detail.origin.index;
-                var ref_id           = sort_detail.destination.itemsBeforeUpdate[new_index].dataset.subitemId;
-                var sort_action      = 'after';
+                placeholder: `<tr><td colspan="${  $list.attr('data-deploy-colspan')  }" class="sortable-placeholder">&nbsp;</td></tr>`
+            })[0].addEventListener('sortupdate', (e) => {
+                const sort_detail      = e.detail;
+                const subitem_id       = sort_detail.item.dataset.subitemId;
+                const new_index        = sort_detail.destination.index;
+                const old_index        = sort_detail.origin.index;
+                const ref_id           = sort_detail.destination.itemsBeforeUpdate[new_index].dataset.subitemId;
+                let sort_action      = 'after';
 
                 if (old_index > new_index) {
                     sort_action = 'before';
