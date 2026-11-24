@@ -50,7 +50,7 @@
                         <thead>
                         <tr>
                             <th style="width: 32px;">
-                                <input class="form-check-input" type="checkbox" id="checkall_{{ rand }}"
+                                <input class="form-check-input" type="checkbox" id="checkall_{{ rand }}" data-deploy-check-all="{{ table_id }}"
                                     value="" title="{{ __('Check all as') }}"
                                     data-bs-toggle="tooltip" />
                             </th>
@@ -111,9 +111,4 @@
         {% endif %}
     </form>
 
-    <script type="text/javascript">
-    $('#checkall_{{ rand }}').on('click', function() {
-        checkAsCheckboxes(this, '{{ table_id }}');
-    });
-    </script>
 </div>

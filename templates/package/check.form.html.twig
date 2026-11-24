@@ -65,7 +65,7 @@
     {% for type_group_key, type_group in types %}
     <div id="subtype-{{ type_group_key }}" class="subtype {{ is_edit and subitem_instance.fields['parent_type'] == type_group_key ? "" : "d-none" }}">
         {% set subtype_select_field %}
-            <select class="form-select checktype">
+            <select class="form-select checktype" data-deploy-types-with-value="{{ types_with_value|json_encode }}">
                 <option value="">--</option>
                 {% for type_key, type in type_group['subtypes'] %}
                     <option value="{{ type_key }}" {{ subitem_instance.fields['type'] == type_key ? "selected" : "" }}>
@@ -125,48 +125,3 @@
 </div>
 
 
-<script type="text/javascript">
-$(document).ready(function() {
-    $('[name="parent_type"]').on('change', function() {
-        $('.subtype, .subfields, #return-bloc, .modal-footer').addClass('d-none');
-
-
-        var parent_type = $(this).val();
-        if (parent_type.length > 0) {
-            $('#return-block').removeClass('d-none');
-            $('#subtype-' + $(this).val()).removeClass('d-none');
-        }
-    });
-
-    $('.checktype').on('change', function() {
-        var parentype = $('[name="parent_type"]:checked').val();
-        var checktype = $(this).val();
-
-        $('.valuefield').addClass('d-none')
-            .find('label').html(__("Value", 'deploy') + '<i class="ms-2 ti ti-forms"></i>');
-        $('.subfields, .modal-footer').removeClass('d-none');
-
-        $('#checktype_value').val(checktype);
-        $('#extra-help').html('');
-        switch (parentype) {
-            case 'registry':
-                $('#extra-help').html(__("Path to the registry key (ex: \"HKEY_LOCAL_MACHINE\\SOFTWARE\\Glpi-Agent\\\")", 'deploy'));
-                break;
-
-            case 'file':
-                $('#extra-help').html(__("Path to the file (ex: \"/etc/passwd\")", 'deploy'));
-                break;
-
-            case 'directory':
-                $('#extra-help').html(__("Path to the directory (ex: \"/tmp\")", 'deploy'));
-                break;
-        }
-
-        var types_with_value = {{ types_with_value|json_encode|raw }};
-        if (Object.keys(types_with_value).includes(checktype)) {
-            $('.valuefield').removeClass('d-none')
-                .find('label').html(types_with_value[checktype]);
-        }
-    });
-});
-</script>

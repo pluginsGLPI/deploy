@@ -31,7 +31,7 @@
 
 <div class="container-fluid">
     <div class="mb-2 d-flex justify-content-between">
-        <button class="btn btn-primary mb-2" id="add_{{ subitem_type }}">
+        <button class="btn btn-primary mb-2" id="add_{{ subitem_type }}" data-deploy-subitem-add="{{ subitem_type }}">
             <i class="{{ icon }}"></i>
             <span>{{ add_title }}</span>
         </button>
@@ -49,7 +49,7 @@
         <input type="hidden" name="action_name" value="purge">
         <input type="hidden" name="processor" value="MassiveAction">
 
-        <div class="modal fade" id="modal_{{ subitem_type }}" role="dialog">
+        <div class="modal fade" id="modal_{{ subitem_type }}" role="dialog" data-deploy-add-title="{{ add_title }}" data-deploy-edit-title="{{ edit_title }}" data-deploy-package-id="{{ plugin_deploy_packages_id }}">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -73,7 +73,7 @@
                         <thead>
                         <tr>
                             <th style="width: 32px;">
-                                <input class="form-check-input" type="checkbox" id="checkall_{{ rand }}"
+                                <input class="form-check-input" type="checkbox" id="checkall_{{ rand }}" data-deploy-check-all="{{ table_id }}"
                                     value="" title="{{ __('Check all as') }}"
                                     data-bs-toggle="tooltip" />
                             </th>
@@ -85,7 +85,7 @@
                             <th>{# ordering #}</th>
                         </tr>
                         </thead>
-                        <tbody class="sortable-subitems">
+                        <tbody class="sortable-subitems" data-deploy-sortable="{{ subitem_itemtype }}" data-deploy-colspan="{{ (headings|length + 2) }}">
                         {% for entry in entries %}
                             <tr data-subitem-id="{{ entry['id'] }}">
                                 <td>
@@ -122,69 +122,4 @@
     </form>
 </div>
 
-<script type="text/javascript">
-$(document).ready(function() {
-    var modal = $('#modal_{{ subitem_type }}');
-    var bs_modal = new bootstrap.Modal(document.getElementById('modal_{{ subitem_type }}'), {});
-    var ajax_url = CFG_GLPI.root_doc + '/' + GLPI_PLUGINS_PATH.deploy + '/ajax/package.php';
-
-    $('#add_{{ subitem_type }}').on('click', function() {
-        var id = $(this).data('id');
-        modal.find('.modal-title').html('{{ add_title }}');
-        modal.find('.modal-ajax-content').load(ajax_url, {
-            'plugin_deploy_packages_id': {{ plugin_deploy_packages_id }},
-            'action': 'add_{{ subitem_type }}',
-        });
-
-        bs_modal.show();
-    });
-
-    $('#checkall_{{ rand }}').on('click', function() {
-        checkAsCheckboxes(this, '{{ table_id }}');
-    });
-
-    $('.edit_{{ subitem_type }}').on('click', function() {
-        var id = $(this).data('id');
-        modal.find('.modal-title').html('{{ edit_title }}');
-        modal.find('.modal-ajax-content').load(ajax_url, {
-            'id': id,
-            'action': 'edit_{{ subitem_type }}',
-        });
-
-        bs_modal.show();
-    });
-
-    $(".next-tab").on('click', function() {
-        const next_tab_el = $("#tabspanel li a.active").parent('li').next('li').find("a")[0];
-        const next_tab = new bootstrap.Tab(next_tab_el);
-        next_tab.show();
-    });
-
-    sortable('.sortable-subitems', {
-        handle: '.reorder-subitem',
-        placeholder: '<tr><td colspan="{{ (headings|length + 2) }}" class="sortable-placeholder">&nbsp;</td></tr>'
-    })[0].addEventListener('sortupdate', function(e) {
-        var sort_detail      = e.detail;
-        var subitem_id       = sort_detail.item.dataset.subitemId;
-        var subitem_itemtype = '{{ subitem_itemtype }}';
-        var new_index        = sort_detail.destination.index;
-        var old_index        = sort_detail.origin.index;
-        var ref_id           = sort_detail.destination.itemsBeforeUpdate[new_index].dataset.subitemId;
-        var sort_action      = 'after';
-
-        if (old_index > new_index) {
-            sort_action = 'before';
-        }
-
-        $.post(ajax_url, {
-            'action': 'move_subitem',
-            'subitem_itemtype': subitem_itemtype,
-            'subitem_id': subitem_id,
-            'ref_id': ref_id,
-            'sort_action': sort_action,
-        });
-
-        displayAjaxMessageAfterRedirect();
-    });
-});
-</script>
+{{ call('Html::script', ['/plugins/deploy/javascript/widgets.js', {}, false])|raw }}

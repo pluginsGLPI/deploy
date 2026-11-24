@@ -38,8 +38,31 @@
         })
     ) }}
 
+    {% set action_targets = {
+        (constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_CMD")): {
+            'field': '#execfields',
+            'icon': call("GlpiPlugin\\Deploy\\PackageAction::getTypeIconClass", [constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_CMD")]),
+        },
+        (constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_MOVE")): {
+            'field': '#doublepathfields',
+            'icon': call("GlpiPlugin\\Deploy\\PackageAction::getTypeIconClass", [constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_MOVE")]),
+        },
+        (constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_COPY")): {
+            'field': '#doublepathfields',
+            'icon': call("GlpiPlugin\\Deploy\\PackageAction::getTypeIconClass", [constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_COPY")]),
+        },
+        (constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_DELETE")): {
+            'field': '#singlepathfields',
+            'icon': call("GlpiPlugin\\Deploy\\PackageAction::getTypeIconClass", [constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_DELETE")]),
+        },
+        (constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_MKDIR")): {
+            'field': '#singlepathfields',
+            'icon': call("GlpiPlugin\\Deploy\\PackageAction::getTypeIconClass", [constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_MKDIR")]),
+        },
+    } %}
+
     {% set type_select_field %}
-        <select class="form-select" id="actiontype" name="type">
+        <select class="form-select" id="actiontype" name="type" data-deploy-action-targets="{{ action_targets|json_encode }}">
             <option value="">--</option>
             {% for type_key, type in call("GlpiPlugin\\Deploy\\PackageAction::getTypes") %}
                 <option value="{{ type_key }}" {{ subitem_instance.fields['type'] == type_key ? "selected" : "" }}>
@@ -123,42 +146,3 @@
     </div>
 </div>
 
-<script type="text/javascript">
-$(document).ready(function() {
-    $('#actiontype').on('change', function() {
-        $('.specificfields, .modal-footer').addClass('d-none');
-        var actiontype = $(this).val();
-
-        if (actiontype != "") {
-            $('.modal-footer').removeClass('d-none');
-        }
-
-        $('.action-icon-type')
-            .attr('class', '')
-            .addClass('ms-2 action-icon-type');
-
-        switch (actiontype) {
-            case '{{ constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_CMD") }}':
-                $('#execfields').removeClass('d-none');
-                $('.action-icon-type').addClass('{{ call("GlpiPlugin\\Deploy\\PackageAction::getTypeIconClass", [constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_CMD")]) }}');
-                break;
-            case '{{ constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_MOVE") }}':
-                $('#doublepathfields').removeClass('d-none');
-                $('.action-icon-type').addClass('{{ call("GlpiPlugin\\Deploy\\PackageAction::getTypeIconClass", [constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_MOVE")]) }}');
-                break;
-            case '{{ constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_COPY") }}':
-                $('#doublepathfields').removeClass('d-none');
-                $('.action-icon-type').addClass('{{ call("GlpiPlugin\\Deploy\\PackageAction::getTypeIconClass", [constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_COPY")]) }}');
-                break;
-            case '{{ constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_DELETE") }}':
-                $('#singlepathfields').removeClass('d-none');
-                $('.action-icon-type').addClass('{{ call("GlpiPlugin\\Deploy\\PackageAction::getTypeIconClass", [constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_DELETE")]) }}');
-                break;
-            case '{{ constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_MKDIR") }}':
-                $('#singlepathfields').removeClass('d-none');
-                $('.action-icon-type').addClass('{{ call("GlpiPlugin\\Deploy\\PackageAction::getTypeIconClass", [constant("GlpiPlugin\\Deploy\\PackageAction::ACTION_MKDIR")]) }}');
-                break;
-        }
-    });
-});
-</script>

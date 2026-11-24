@@ -59,7 +59,7 @@
                             <div>
                                 <input class="form-check-input massive_action_checkbox" type="checkbox" id="checkall_{{ massiveactionparams['container'] }}"
                                     value="" aria-label="{{ __('Check all') }}"
-                                    data-glpi-check-all="{{ massiveactionparams['container'] }}" />
+                                    data-deploy-check-all="{{ massiveactionparams['container'] }}" data-deploy-checkboxes=".massive_action_checkbox" />
                             </div>
                         </th>
                     {% endif %}
@@ -73,10 +73,10 @@
 
                         {% set sort_query = "sort=" ~ colkey ~ "&order=" ~ new_order ~ "&" ~ additional_params %}
 
-                        <th><button type="button" class="btn-as-link" data-glpi-reload-tab="{{ sort_query }}">
+                        <th><a href="#" role="button" data-deploy-reload-tab="{{ sort_query }}">
                             <i class="{{ sort_icon }}"></i>
                             <span>{{ colum }}</span>
-                        </button></th>
+                        </a></th>
                     {% endfor %}
 
                    {% if nofilter is not defined or csv_url|length %}
@@ -112,7 +112,7 @@
                             <td class="{{ class[colkey]|raw }}" >
                                 {% if formatter == "array" and columns_values[colkey] is defined %}
                                        <select name="filters[{{ colkey }}][]"
-                                            class="form-select filter-select-multiple" multiple>
+                                            class="form-select filter-select-multiple" data-deploy-filter-select multiple>
                                         {% for field, value in columns_values[colkey] %}
                                             <option value="{{ field }}" {{ filters[colkey] is defined and field in filters[colkey] ? 'selected' : '' }}>
                                                 {{ value }}
@@ -246,9 +246,5 @@
         {{ __('Show %s entries')|format(limitdropdown)|raw }}
     </div>
 
-    <script type="text/javascript">
-    $(function() {
-        $('.filter-select-multiple').select2();
-    });
-    </script>
+    {{ call('Html::script', ['/plugins/deploy/javascript/widgets.js', {}, false])|raw }}
 {% endif %}

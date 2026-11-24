@@ -28,7 +28,7 @@
 
 {% import 'components/form/fields_macros.html.twig' as fields %}
 
-<div class="modal-body">
+<div class="modal-body"{{ is_edit ? '' : ' data-deploy-hide-footer' }}>
     {% if not is_edit %}
         {{ fields.dropdownArrayField(
             'upload_mode',
@@ -62,7 +62,7 @@
             <div id="from_server" class="d-none">
                 {% set fancytree_html %}
                     <input type="text" id="server_file_input" class="form-control" name="server_file">
-                    <div id="server_files_tree">
+                    <div id="server_files_tree" data-deploy-file-tree>
                         {{ call('GlpiPlugin\\Deploy\\PackageFile::getFilesTreeFromServer')|raw }}
                     </div>
                 {% endset %}
@@ -137,40 +137,4 @@
     </div>
 </div>
 
-<script type="text/javascript">
-$(document).ready(function() {
-    {% if not is_edit %}
-        $('.modal-footer').addClass('d-none');
-    {% endif %}
-    $('#dropdown_upload_mode{{ rand }}').on('select2:select', function() {
-        $('#file_options, #file_more_options, #from_computer, #from_server, .modal-footer').addClass('d-none');
-
-        var mode = $(this).val();
-        if (mode.length > 0) {
-            $('#file_options, #file_more_options, .modal-footer').removeClass('d-none');
-            if (mode == 'from_computer') {
-                $('#from_computer').removeClass('d-none');
-            }
-            if (mode == 'from_server') {
-                $('#from_server').removeClass('d-none');
-            }
-        }
-    });
-
-    $('#server_files_tree').fancytree({
-        // load plugins
-        extensions: ['glyph'],
-
-        // enable font-awesome icons
-        glyph: {
-            preset: "awesome5",
-            map: {}
-        },
-
-        // copy path on node click
-        activate: function(event, data) {
-            $('#server_file_input').val((data.node.data.path ?? ""));
-        },
-    });
-});
-</script>
+{{ call('Html::script', ['/plugins/deploy/javascript/widgets.js', {}, false])|raw }}
