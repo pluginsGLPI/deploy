@@ -31,4 +31,4 @@
 <pre data-deploy-prism="{{ js_path('public/lib/prismjs.js') }}"><code class="language-json">
 {{ json }}
 </code></pre>
-{{ call('Html::script', ['/plugins/deploy/javascript/widgets.js', {}, false])|raw }}
+{{ call('Html::script', ['/plugins/deploy/javascript/widgets.js', {'version': constant('PLUGIN_DEPLOY_VERSION')}, false])|raw }}

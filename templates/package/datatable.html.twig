@@ -246,5 +246,5 @@
         {{ __('Show %s entries')|format(limitdropdown)|raw }}
     </div>
 
-    {{ call('Html::script', ['/plugins/deploy/javascript/widgets.js', {}, false])|raw }}
+    {{ call('Html::script', ['/plugins/deploy/javascript/widgets.js', {'version': constant('PLUGIN_DEPLOY_VERSION')}, false])|raw }}
 {% endif %}
